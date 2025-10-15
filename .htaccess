@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Redirection vers le dossier public si on accède à la racine
+RewriteCond %{REQUEST_URI} !^/tests/Projet4/public/
+RewriteRule ^(.*)$ public/$1 [L]

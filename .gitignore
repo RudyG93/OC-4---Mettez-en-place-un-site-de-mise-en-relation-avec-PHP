@@ -1,0 +1,24 @@
+# Configuration locale (contient les identifiants BDD)
+config/config.local.php
+
+# Uploads utilisateurs
+public/uploads/*
+!public/uploads/.gitkeep
+!public/uploads/books/.gitkeep
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Éditeurs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp

@@ -1,0 +1,62 @@
+# Structure complète du projet TomTroc
+
+Projet4/
+│
+├── .gitignore                          # Fichiers à ignorer (config.local.php, uploads, etc.)
+├── .htaccess                           # Redirection vers /public
+├── README.md                           # Documentation complète
+│
+├── app/                                # APPLICATION
+│   │
+│   ├── core/                           # CLASSES SYSTÈME
+│   │   ├── App.php                    # ✅ Routeur principal
+│   │   ├── Controller.php             # ✅ Contrôleur de base
+│   │   ├── Model.php                  # ✅ Manager de base (CRUD)
+│   │   ├── Entity.php                 # ✅ Entité de base
+│   │   ├── Database.php               # ✅ Connexion PDO Singleton
+│   │   └── Session.php                # ✅ Gestion sessions + CSRF
+│   │
+│   ├── controllers/                    # CONTRÔLEURS
+│   │   ├── HomeController.php         # ✅ Page d'accueil (Hello World)
+│   │   └── ErrorController.php        # ✅ Pages 404, 403
+│   │
+│   ├── models/                         # MODÈLES
+│   │   ├── entities/                  # Entités métier (à créer)
+│   │   └── managers/                  # Managers (à créer)
+│   │
+│   └── views/                          # VUES
+│       ├── layouts/                   
+│       │   └── main.php               # ✅ Layout principal (header/footer)
+│       ├── home/
+│       │   └── index.php              # ✅ Vue Hello World
+│       ├── auth/                      # (à créer)
+│       ├── user/                      # (à créer)
+│       ├── book/                      # (à créer)
+│       ├── message/                   # (à créer)
+│       └── error/
+│           ├── 404.php                # ✅ Page 404
+│           └── 403.php                # ✅ Page 403
+│
+├── config/                             # CONFIGURATION
+│   ├── config.php                     # ✅ Config générale + constantes
+│   ├── config.example.php             # ✅ Template pour config BDD
+│   ├── config.local.php               # ✅ Config locale (GITIGNORED)
+│   └── routes.php                     # ✅ Routes personnalisées
+│
+├── public/                             # DOSSIER PUBLIC (DocumentRoot)
+│   ├── index.php                      # ✅ Point d'entrée + autoloader
+│   ├── .htaccess                      # ✅ Réécriture d'URL
+│   ├── css/
+│   │   └── style.css                  # ✅ Styles principaux
+│   ├── js/
+│   │   └── app.js                     # ✅ JavaScript principal
+│   └── uploads/                       # Uploads utilisateurs
+│       ├── .gitkeep
+│       └── books/
+│           └── .gitkeep
+│
+└── sql/                                # BASE DE DONNÉES
+    └── database.sql                    # ✅ Script de création BDD complète
+
+TOTAL : 17 fichiers PHP créés
+STATUT : ✅ Hello World fonctionnel !

@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Ne pas rediriger les fichiers et dossiers existants
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rediriger toutes les requêtes vers index.php
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# Bloquer l'accès direct aux dossiers sensibles
+RewriteCond %{REQUEST_URI} ^/(app|config|sql)/
+RewriteRule ^(.*)$ - [F,L]
