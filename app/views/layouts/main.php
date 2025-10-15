@@ -58,11 +58,13 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; <?php echo date('Y'); ?> TomTroc - Tous droits réservés</p>
-            <p class="footer-text">Plateforme d'échange de livres entre particuliers</p>
+            <div class="footer-item">Politique de confidentialité</div>
+            <div class="footer-item">Mentions légales</div>
+            <div class="footer-item">Tom Troc©</div>
+            <div class="footer-item">
+                <img src="<?php echo BASE_URL; ?>assets/ico_footer.svg" alt="Logo Footer TomTroc" class="footer-logo">
+            </div>
         </div>
     </footer>
-
-    <script src="<?php echo BASE_URL; ?>js/app.js"></script>
 </body>
 </html>
