@@ -10,13 +10,15 @@
     --accent-color: #FF6B6B;
     --text-color: #333333;
     --text-light: #666666;
-    --bg-color: #FFFFFF;
-    --bg-light: #F8F9FA;
+    --bg-color: #F5F3EF;
+    --bg-light: #fffbf5;
     --border-color: #E0E0E0;
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
     --border-radius: 8px;
     --transition: all 0.3s ease;
+    --primary-font: 'Inter', sans-serif;
+    --secondary-font: 'Playfair Display', serif;
 }
 
 /* === RESET & BASE === */
@@ -26,8 +28,14 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    font-family: 'Arial', 'Helvetica', sans-serif;
+    font-family: var(--primary-font);
     font-size: 16px;
     line-height: 1.6;
     color: var(--text-color);
@@ -62,13 +70,26 @@ a:hover {
     padding: 20px 0;
 }
 
+.auth-page {
+    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-page .main-content {
+    flex: 1 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    /* min-height: 100vh; retiré pour afficher le footer */
+}
+
 /* === HEADER === */
 .header {
     background-color: var(--bg-color);
-    box-shadow: var(--shadow);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
 }
 
 .nav {
@@ -78,10 +99,37 @@ a:hover {
     padding: 1rem 0;
 }
 
-.nav-brand .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--primary-color);
+.nav-menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 0;
+}
+
+.nav-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav-group-left {
+    margin-right: 24px;
+}
+
+.nav-group-right {
+    margin-left: 24px;
+}
+
+.nav-separator {
+    width: 1px;
+    height: 28px;
+    background: #ccc;
+    margin: 0 12px;
+    border-radius: 1px;
+    list-style: none;
+    display: block;
 }
 
 .nav-menu {
@@ -93,15 +141,31 @@ a:hover {
 
 .nav-link {
     color: var(--text-color);
-    font-weight: 500;
+    font-weight: 400;
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
-    transition: var(--transition);
+    transition: none
 }
 
 .nav-link:hover {
-    background-color: var(--bg-light);
-    opacity: 1;
+    font-weight: bold;
+    color: black;
+}
+
+.nav-link.active {
+    font-weight: bold;
+}
+
+.nav-link-icon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-icon {
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
 }
 
 /* === BUTTONS === */
@@ -121,7 +185,6 @@ a:hover {
 
 .btn-primary:hover {
     background-color: #009955;
-    transform: translateY(-2px);
     box-shadow: var(--shadow-hover);
     opacity: 1;
 }
@@ -305,6 +368,7 @@ a:hover {
     padding: 1rem 0;
     margin-top: 3rem;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .footer-text {
@@ -381,7 +445,7 @@ a:hover {
 .mt-2 {
     margin-top: 1rem;
 }
-
+h
 .mt-3 {
     margin-top: 1.5rem;
 }
@@ -420,4 +484,122 @@ a:hover {
 
 .p-4 {
     padding: 2rem;
+}
+/* === AUTHENTICATION FORMS === */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+    padding: 2rem 0;
+}
+
+.auth-card {
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 450px;
+}
+
+.auth-title {
+    font-size: 2rem;
+    font-family: var(--secondary-font);
+    color: var(--secondary-color);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.auth-form {
+    margin-top: 2rem;
+}
+
+/* === FORM ELEMENTS === */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    background-color: var(--bg-color);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 172, 102, 0.1);
+}
+
+.form-input.input-error {
+    border-color: var(--accent-color);
+}
+
+.form-input.input-error:focus {
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.error-message {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.auth-footer {
+    margin-top: 2rem;
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.auth-footer p {
+    color: var(--text-light);
+}
+
+.auth-link {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
+
+/* === FORM RESPONSIVE === */
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 1rem;
+    }
+
+    .auth-card {
+        padding: 1.5rem;
+    }
+
+    .auth-title {
+        font-size: 1.5rem;
+    }
 }

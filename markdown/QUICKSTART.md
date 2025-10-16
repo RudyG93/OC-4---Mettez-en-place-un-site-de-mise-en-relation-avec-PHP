@@ -81,11 +81,13 @@ http://localhost/tests/Projet4/public/page-inexistante
 
 ### À implémenter (dans l'ordre recommandé) :
 
-1. **Système d'authentification**
-   - [ ] Formulaire d'inscription
-   - [ ] Formulaire de connexion
-   - [ ] Déconnexion
-   - [ ] Entité User + UserManager
+1. **Système d'authentification** ✅ **TERMINÉ !**
+   - [x] Formulaire d'inscription ✅
+   - [x] Formulaire de connexion ✅
+   - [x] Déconnexion ✅
+   - [x] Entité User + UserManager ✅
+   
+   📖 **Voir le guide complet** : `AUTHENTICATION_GUIDE.md`
 
 2. **Gestion des profils**
    - [ ] Voir son profil

@@ -1,3 +1,4 @@
+<?php $activePage = 'home'; ?>
 <div class="hero">
     <div class="container">
         <h1 class="hero-title"><?php echo htmlspecialchars($heading); ?></h1>
