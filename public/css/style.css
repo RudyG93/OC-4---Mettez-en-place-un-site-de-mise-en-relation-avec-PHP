@@ -5,8 +5,9 @@
 
 /* === VARIABLES CSS === */
 :root {
-    --primary-color: #00AC66;
-    --secondary-color: #292929;
+    --primary-color: black;
+    --secondary-color: #A6A6A6;
+    --third-color: #00AC66;
     --accent-color: #FF6B6B;
     --text-color: #333333;
     --text-light: #666666;
@@ -485,7 +486,15 @@ h
 .p-4 {
     padding: 2rem;
 }
+
 /* === AUTHENTICATION FORMS === */
+
+.login-container {
+    display: flex;
+    align-items: center;
+    gap: 10rem;
+}
+
 .auth-container {
     display: flex;
     justify-content: center;
@@ -503,9 +512,8 @@ h
 .auth-title {
     font-size: 2rem;
     font-family: var(--secondary-font);
-    color: var(--secondary-color);
+    color: var(--primary-color);
     margin-bottom: 0.5rem;
-    text-align: center;
 }
 
 .auth-form {
@@ -521,18 +529,18 @@ h
     display: block;
     margin-bottom: 0.5rem;
     color: var(--secondary-color);
-    font-weight: 500;
     font-size: 0.95rem;
 }
 
 .form-input {
-    width: 100%;
+    width: 140%;
+    height: 50px;
     padding: 0.75rem 1rem;
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     font-size: 1rem;
     transition: var(--transition);
-    background-color: var(--bg-color);
+    background-color: white
 }
 
 .form-input:focus {
@@ -565,8 +573,11 @@ h
 }
 
 .btn-block {
-    width: 100%;
+    width: 140%;
+    height: 50px;
     margin-top: 1rem;
+    font-weight: 600;
+    background-color: var(--third-color);
 }
 
 .auth-footer {
@@ -577,16 +588,21 @@ h
 }
 
 .auth-footer p {
-    color: var(--text-light);
+    color: var(--primary-color);
 }
 
 .auth-link {
-    color: var(--primary-color);
-    font-weight: 500;
+    text-decoration: underline;
 }
 
 .auth-link:hover {
     text-decoration: underline;
+}
+
+/* === FULLSCREEN IMAGE === */
+.login-pic {
+    width: auto;
+    height: auto;
 }
 
 /* === FORM RESPONSIVE === */

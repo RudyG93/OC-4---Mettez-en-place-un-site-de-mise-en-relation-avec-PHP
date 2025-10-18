@@ -11,6 +11,7 @@ class User extends Entity
     private $email;
     private $password;
     private $avatar;
+    private $login;
     private $created_at;
     private $updated_at;
 
@@ -50,6 +51,11 @@ class User extends Entity
     public function getUpdatedAt()
     {
         return $this->updated_at;
+    }
+    
+    public function getLogin()
+    {
+        return $this->login;
     }
 
     /**
@@ -94,6 +100,12 @@ class User extends Entity
     public function setUpdatedAt($updated_at)
     {
         $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function setLogin($login)
+    {
+        $this->login = $login;
         return $this;
     }
 
