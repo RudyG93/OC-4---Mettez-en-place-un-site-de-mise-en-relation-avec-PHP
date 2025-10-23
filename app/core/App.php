@@ -53,12 +53,30 @@ class App
         // Reconstruire l'URL pour comparer avec les routes
         $urlString = implode('/', $url);
         
-        // Vérifier si c'est une route personnalisée
+        // Vérifier si c'est une route personnalisée exacte
         if (isset($this->routes[$urlString])) {
             $route = $this->routes[$urlString];
             $this->controller = $route['controller'];
             $this->action = $route['action'];
             return;
+        }
+        
+        // Vérifier les routes avec paramètres dynamiques
+        foreach ($this->routes as $pattern => $route) {
+            if (strpos($pattern, '{') !== false) {
+                $regex = preg_replace('/\{[^}]+\}/', '([^/]+)', $pattern);
+                $regex = '#^' . $regex . '$#';
+                
+                if (preg_match($regex, $urlString, $matches)) {
+                    $this->controller = $route['controller'];
+                    $this->action = $route['action'];
+                    
+                    // Extraire les paramètres
+                    array_shift($matches); // Enlever le match complet
+                    $this->params = $matches;
+                    return;
+                }
+            }
         }
         
         // Route dynamique standard : controller/action/params

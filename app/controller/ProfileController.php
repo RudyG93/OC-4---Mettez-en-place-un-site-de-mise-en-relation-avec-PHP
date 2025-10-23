@@ -9,10 +9,12 @@
 class ProfileController extends Controller
 {
     private UserManager $userManager;
+    private BookManager $bookManager;
 
     public function __construct()
     {
         $this->userManager = $this->loadManager('User');
+        $this->bookManager = $this->loadManager('Book');
     }
 
     /**
@@ -27,7 +29,7 @@ class ProfileController extends Controller
         $userId = Session::get('user_id');
 
         // Récupérer les informations complètes de l'utilisateur
-        $user = $this->userManager->findById($userId);
+        $user = $this->userManager->getUserById($userId);
 
         if (!$user) {
             Session::setFlash('error', 'Profil introuvable.');
@@ -58,7 +60,7 @@ class ProfileController extends Controller
         $userId = Session::get('user_id');
 
         // Récupérer les informations actuelles
-        $user = $this->userManager->findById($userId);
+        $user = $this->userManager->getUserById($userId);
 
         if (!$user) {
             Session::setFlash('error', 'Profil introuvable.');
@@ -134,10 +136,10 @@ class ProfileController extends Controller
         } else {
             // Vérifier si l'email est déjà utilisé par un autre utilisateur
             $userId = Session::get('user_id');
-            $currentUser = $this->userManager->findById($userId);
+            $currentUser = $this->userManager->getUserById($userId);
 
             if ($email !== $currentUser->getEmail()) {
-                $existingUser = $this->userManager->findByEmail($email);
+                $existingUser = $this->userManager->getUserByEmail($email);
                 if ($existingUser) {
                     $errors['email'] = 'Cet email est déjà utilisé par un autre compte.';
                 }
@@ -198,7 +200,7 @@ class ProfileController extends Controller
     public function show(int $userId): void
     {
         // Récupérer l'utilisateur
-        $user = $this->userManager->findById($userId);
+        $user = $this->userManager->getUserById($userId);
 
         // Vérifier que l'utilisateur existe
         if (!$user) {

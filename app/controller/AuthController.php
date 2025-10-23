@@ -187,7 +187,7 @@ class AuthController extends Controller
         }
 
         // Rechercher l'utilisateur
-        $user = $this->userManager->findByEmail($email);
+        $user = $this->userManager->getUserByEmail($email);
 
         // Vérifier si l'utilisateur existe et si le mot de passe est correct
         if (!$user || !$user->verifyPassword($password)) {

@@ -10,6 +10,7 @@ class User extends Entity
     private $username;
     private $email;
     private $password;
+    private $bio;
     private $avatar;
     private $created_at;
     private $updated_at;
@@ -37,7 +38,7 @@ class User extends Entity
         // Liste des propriétés autorisées
         $allowedProperties = [
             'id', 'username', 'email', 'password', 
-            'avatar', 'created_at', 'updated_at'
+            'bio', 'avatar', 'created_at', 'updated_at'
         ];
         
         foreach ($data as $key => $value) {
@@ -74,6 +75,19 @@ class User extends Entity
     public function getPassword()
     {
         return $this->password;
+    }
+
+    public function getBio()
+    {
+        return $this->bio;
+    }
+
+    /**
+     * Vérifie si l'utilisateur a une bio
+     */
+    public function hasBio()
+    {
+        return !empty($this->bio);
     }
 
     public function getAvatar()
@@ -115,6 +129,12 @@ class User extends Entity
     public function setPassword($password)
     {
         $this->password = $password;
+        return $this;
+    }
+
+    public function setBio($bio)
+    {
+        $this->bio = $bio;
         return $this;
     }
 

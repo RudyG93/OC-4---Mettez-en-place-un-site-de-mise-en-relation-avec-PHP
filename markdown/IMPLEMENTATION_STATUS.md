@@ -1,40 +1,67 @@
-# ��� État d'avancement du projet TomTroc
+# ��� État d'avancement du projet TomTroc
 
-## ��� Objectif du projet
+## ��� Objectif du projet
 Créer une plateforme d'échange de livres entre particuliers avec système de messagerie.
 
 ---
 
 ## ✅ TERMINÉ
 
-### ���️ Structure MVC
+### ���️ Structure MVC
 - [x] Architecture MVC complète
 - [x] Système de routage
 - [x] Autoloading des classes
 - [x] Configuration (BDD, constantes)
 - [x] Gestion des erreurs (404, 403)
 
-### ��� Base de données
+### ��� Base de données
 - [x] Schéma SQL créé
 - [x] Tables : users, books, messages
 - [x] Données de test insérées
 - [x] Relations entre tables définies
 
-### ��� Authentification (NOUVEAU !)
-- [x] **Entité User**
-- [x] **UserManager (CRUD utilisateurs)**
-- [x] **AuthController**
-- [x] **Formulaire d'inscription**
-- [x] **Formulaire de connexion**
-- [x] **Déconnexion**
+### 👤 Profils utilisateurs (NOUVEAU !)
+- [x] **ProfileController**
+- [x] **Affichage du profil privé** 
+- [x] **Modification du profil**
+- [x] **Upload d'avatar**
 - [x] **Validation des données**
-- [x] **Hachage des mots de passe**
-- [x] **Protection CSRF**
-- [x] **Gestion de session**
-- [x] **Messages flash**
+- [x] **Profil public** (affichage public des utilisateurs)
 - [x] **Design responsive**
+- [x] **Sécurité et autorisations**
 
-### ��� Interface
+### 📚 Bibliothèque personnelle (NOUVEAU !)
+- [x] **Entité Book**
+- [x] **BookManager (CRUD livres)**
+- [x] **BookController**
+- [x] **Gestion ma bibliothèque**
+- [x] **Ajout de livres**
+- [x] **Modification de livres**
+- [x] **Suppression de livres**
+- [x] **Upload d'images de livres**
+- [x] **Gestion disponibilité**
+- [x] **Statistiques utilisateur**
+- [x] **Interface responsive**
+
+### 🌐 Catalogue public (NOUVEAU !)
+- [x] **Page publique des livres**
+- [x] **Recherche et filtres**
+- [x] **Affichage en grille responsive**
+- [x] **Pagination**
+- [x] **Tri par disponibilité**
+- [x] **Design cohérent**
+
+### 📖 Page détail du livre (NOUVEAU !)
+- [x] **Affichage complet d'un livre**
+- [x] **Informations du propriétaire**
+- [x] **Actions contextuelles**
+- [x] **Liens vers profils publics**
+- [x] **Suggestions d'autres livres**
+- [x] **Préparation messagerie**
+- [x] **Design responsive avancé**
+- [x] **Gestion des autorisations**
+
+### ��� Interface
 - [x] Layout principal (header, footer, main)
 - [x] Navbar dynamique (selon connexion)
 - [x] Page d'accueil "Hello World"
@@ -43,7 +70,7 @@ Créer une plateforme d'échange de livres entre particuliers avec système de m
 - [x] Messages flash colorés
 - [x] Design responsive mobile
 
-### ��� Sécurité
+### ��� Sécurité
 - [x] Requêtes préparées (PDO)
 - [x] Protection CSRF
 - [x] Hachage de mots de passe (bcrypt)
@@ -53,71 +80,60 @@ Créer une plateforme d'échange de livres entre particuliers avec système de m
 
 ---
 
-## ��� EN COURS
+## ��� EN COURS
 
-**Rien actuellement** - Authentification terminée avec succès !
+**Prêt pour l'étape 6** - Toutes les fonctionnalités de base sont terminées ! 
+
+**Corrections récentes appliquées :**
+- ✅ Erreur "Token de sécurité invalide" corrigée
+- ✅ Erreur "getBio() method" corrigée  
+- ✅ Upload d'images lors de modification corrigé
+- ✅ Documentation mise à jour
 
 ---
 
-## ��� À FAIRE
+## ��� À FAIRE
 
-### 1. Gestion des profils utilisateurs
-- [ ] Afficher son profil
-- [ ] Modifier son profil (pseudo, email, mot de passe)
-- [ ] Upload d'avatar
-- [ ] Afficher le profil des autres utilisateurs
+### 1. Système de messagerie (Étape 6) - PRIORITÉ
+- [ ] MessageController (gestion des conversations)
+- [ ] Vues de messagerie (liste, détail conversation)
+- [ ] Envoi et réception de messages
+- [ ] Notifications (messages non lus)
+- [ ] Interface utilisateur responsive
 
-### 2. Gestion des livres (CRUD)
-- [ ] Entité Book + BookManager
-- [ ] Afficher mes livres (liste)
-- [ ] Ajouter un livre (formulaire)
-- [ ] Modifier un livre
-- [ ] Supprimer un livre
-- [ ] Upload d'image de couverture
-
-### 3. Page "Nos livres"
-- [ ] Liste de tous les livres disponibles
-- [ ] Recherche par titre/auteur
-- [ ] Filtres (catégorie, disponibilité)
-- [ ] Pagination
-
-### 4. Détail d'un livre
-- [ ] Affichage complet du livre
-- [ ] Informations sur le propriétaire
-- [ ] Bouton "Envoyer un message"
-
-### 5. Messagerie
-- [ ] Entité Message + MessageManager
-- [ ] Liste des conversations
-- [ ] Afficher une conversation
-- [ ] Envoyer un message
-- [ ] Répondre à un message
-- [ ] Notifications (non lu)
-
-### 6. Fonctionnalités avancées (optionnel)
-- [ ] Système de notation/avis
+### 2. Gestion des échanges (Étape 7) - OPTIONNEL
+- [ ] Système de demande d'échange
+- [ ] Statuts des échanges (en cours, accepté, refusé)
 - [ ] Historique des échanges
+- [ ] Notifications d'échange
+
+### 3. Fonctionnalités avancées (optionnel)
+- [ ] Système de notation/avis
 - [ ] Favoris
 - [ ] Notifications par email
+- [ ] Recherche avancée avec filtres multiples
 
 ---
 
-## ��� Progression globale
+## ��� Progression globale
 
 ```
-████████████░░░░░░░░░░░░░░░░░░░░ 30%
+██████████████████████░░░░░░░░░░ 70%
 
 ✅ Structure MVC        : 100%
 ✅ Base de données      : 100%
-✅ Authentification     : 100%  ← NOUVEAU !
-⏳ Profils utilisateurs :   0%
-⏳ Gestion des livres   :   0%
+✅ Authentification     : 100%
+✅ Profils utilisateurs : 100%  ← COMPLÉTÉ !
+✅ Bibliothèque perso   : 100%  ← COMPLÉTÉ !
+✅ Catalogue public     : 100%  ← COMPLÉTÉ !
+✅ Page détail livre    : 100%  ← NOUVEAU !
 ⏳ Messagerie           :   0%
+⏳ Gestion échanges     :   0%
 ```
 
 ---
 
-## ��� Compétences mises en œuvre
+## ��� Compétences mises en œuvre
 
 ### Déjà implémentées
 - [x] Architecture MVC
@@ -127,51 +143,63 @@ Créer une plateforme d'échange de livres entre particuliers avec système de m
 - [x] Relations entre tables (clés étrangères)
 - [x] Sécurité web (CSRF, hachage, validation)
 - [x] Sessions PHP
-- [x] Routing personnalisé
+- [x] Routing personnalisé avec paramètres dynamiques
 - [x] HTML5 sémantique
-- [x] CSS3 (Flexbox, Grid, Variables CSS)
+- [x] CSS3 (Flexbox, Grid, Variables CSS, Animations)
 - [x] Design responsive
+- [x] Upload de fichiers (images)
+- [x] Validation côté client et serveur
+- [x] JavaScript (interactions, prévisualisation)
 - [x] Git (versioning)
 
 ### À venir
-- [ ] Upload de fichiers
 - [ ] Envoi d'emails
-- [ ] AJAX (interactions asynchrones)
-- [ ] Pagination
-- [ ] Recherche et filtres
+- [ ] AJAX avancé (interactions asynchrones)
+- [ ] Pagination avancée
+- [ ] Système de messagerie temps réel
+- [ ] Notifications push
 
 ---
 
-## ��� Documentation disponible
+## ��� Documentation disponible
 
 | Fichier | Description |
 |---------|-------------|
 | `README.md` | Documentation complète du projet |
-| `QUICKSTART.md` | Guide de démarrage rapide |
-| `AUTHENTICATION_GUIDE.md` | Guide détaillé de l'authentification ⭐ |
+| `QUICKSTART.md` | Guide de démarrage rapide ⭐ |
+| `AUTHENTICATION_GUIDE.md` | Guide complet authentification |
+| `PROFILE_IMPLEMENTATION_SUMMARY.md` | Résumé gestion profils |
+| `BIBLIOTHEQUE_IMPLEMENTATION.md` | Bibliothèque personnelle (étape 3) |
+| `CATALOGUE_PUBLIC_IMPLEMENTATION.md` | Catalogue public (étape 4) |
+| `DETAIL_LIVRE_IMPLEMENTATION.md` | Page détail livre (étape 5) ⭐ |
+| `BOOK_EDIT_TEST_GUIDE.md` | Guide de test édition livres |
+| `FIX_GETBIO_ERROR.md` | Correction erreur getBio() |
+| `FIX_IMAGE_UPLOAD.md` | Correction upload d'images ⭐ |
+| `STRUCTURE.txt` | Architecture des fichiers |
 | `AUTHENTICATION_SUMMARY.md` | Résumé rapide de l'authentification |
 | `IMPLEMENTATION_STATUS.md` | Ce fichier - État d'avancement |
-| `STRUCTURE.txt` | Arborescence du projet |
 
 ---
 
-## ��� Prochaine étape recommandée
+## ��� Prochaine étape recommandée
 
-**Gestion des profils utilisateurs**
+**Système de messagerie (Étape 6)**
 
 Pourquoi commencer par là ?
-- ✅ Profite du système d'authentification déjà en place
-- ✅ Permet de compléter les données utilisateur
-- ✅ Nécessaire avant de lier des livres aux utilisateurs
-- ✅ Relativement simple à implémenter
+- ✅ Base de données déjà préparée (table messages)
+- ✅ Système d'authentification complet en place
+- ✅ Profils utilisateurs fonctionnels
+- ✅ Pages détail des livres avec boutons de contact préparés
+- ✅ Architecture MVC solide pour accueillir MessageController
 
-**Temps estimé** : 2-3 heures
+**Temps estimé** : 3-4 heures
 
-**Fichiers à créer** :
-- `app/controllers/UserController.php`
-- `app/views/user/profile.php`
-- `app/views/user/edit.php`
+**Ce qui reste à implémenter :**
+- [ ] MessageController (création, lecture, réponse)
+- [ ] Vues de messagerie (liste conversations, détail)
+- [ ] Système de notifications
+- [ ] Interface utilisateur pour envoyer/recevoir messages
 
 ---
 
-**Dernière mise à jour** : Authentification complétée avec succès ! ���
+**Dernière mise à jour** : Authentification complétée avec succès ! ���

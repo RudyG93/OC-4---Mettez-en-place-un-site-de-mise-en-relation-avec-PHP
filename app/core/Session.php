@@ -156,6 +156,13 @@ class Session
      */
     public static function generateCsrfToken()
     {
+        // Réutiliser le token existant s'il y en a un
+        $existingToken = self::get('csrf_token', '');
+        if (!empty($existingToken)) {
+            return $existingToken;
+        }
+        
+        // Générer un nouveau token seulement s'il n'y en a pas
         $token = bin2hex(random_bytes(32));
         self::set('csrf_token', $token);
         return $token;

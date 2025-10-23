@@ -1,0 +1,495 @@
+/* ===== PAGE D'ÉDITION DES LIVRES ===== */
+
+/* Container principal */
+#book-edit-container {
+    padding: 2rem 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 200px);
+}
+
+.book-edit-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Navigation breadcrumb */
+.breadcrumb {
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+    color: var(--primary-color);
+}
+
+.breadcrumb-link i {
+    font-size: 0.9rem;
+}
+
+/* En-tête de page */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Layout du formulaire */
+.book-edit-form {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.form-layout {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 3rem;
+}
+
+/* ===== SECTION PHOTO ===== */
+.photo-section {
+    position: sticky;
+    top: 2rem;
+    height: fit-content;
+}
+
+.current-image-container {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.current-image-container:hover {
+    transform: translateY(-2px);
+}
+
+.current-book-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    display: block;
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #6c757d;
+    font-size: 3rem;
+    gap: 1rem;
+}
+
+.image-placeholder span {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Overlay pour changer l'image */
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.current-image-container:hover .image-overlay {
+    opacity: 1;
+}
+
+.btn-change-image {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-change-image:hover {
+    background: white;
+    transform: translateY(-1px);
+}
+
+.file-input {
+    display: none;
+}
+
+.form-help {
+    margin-top: 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* ===== SECTION INFORMATIONS ===== */
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Groupes de formulaire */
+.form-group {
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===== INPUTS ET TEXTAREA ===== */
+.form-input {
+    width: 100%;
+    padding: 1rem 0 0.75rem 0;
+    border: none;
+    border-bottom: 2px solid #e9ecef;
+    background: transparent;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    transition: all 0.3s;
+    outline: none;
+}
+
+.form-input:focus {
+    border-bottom-color: var(--primary-color);
+}
+
+.form-input:focus + .input-underline {
+    transform: scaleX(1);
+}
+
+.input-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+}
+
+/* Textarea spécifique */
+.form-textarea {
+    width: 100%;
+    padding: 1rem 0 0.75rem 0;
+    border: none;
+    border-bottom: 2px solid #e9ecef;
+    background: transparent;
+    font-size: 1rem;
+    color: #2c3e50;
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+    outline: none;
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.form-textarea:focus {
+    border-bottom-color: var(--primary-color);
+}
+
+.form-textarea:focus + .textarea-underline {
+    transform: scaleX(1);
+}
+
+.textarea-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+    transform-origin: left;
+}
+
+.character-count {
+    margin-top: 0.5rem;
+    text-align: right;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+/* ===== SELECT PERSONNALISÉ ===== */
+.select-wrapper {
+    position: relative;
+}
+
+.form-select {
+    width: 100%;
+    padding: 1rem 2rem 0.75rem 0;
+    border: none;
+    border-bottom: 2px solid #e9ecef;
+    background: transparent;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    cursor: pointer;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    transition: all 0.3s;
+}
+
+.form-select:focus {
+    border-bottom-color: var(--primary-color);
+}
+
+.select-arrow {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    transition: color 0.3s;
+}
+
+.form-select:focus + .select-arrow {
+    color: var(--primary-color);
+}
+
+/* ===== BOUTONS D'ACTION ===== */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border-color: #28a745;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #218838 0%, #1ea085 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-danger {
+    background: transparent;
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background: #dc3545;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .form-layout {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .photo-section {
+        position: static;
+    }
+    
+    .current-book-image,
+    .image-placeholder {
+        height: 300px;
+    }
+    
+    .page-title {
+        font-size: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        justify-content: center;
+    }
+    
+    .book-edit-content {
+        padding: 0 0.5rem;
+    }
+    
+    .book-edit-form {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 1.3rem;
+    }
+    
+    .form-input,
+    .form-select {
+        font-size: 1rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ALERTES ===== */
+.alert {
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-error,
+.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+}
+
+/* ===== ANIMATIONS ET EFFETS ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.book-edit-form {
+    animation: fadeInUp 0.5s ease;
+}
+
+/* Focus states améliorés */
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+
+/* Amélioration visuelle du placeholder */
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: #adb5bd;
+    opacity: 1;
+}
+
+/* Styles pour les états d'erreur */
+.form-group.error .form-input,
+.form-group.error .form-textarea,
+.form-group.error .form-select {
+    border-bottom-color: #dc3545;
+}
+
+.form-group.error .input-underline,
+.form-group.error .textarea-underline {
+    background: #dc3545;
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+/* États de chargement */
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}

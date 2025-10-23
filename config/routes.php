@@ -18,13 +18,27 @@ return [
     'mon-compte' => ['controller' => 'Profile', 'action' => 'view'],
     'mon-compte/modifier' => ['controller' => 'Profile', 'action' => 'edit'],
     'mon-compte/update' => ['controller' => 'Profile', 'action' => 'update'],
-    'profil' => ['controller' => 'Profile', 'action' => 'show'],
+    'profil/{id}' => ['controller' => 'Profile', 'action' => 'show'],
     
     // Livres
-    'nos-livres' => ['controller' => 'Book', 'action' => 'list'],
-    'livre' => ['controller' => 'Book', 'action' => 'show'],
+    'nos-livres' => ['controller' => 'Book', 'action' => 'index'],
+    'livre/{id}' => ['controller' => 'Book', 'action' => 'show'],
+    'livre/recherche' => ['controller' => 'Book', 'action' => 'search'],
+    
+    // Bibliothèque personnelle
+    'book/my-books' => ['controller' => 'Book', 'action' => 'myBooks'],
+    'book/add' => ['controller' => 'Book', 'action' => 'add'],
+    'book/create' => ['controller' => 'Book', 'action' => 'create'],
+    'book/{id}/edit' => ['controller' => 'Book', 'action' => 'edit'],
+    'book/{id}/update' => ['controller' => 'Book', 'action' => 'update'],
+    'book/{id}/delete' => ['controller' => 'Book', 'action' => 'delete'],
+    'book/{id}/toggle-availability' => ['controller' => 'Book', 'action' => 'toggleAvailability'],
     
     // Messagerie
-    'messagerie' => ['controller' => 'Message', 'action' => 'inbox'],
+    'messages' => ['controller' => 'Message', 'action' => 'index'],
+    'messages/conversation/{id}' => ['controller' => 'Message', 'action' => 'conversation'],
+    'messages/compose/{id}' => ['controller' => 'Message', 'action' => 'compose'],
+    'messages/send' => ['controller' => 'Message', 'action' => 'send'],
+    'messagerie' => ['controller' => 'Message', 'action' => 'index'], // Alias pour compatibilité
     'conversation' => ['controller' => 'Message', 'action' => 'conversation'],
 ];
