@@ -11,7 +11,35 @@ class Session
     public static function start()
     {
         if (session_status() === PHP_SESSION_NONE) {
+            // Supprimer temporairement les erreurs de propriétés dynamiques
+            $errorLevel = error_reporting();
+            error_reporting($errorLevel & ~E_DEPRECATED);
+            
             session_start();
+            
+            // Restaurer le niveau d'erreur
+            error_reporting($errorLevel);
+            
+            // Nettoyer les objets User obsolètes de la session s'ils existent
+            self::cleanObsoleteUserObjects();
+        }
+    }
+    
+    /**
+     * Nettoie les objets User obsolètes stockés dans la session
+     */
+    private static function cleanObsoleteUserObjects()
+    {
+        if (!isset($_SESSION)) {
+            return;
+        }
+        
+        // Parcourir toutes les variables de session
+        foreach ($_SESSION as $key => $value) {
+            // Si c'est un objet User, le recréer proprement
+            if (is_object($value) && $value instanceof User) {
+                unset($_SESSION[$key]);
+            }
         }
     }
     
@@ -139,5 +167,37 @@ class Session
     public static function verifyCsrfToken($token)
     {
         return hash_equals(self::get('csrf_token', ''), $token);
+    }
+    
+    /**
+     * Nettoie la session des objets obsolètes
+     * Utile après des modifications de structure d'entités
+     */
+    public static function cleanSession()
+    {
+        self::start();
+        
+        // Sauvegarder les données importantes
+        $userId = self::get('user_id');
+        $username = self::get('username');
+        $csrfToken = self::get('csrf_token');
+        $flash = self::get('flash');
+        
+        // Vider complètement la session
+        session_unset();
+        
+        // Restaurer les données importantes
+        if ($userId) {
+            $_SESSION['user_id'] = $userId;
+        }
+        if ($username) {
+            $_SESSION['username'] = $username;
+        }
+        if ($csrfToken) {
+            $_SESSION['csrf_token'] = $csrfToken;
+        }
+        if ($flash) {
+            $_SESSION['flash'] = $flash;
+        }
     }
 }

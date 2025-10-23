@@ -11,9 +11,47 @@ class User extends Entity
     private $email;
     private $password;
     private $avatar;
-    private $login;
     private $created_at;
     private $updated_at;
+
+    /**
+     * Empêche la création de propriétés dynamiques
+     */
+    public function __set($name, $value)
+    {
+        // Ignorer silencieusement les tentatives de création de propriétés obsolètes
+        if ($name === 'login') {
+            return;
+        }
+        
+        // Pour les autres propriétés, lever une exception explicite
+        throw new Exception("Propriété '$name' non autorisée dans la classe User");
+    }
+
+    /**
+     * Hydrate l'objet User avec des données spécifiques
+     * Surcharge la méthode parent pour plus de contrôle
+     */
+    public function hydrate(array $data)
+    {
+        // Liste des propriétés autorisées
+        $allowedProperties = [
+            'id', 'username', 'email', 'password', 
+            'avatar', 'created_at', 'updated_at'
+        ];
+        
+        foreach ($data as $key => $value) {
+            // Ignorer les propriétés non autorisées
+            if (!in_array($key, $allowedProperties)) {
+                continue;
+            }
+            
+            $method = 'set' . str_replace('_', '', ucwords($key, '_'));
+            if (method_exists($this, $method)) {
+                $this->$method($value);
+            }
+        }
+    }
 
     /**
      * Getters
@@ -51,11 +89,6 @@ class User extends Entity
     public function getUpdatedAt()
     {
         return $this->updated_at;
-    }
-    
-    public function getLogin()
-    {
-        return $this->login;
     }
 
     /**
@@ -100,12 +133,6 @@ class User extends Entity
     public function setUpdatedAt($updated_at)
     {
         $this->updated_at = $updated_at;
-        return $this;
-    }
-
-    public function setLogin($login)
-    {
-        $this->login = $login;
         return $this;
     }
 

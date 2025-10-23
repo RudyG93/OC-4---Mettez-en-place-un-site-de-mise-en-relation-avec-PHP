@@ -12,7 +12,7 @@ abstract class Controller
     protected function loadManager($manager)
     {
         $managerClass = $manager . 'Manager';
-        $managerFile = APP_PATH . '/models/managers/' . $managerClass . '.php';
+        $managerFile = APP_PATH . '/model/manager/' . $managerClass . '.php';
         
         if (file_exists($managerFile)) {
             require_once $managerFile;
@@ -32,7 +32,7 @@ abstract class Controller
         
         // Capturer le contenu de la vue
         ob_start();
-        $viewFile = APP_PATH . '/views/' . $view . '.php';
+        $viewFile = APP_PATH . '/view/' . $view . '.php';
         
         if (file_exists($viewFile)) {
             require $viewFile;
@@ -43,7 +43,7 @@ abstract class Controller
         $content = ob_get_clean();
         
         // Charger le layout
-        $layoutFile = APP_PATH . '/views/layouts/' . $layout . '.php';
+        $layoutFile = APP_PATH . '/view/layouts/' . $layout . '.php';
         if (file_exists($layoutFile)) {
             require $layoutFile;
         } else {

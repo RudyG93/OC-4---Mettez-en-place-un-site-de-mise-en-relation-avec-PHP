@@ -89,10 +89,13 @@ http://localhost/tests/Projet4/public/page-inexistante
    
    📖 **Voir le guide complet** : `AUTHENTICATION_GUIDE.md`
 
-2. **Gestion des profils**
-   - [ ] Voir son profil
-   - [ ] Modifier son profil
-   - [ ] Voir le profil des autres
+2. **Gestion des profils** ✅ **TERMINÉ !**
+   - [x] Voir son profil ✅
+   - [x] Modifier son profil ✅
+   - [x] Voir le profil des autres ✅
+   - [x] ProfileController + vues ✅
+   
+   📖 **Voir le guide complet** : `PROFILE_MANAGEMENT_GUIDE.md`
 
 3. **Bibliothèque personnelle**
    - [ ] Afficher mes livres

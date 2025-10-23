@@ -86,7 +86,7 @@ class App
     private function loadController()
     {
         $controllerName = $this->controller . 'Controller';
-        $controllerFile = APP_PATH . '/controllers/' . $controllerName . '.php';
+        $controllerFile = APP_PATH . '/controller/' . $controllerName . '.php';
         
         if (file_exists($controllerFile)) {
             require_once $controllerFile;
@@ -116,7 +116,7 @@ class App
     private function show404()
     {
         http_response_code(404);
-        require_once APP_PATH . '/controllers/ErrorController.php';
+        require_once APP_PATH . '/controller/ErrorController.php';
         $errorController = new ErrorController();
         $errorController->notFound();
         exit;

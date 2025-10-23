@@ -196,6 +196,9 @@ class AuthController extends Controller
         }
 
         // Connecter l'utilisateur
+        // D'abord nettoyer la session des objets obsolètes
+        Session::cleanSession();
+        
         Session::set('user_id', $user->getId());
         Session::set('username', $user->getUsername());
         Session::setFlash('success', 'Bienvenue ' . $user->getUsername() . ' !');

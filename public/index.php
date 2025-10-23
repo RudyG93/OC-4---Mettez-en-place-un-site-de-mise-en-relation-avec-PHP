@@ -10,9 +10,9 @@ require_once __DIR__ . '/../config/config.php';
 spl_autoload_register(function ($className) {
     $paths = [
         APP_PATH . '/core/',
-        APP_PATH . '/controllers/',
-        APP_PATH . '/models/managers/',
-        APP_PATH . '/models/entities/',
+        APP_PATH . '/controller/',
+        APP_PATH . '/model/manager/',
+        APP_PATH . '/model/entity/',
     ];
     
     foreach ($paths as $path) {

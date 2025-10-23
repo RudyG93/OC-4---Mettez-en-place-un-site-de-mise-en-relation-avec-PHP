@@ -14,9 +14,11 @@ return [
     'register' => ['controller' => 'Auth', 'action' => 'register'],
     'logout' => ['controller' => 'Auth', 'action' => 'logout'],
     
-    // Profil utilisateur
-    'mon-compte' => ['controller' => 'User', 'action' => 'account'],
-    'profil' => ['controller' => 'User', 'action' => 'profile'],
+    // Mon compte
+    'mon-compte' => ['controller' => 'Profile', 'action' => 'view'],
+    'mon-compte/modifier' => ['controller' => 'Profile', 'action' => 'edit'],
+    'mon-compte/update' => ['controller' => 'Profile', 'action' => 'update'],
+    'profil' => ['controller' => 'Profile', 'action' => 'show'],
     
     // Livres
     'nos-livres' => ['controller' => 'Book', 'action' => 'list'],
