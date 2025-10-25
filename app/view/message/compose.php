@@ -7,9 +7,9 @@ $activePage = 'messagerie';
 <div class="compose-container">
     <?php if ($flash): ?>
         <div class="alert alert-<?= $flash['type'] ?>">
-            <?= htmlspecialchars($flash['message']) ?>
+            <?= e($flash['message']) ?>
         </div>
-    <?php endif; ?>
+    <?php endif?>
 
     <div class="compose-content">
         <!-- En-tête -->
@@ -25,15 +25,15 @@ $activePage = 'messagerie';
             <div class="recipient-avatar">
                 <?php if ($recipient->getAvatar()): ?>
                     <img src="<?= BASE_URL ?>uploads/avatars/<?= $recipient->getAvatar() ?>" 
-                         alt="<?= htmlspecialchars($recipient->getUsername()) ?>">
+                         alt="<?= e($recipient->getUsername()) ?>">
                 <?php else: ?>
                     <div class="avatar-placeholder">
                         <?= strtoupper(substr($recipient->getUsername(), 0, 1)) ?>
                     </div>
-                <?php endif; ?>
+                <?php endif?>
             </div>
             <div class="recipient-details">
-                <h2 class="recipient-name">À : <?= htmlspecialchars($recipient->getUsername()) ?></h2>
+                <h2 class="recipient-name">À : <?= e($recipient->getUsername()) ?></h2>
                 <a href="<?= BASE_URL ?>profil/<?= $recipient->getId() ?>" class="profile-link">
                     Voir le profil
                 </a>
@@ -41,9 +41,9 @@ $activePage = 'messagerie';
                 <?php if (isset($_GET['book_title'])): ?>
                     <div class="message-context">
                         <i class="fas fa-book"></i>
-                        <span>À propos du livre : <strong><?= htmlspecialchars($_GET['book_title']) ?></strong></span>
+                        <span>À propos du livre : <strong><?= e($_GET['book_title']) ?></strong></span>
                     </div>
-                <?php endif; ?>
+                <?php endif?>
             </div>
         </div>
 

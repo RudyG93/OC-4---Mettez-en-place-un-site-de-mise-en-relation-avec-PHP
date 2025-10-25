@@ -6,6 +6,9 @@
 // Charger la configuration
 require_once __DIR__ . '/../config/config.php';
 
+// Charger les helpers pour les vues
+require_once APP_PATH . '/core/helpers.php';
+
 // Autoloader pour charger automatiquement les classes
 spl_autoload_register(function ($className) {
     $paths = [

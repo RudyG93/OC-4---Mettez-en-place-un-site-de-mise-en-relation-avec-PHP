@@ -6,9 +6,9 @@ $flash = Session::getFlash();
 <div id="books-public-container">
     <?php if ($flash): ?>
         <div class="alert alert-<?= $flash['type'] ?>">
-            <?= htmlspecialchars($flash['message']) ?>
+            <?= e($flash['message']) ?>
         </div>
-    <?php endif; ?>
+    <?php endif?>
 
     <div class="books-public-content">
         <!-- En-tête -->
@@ -24,7 +24,7 @@ $flash = Session::getFlash();
                                name="q" 
                                class="search-input" 
                                placeholder="Rechercher un livre ou un auteur..."
-                               value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+                               value="<?= e($_GET['q'] ?? '') ?>">
                         <button type="submit" class="search-btn">
                             <i class="fas fa-search"></i>
                         </button>
@@ -50,7 +50,7 @@ $flash = Session::getFlash();
                         <a href="<?= BASE_URL ?>register" class="btn btn-primary">
                             Rejoignez-nous !
                         </a>
-                    <?php endif; ?>
+                    <?php endif?>
                 </div>
             <?php else: ?>
                 <div class="books-count">
@@ -66,12 +66,12 @@ $flash = Session::getFlash();
                         <div class="book-card">
                             <div class="book-image">
                                 <?php if ($book->getImage()): ?>
-                                    <img src="<?= $book->getImagePath() ?>" alt="<?= htmlspecialchars($book->getTitle()) ?>">
+                                    <img src="<?= $book->getImagePath() ?>" alt="<?= e($book->getTitle()) ?>">
                                 <?php else: ?>
                                     <div class="book-placeholder">
                                         <i class="fas fa-book"></i>
                                     </div>
-                                <?php endif; ?>
+                                <?php endif?>
                                 
                                 <div class="book-overlay">
                                     <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>" class="btn btn-sm btn-primary">
@@ -83,19 +83,19 @@ $flash = Session::getFlash();
                             <div class="book-info">
                                 <h3 class="book-title">
                                     <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>">
-                                        <?= htmlspecialchars($book->getTitle()) ?>
+                                        <?= e($book->getTitle()) ?>
                                     </a>
                                 </h3>
-                                <p class="book-author">par <?= htmlspecialchars($book->getAuthor()) ?></p>
+                                <p class="book-author">par <?= e($book->getAuthor()) ?></p>
                                 
                                 <?php if ($book->getDescription()): ?>
-                                    <p class="book-description"><?= htmlspecialchars($book->getShortDescription(120)) ?></p>
-                                <?php endif; ?>
+                                    <p class="book-description"><?= e($book->getShortDescription(120)) ?></p>
+                                <?php endif?>
                                 
                                 <div class="book-meta">
                                     <div class="book-owner">
                                         <i class="fas fa-user"></i>
-                                        <span>Par <?= htmlspecialchars($owner['username']) ?></span>
+                                        <span>Par <?= e($owner['username']) ?></span>
                                     </div>
                                     
                                     <div class="book-date">
@@ -114,13 +114,13 @@ $flash = Session::getFlash();
                                                 data-owner-id="<?= $book->getUserId() ?>">
                                             <i class="fas fa-envelope"></i> Contacter
                                         </button>
-                                    <?php endif; ?>
+                                    <?php endif?>
                                 </div>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+                    <?php endforeach?>
                 </div>
-            <?php endif; ?>
+            <?php endif?>
         </div>
     </div>
 </div>

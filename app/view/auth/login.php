@@ -1,12 +1,12 @@
-<?php $activePage = 'login'; ?>
+<?php $activePage = 'login'?>
 <div class="login-container">
     <div class="auth-container">
         <div class="auth-card">
             <h1 class="auth-title">Connexion</h1>
 
-            <form method="POST" action="<?php echo BASE_URL; ?>login" class="auth-form">
+            <form method="POST" action="<?= BASE_URL ?>login" class="auth-form">
                 <!-- Token CSRF -->
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
 
                 <!-- Email -->
                 <div class="form-group">
@@ -39,12 +39,12 @@
 
             <!-- Lien vers l'inscription -->
             <div class="auth-footer">
-                <p>Pas de compte ? <a href="<?php echo BASE_URL; ?>register" class="auth-link">Inscrivez-vous</a></p>
+                <p>Pas de compte ? <a href="<?= BASE_URL ?>register" class="auth-link">Inscrivez-vous</a></p>
             </div>
         </div>
     </div>
 
     <div class="login-pic">
-        <img src="<?php echo BASE_URL; ?>assets/inscription.png" alt="Person reading a book while sitting comfortably in a cozy library setting with warm lighting, conveying a peaceful and inviting atmosphere for book lovers">
+        <img src="<?= BASE_URL ?>assets/inscription.png" alt="Person reading a book while sitting comfortably in a cozy library setting with warm lighting, conveying a peaceful and inviting atmosphere for book lovers">
     </div>
 </div>

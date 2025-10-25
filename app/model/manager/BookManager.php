@@ -10,23 +10,9 @@ class BookManager extends Model
      */
     public function findByUserId($userId)
     {
-        $sql = "SELECT id, user_id, title, author, image, description, is_available, created_at, updated_at 
-                FROM books 
-                WHERE user_id = :user_id 
-                ORDER BY created_at DESC";
-        
-        $query = $this->db->prepare($sql);
-        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
-        $query->execute();
-        
-        $books = [];
-        while ($bookData = $query->fetch(PDO::FETCH_ASSOC)) {
-            $book = new Book();
-            $book->hydrate($bookData);
-            $books[] = $book;
-        }
-        
-        return $books;
+        $this->table = 'books';
+        $rows = parent::findBy(['user_id' => $userId], 'created_at DESC');
+        return $this->hydrateEntities('Book', $rows);
     }
 
     /**
@@ -34,23 +20,9 @@ class BookManager extends Model
      */
     public function findById($id)
     {
-        $sql = "SELECT id, user_id, title, author, image, description, is_available, created_at, updated_at 
-                FROM books 
-                WHERE id = :id";
-        
-        $query = $this->db->prepare($sql);
-        $query->bindValue(':id', $id, PDO::PARAM_INT);
-        $query->execute();
-        
-        $bookData = $query->fetch(PDO::FETCH_ASSOC);
-        
-        if ($bookData) {
-            $book = new Book();
-            $book->hydrate($bookData);
-            return $book;
-        }
-        
-        return null;
+        $this->table = 'books';
+        $bookData = parent::findById($id);
+        return $this->hydrateEntity('Book', $bookData);
     }
 
     /**

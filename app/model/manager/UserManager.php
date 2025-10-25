@@ -5,61 +5,28 @@ class UserManager extends Model {
     /**
      * Récupère un utilisateur par son ID
      */
-    public function getUserById($id) {
-        $sql = "SELECT * FROM users WHERE id = :id";
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->execute();
-        
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
-        
-        if ($row) {
-            $user = new User();
-            $user->hydrate($row);
-            return $user;
-        }
-        
-        return null;
+    public function findById($id) {
+        $this->table = 'users';
+        $row = parent::findById($id);
+        return $this->hydrateEntity('User', $row);
     }
 
     /**
      * Récupère un utilisateur par son email
      */
     public function getUserByEmail($email) {
-        $sql = "SELECT * FROM users WHERE email = :email";
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':email', $email, PDO::PARAM_STR);
-        $statement->execute();
-        
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
-        
-        if ($row) {
-            $user = new User();
-            $user->hydrate($row);
-            return $user;
-        }
-        
-        return null;
+        $this->table = 'users';
+        $row = parent::findOneBy(['email' => $email]);
+        return $this->hydrateEntity('User', $row);
     }
 
     /**
      * Récupère un utilisateur par son nom d'utilisateur
      */
     public function getUserByUsername($username) {
-        $sql = "SELECT * FROM users WHERE username = :username";
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':username', $username, PDO::PARAM_STR);
-        $statement->execute();
-        
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
-        
-        if ($row) {
-            $user = new User();
-            $user->hydrate($row);
-            return $user;
-        }
-        
-        return null;
+        $this->table = 'users';
+        $row = parent::findOneBy(['username' => $username]);
+        return $this->hydrateEntity('User', $row);
     }
 
     /**
@@ -126,46 +93,44 @@ class UserManager extends Model {
      * Vérifie si un email existe déjà
      */
     public function emailExists($email, $excludeUserId = null) {
-        $sql = "SELECT COUNT(*) as count FROM users WHERE email = :email";
+        $this->table = 'users';
         
         if ($excludeUserId) {
-            $sql .= " AND id != :exclude_id";
-        }
-
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':email', $email, PDO::PARAM_STR);
-        
-        if ($excludeUserId) {
+            // Pour les cas avec exclusion, garder SQL manuel pour performance
+            $sql = "SELECT COUNT(*) as count FROM users WHERE email = :email AND id != :exclude_id";
+            $statement = $this->db->prepare($sql);
+            $statement->bindValue(':email', $email, PDO::PARAM_STR);
             $statement->bindValue(':exclude_id', $excludeUserId, PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+            return $result['count'] > 0;
         }
         
-        $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-        
-        return $result['count'] > 0;
+        // Cas simple : utiliser findBy()
+        $users = parent::findBy(['email' => $email], null, 1);
+        return !empty($users);
     }
 
     /**
      * Vérifie si un nom d'utilisateur existe déjà
      */
     public function usernameExists($username, $excludeUserId = null) {
-        $sql = "SELECT COUNT(*) as count FROM users WHERE username = :username";
+        $this->table = 'users';
         
         if ($excludeUserId) {
-            $sql .= " AND id != :exclude_id";
-        }
-
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':username', $username, PDO::PARAM_STR);
-        
-        if ($excludeUserId) {
+            // Pour les cas avec exclusion, garder SQL manuel pour performance
+            $sql = "SELECT COUNT(*) as count FROM users WHERE username = :username AND id != :exclude_id";
+            $statement = $this->db->prepare($sql);
+            $statement->bindValue(':username', $username, PDO::PARAM_STR);
             $statement->bindValue(':exclude_id', $excludeUserId, PDO::PARAM_INT);
+            $statement->execute();
+            $result = $statement->fetch(PDO::FETCH_ASSOC);
+            return $result['count'] > 0;
         }
         
-        $statement->execute();
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-        
-        return $result['count'] > 0;
+        // Cas simple : utiliser findBy()
+        $users = parent::findBy(['username' => $username], null, 1);
+        return !empty($users);
     }
 
     /**
@@ -184,18 +149,9 @@ class UserManager extends Model {
      * Récupère tous les utilisateurs (pour l'administration future)
      */
     public function getAllUsers() {
-        $sql = "SELECT * FROM users ORDER BY created_at DESC";
-        $statement = $this->db->prepare($sql);
-        $statement->execute();
-        
-        $users = [];
-        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-            $user = new User();
-            $user->hydrate($row);
-            $users[] = $user;
-        }
-        
-        return $users;
+        $this->table = 'users';
+        $rows = parent::findBy([], 'created_at DESC');
+        return $this->hydrateEntities('User', $rows);
     }
 
     /**
@@ -227,26 +183,16 @@ class UserManager extends Model {
         $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
         $statement->execute();
         
-        $users = [];
-        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-            $user = new User();
-            $user->hydrate($row);
-            $users[] = $user;
-        }
-        
-        return $users;
+        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $this->hydrateEntities('User', $rows);
     }
 
     /**
      * Compte le nombre d'utilisateurs actifs
      */
     public function getActiveUsersCount() {
-        $sql = "SELECT COUNT(*) as count FROM users";
-        $statement = $this->db->prepare($sql);
-        $statement->execute();
-        
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-        return $result['count'] ?? 0;
+        $this->table = 'users';
+        return parent::count();
     }
 
     /**
@@ -269,13 +215,6 @@ class UserManager extends Model {
         $statement->execute();
         
         $row = $statement->fetch(PDO::FETCH_ASSOC);
-        
-        if ($row) {
-            $user = new User();
-            $user->hydrate($row);
-            return $user;
-        }
-        
-        return null;
+        return $this->hydrateEntity('User', $row);
     }
 }

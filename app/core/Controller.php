@@ -128,4 +128,150 @@ abstract class Controller
     {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
+
+    /**
+     * Récupère l'utilisateur connecté (évite la duplication)
+     */
+    protected function getCurrentUser()
+    {
+        if (!Session::isLoggedIn()) {
+            return null;
+        }
+        
+        $userId = Session::get('user_id');
+        $userManager = $this->loadManager('User');
+        return $userManager->findById($userId);
+    }
+
+    /**
+     * Affiche une erreur et redirige (évite la duplication)
+     */
+    protected function error($message, $redirectTo = '')
+    {
+        Session::setFlash('error', $message);
+        $this->redirect($redirectTo);
+    }
+
+    /**
+     * Affiche un succès et redirige (évite la duplication)
+     */
+    protected function success($message, $redirectTo = '')
+    {
+        Session::setFlash('success', $message);
+        $this->redirect($redirectTo);
+    }
+
+    /**
+     * Vérifie qu'une ressource existe, sinon erreur
+     */
+    protected function ensureExists($resource, $errorMessage = 'Ressource introuvable', $redirectTo = '')
+    {
+        if (!$resource) {
+            $this->error($errorMessage, $redirectTo);
+        }
+        return $resource;
+    }
+
+
+
+    /**
+     * Récupère l'ID de l'utilisateur connecté
+     */
+    protected function getCurrentUserId()
+    {
+        return Session::get('user_id');
+    }
+
+    /**
+     * Valide le token CSRF (méthode simplifiée)
+     */
+    protected function validateCsrf($redirectTo = '')
+    {
+        if (!Session::verifyCsrfToken($this->getPost('csrf_token'))) {
+            $this->error('Token de sécurité invalide. Veuillez réessayer.', $redirectTo);
+        }
+        return true;
+    }
+
+    /**
+     * Récupère et supprime les erreurs de formulaire de la session
+     */
+    protected function getFormErrors()
+    {
+        $errors = Session::get('form_errors', []);
+        Session::remove('form_errors');
+        return $errors;
+    }
+
+    /**
+     * Récupère et supprime les anciennes données de formulaire de la session
+     */
+    protected function getOldInput()
+    {
+        $data = Session::get('form_data', []);
+        Session::remove('form_data');
+        return $data;
+    }
+
+    /**
+     * Affiche une erreur 404
+     */
+    protected function notFound($message = 'Page introuvable')
+    {
+        Session::setFlash('error', $message);
+        $this->redirect('');
+    }
+
+    /**
+     * Vérifie qu'un utilisateur est propriétaire d'une ressource
+     */
+    protected function ensureOwnership($resourceOwnerId, $errorMessage = 'Accès non autorisé', $redirectTo = '')
+    {
+        $currentUserId = $this->getCurrentUserId();
+        if (!$currentUserId || $currentUserId != $resourceOwnerId) {
+            Session::setFlash('error', $errorMessage);
+            $this->redirect($redirectTo);
+        }
+    }
+
+    /**
+     * Génère et retourne un token CSRF pour les vues
+     */
+    protected function getCsrfToken()
+    {
+        return Session::generateCsrfToken();
+    }
+
+    /**
+     * Récupère l'état du formulaire (old input, errors) et nettoie la session
+     * Utile pour afficher les formulaires avec anciennes valeurs et erreurs
+     */
+    protected function getFormState()
+    {
+        $oldInput = Session::get('old_input', []);
+        $errors = Session::get('errors', []);
+        
+        // Nettoyer la session
+        Session::remove('old_input');
+        Session::remove('errors');
+        
+        return [
+            'oldInput' => $oldInput,
+            'errors' => $errors
+        ];
+    }
+
+    /**
+     * Sauvegarde l'état du formulaire pour redirection (old input, errors)
+     */
+    protected function saveFormState(array $oldInput, array $errors = [])
+    {
+        if (!empty($oldInput)) {
+            Session::set('old_input', $oldInput);
+        }
+        if (!empty($errors)) {
+            Session::set('errors', $errors);
+        }
+    }
+
 }

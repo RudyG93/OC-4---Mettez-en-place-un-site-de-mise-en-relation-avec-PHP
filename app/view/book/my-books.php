@@ -6,9 +6,9 @@ $flash = Session::getFlash();
 <div id="profile-container">
     <?php if ($flash): ?>
         <div class="alert alert-<?= $flash['type'] ?>">
-            <?= htmlspecialchars($flash['message']) ?>
+            <?= e($flash['message']) ?>
         </div>
-    <?php endif; ?>
+    <?php endif?>
 
     <div id="profile-content">
         <!-- En-tête de la bibliothèque -->
@@ -54,12 +54,12 @@ $flash = Session::getFlash();
                         <div class="book-card">
                             <div class="book-image">
                                 <?php if ($book->getImage()): ?>
-                                    <img src="<?= $book->getImagePath() ?>" alt="<?= htmlspecialchars($book->getTitle()) ?>">
+                                    <img src="<?= $book->getImagePath() ?>" alt="<?= e($book->getTitle()) ?>">
                                 <?php else: ?>
                                     <div class="book-placeholder">
                                         <i class="fas fa-book"></i>
                                     </div>
-                                <?php endif; ?>
+                                <?php endif?>
                                 
                                 <div class="book-overlay">
                                     <div class="book-actions">
@@ -71,7 +71,7 @@ $flash = Session::getFlash();
                                         </a>
                                         <button type="button" class="btn btn-sm btn-danger delete-book" 
                                                 data-book-id="<?= $book->getId() ?>" 
-                                                data-book-title="<?= htmlspecialchars($book->getTitle()) ?>"
+                                                data-book-title="<?= e($book->getTitle()) ?>"
                                                 title="Supprimer">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -80,12 +80,12 @@ $flash = Session::getFlash();
                             </div>
                             
                             <div class="book-info">
-                                <h3 class="book-title"><?= htmlspecialchars($book->getTitle()) ?></h3>
-                                <p class="book-author">par <?= htmlspecialchars($book->getAuthor()) ?></p>
+                                <h3 class="book-title"><?= e($book->getTitle()) ?></h3>
+                                <p class="book-author">par <?= e($book->getAuthor()) ?></p>
                                 
                                 <?php if ($book->getDescription()): ?>
-                                    <p class="book-description"><?= htmlspecialchars($book->getShortDescription(80)) ?></p>
-                                <?php endif; ?>
+                                    <p class="book-description"><?= e($book->getShortDescription(80)) ?></p>
+                                <?php endif?>
                                 
                                 <div class="book-status">
                                     <span class="availability-badge <?= $book->getAvailabilityClass() ?>">
@@ -106,9 +106,9 @@ $flash = Session::getFlash();
                                 </div>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+                    <?php endforeach?>
                 </div>
-            <?php endif; ?>
+            <?php endif?>
         </div>
     </div>
 </div>

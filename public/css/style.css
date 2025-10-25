@@ -9,4 +9,5 @@
 @import url('global.css');      /* Styles globaux, layout, navigation, composants */
 @import url('auth.css');        /* Styles pour login et register */
 @import url('profile.css');     /* Styles pour les profils */
+@import url('book-edit.css');   /* Styles pour l'édition des livres */
 

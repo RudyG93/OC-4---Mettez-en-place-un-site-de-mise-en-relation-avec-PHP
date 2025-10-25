@@ -16,11 +16,11 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                 <div class="profile-user-block">
                     <div class="profile-avatar">
                         <div class="avatar-placeholder">
-                            <?php echo strtoupper(substr($user->getUsername(), 0, 1)); ?>
+                            <?= strtoupper(substr($user->getUsername(), 0, 1)) ?>
                         </div>
                     </div>
                     
-                    <h1 class="profile-username"><?php echo htmlspecialchars($user->getUsername()); ?></h1>
+                    <h1 class="profile-username"><?= e($user->getUsername()) ?></h1>
                     
                     <p class="profile-member-info">
                         Membre depuis le 
@@ -60,8 +60,8 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                 <div class="profile-info-block">
                     <h2 class="profile-info-title">Vos informations personnelles</h2>
                     
-                    <form class="profile-form" method="POST" action="<?php echo BASE_URL; ?>mon-compte/update">
-                        <input type="hidden" name="csrf_token" value="<?php echo Session::generateCsrfToken(); ?>">
+                    <form class="profile-form" method="POST" action="<?= BASE_URL ?>mon-compte/update">
+                        <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
                         
                         <div class="form-group">
                             <label class="form-label">Adresse email</label>
@@ -69,7 +69,7 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                                 type="email" 
                                 name="email"
                                 class="form-input" 
-                                value="<?php echo htmlspecialchars($user->getEmail()); ?>"
+                                value="<?= e($user->getEmail()) ?>"
                                 readonly>
                         </div>
 
@@ -89,7 +89,8 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                                 type="text" 
                                 name="username"
                                 class="form-input editable" 
-                                value="<?php echo htmlspecialchars($user->getUsername()); ?>">
+                                value="<?= e($user->getUsername()) ?>">
+                        </div>
                         </div>
                         
                         <button type="submit" class="btn-save">
@@ -136,21 +137,21 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                                     <tr>
                                         <td>
                                             <?php if ($book->getImage()): ?>
-                                                <img src="<?= $book->getImagePath() ?>" alt="Couverture" class="book-cover">
+                                                <img src="<?= e($book->getImagePath()) ?>" alt="Couverture de <?= e($book->getTitle()) ?>" class="book-cover">
                                             <?php else: ?>
                                                 <div class="book-cover-placeholder">
                                                     📚
                                                 </div>
-                                            <?php endif; ?>
+                                            <?php endif?>
                                         </td>
                                         <td>
-                                            <div class="book-title"><?= htmlspecialchars($book->getTitle()) ?></div>
+                                            <div class="book-title"><?= e($book->getTitle()) ?></div>
                                         </td>
                                         <td>
-                                            <div class="book-author"><?= htmlspecialchars($book->getAuthor()) ?></div>
+                                            <div class="book-author"><?= e($book->getAuthor()) ?></div>
                                         </td>
                                         <td>
-                                            <div class="book-description"><?= htmlspecialchars($book->getShortDescription(100)) ?></div>
+                                            <div class="book-description"><?= e($book->getShortDescription(100)) ?></div>
                                         </td>
                                         <td>
                                             <span class="availability-badge <?= $book->getAvailabilityClass() ?>">
@@ -160,11 +161,11 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                                         <td>
                                             <div class="action-buttons">
                                                 <a href="<?= BASE_URL ?>book/<?= $book->getId() ?>/edit" class="btn-action btn-edit">Éditer</a>
-                                                <button class="btn-action btn-delete" onclick="confirmDelete(<?= $book->getId() ?>, '<?= htmlspecialchars($book->getTitle()) ?>')">Supprimer</button>
+                                                <button class="btn-action btn-delete" onclick="confirmDelete(<?= $book->getId() ?>, '<?= e($book->getTitle()) ?>')">Supprimer</button>
                                             </div>
                                         </td>
                                     </tr>
-                                <?php endforeach; ?>
+                                <?php endforeach?>
                                 
                                 <?php if (count($userBooks) > 5): ?>
                                     <tr class="show-more-row">
@@ -174,10 +175,10 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                                             </a>
                                         </td>
                                     </tr>
-                                <?php endif; ?>
+                                <?php endif?>
                             </tbody>
                         </table>
-                    <?php endif; ?>
+                    <?php endif?>
                 </div>
             </div>
         </div>

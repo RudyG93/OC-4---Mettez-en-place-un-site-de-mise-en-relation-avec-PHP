@@ -52,62 +52,19 @@
     margin-top: 2rem;
 }
 
-/* === FORM ELEMENTS === */
-.form-group {
-    margin-bottom: 1.5rem;
+/* === FORM VARIANTS SPÉCIFIQUES AUTH === */
+.auth-form .form-input {
+    width: 140%;
+    height: 50px;
 }
 
-.form-label {
-    display: block;
-    margin-bottom: 0.5rem;
+.auth-form .form-label {
     color: var(--secondary-color);
-    font-size: 0.95rem;
 }
 
-.form-input {
+.auth-form .btn-block {
     width: 140%;
     height: 50px;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    transition: var(--transition);
-    background-color: white;
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 172, 102, 0.1);
-}
-
-.form-input.input-error {
-    border-color: var(--accent-color);
-}
-
-.form-input.input-error:focus {
-    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
-}
-
-.form-help {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.85rem;
-    color: var(--text-light);
-}
-
-.error-message {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    color: var(--accent-color);
-    font-weight: 500;
-}
-
-.btn-block {
-    width: 140%;
-    height: 50px;
-    margin-top: 1rem;
     font-weight: 600;
     background-color: var(--third-color);
 }

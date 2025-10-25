@@ -7,9 +7,9 @@ $activePage = 'messagerie';
 <div class="conversation-container">
     <?php if ($flash): ?>
         <div class="alert alert-<?= $flash['type'] ?>">
-            <?= htmlspecialchars($flash['message']) ?>
+            <?= e($flash['message']) ?>
         </div>
-    <?php endif; ?>
+    <?php endif?>
 
     <!-- En-tête de la conversation -->
     <div class="conversation-header">
@@ -21,15 +21,15 @@ $activePage = 'messagerie';
                 <div class="conversation-avatar">
                     <?php if ($otherUser->getAvatar()): ?>
                         <img src="<?= BASE_URL ?>uploads/avatars/<?= $otherUser->getAvatar() ?>" 
-                             alt="<?= htmlspecialchars($otherUser->getUsername()) ?>">
+                             alt="<?= e($otherUser->getUsername()) ?>">
                     <?php else: ?>
                         <div class="avatar-placeholder">
                             <?= strtoupper(substr($otherUser->getUsername(), 0, 1)) ?>
                         </div>
-                    <?php endif; ?>
+                    <?php endif?>
                 </div>
                 <div class="conversation-details">
-                    <h1 class="conversation-title"><?= htmlspecialchars($otherUser->getUsername()) ?></h1>
+                    <h1 class="conversation-title"><?= e($otherUser->getUsername()) ?></h1>
                     <a href="<?= BASE_URL ?>profil/<?= $otherUser->getId() ?>" class="profile-link">
                         Voir le profil
                     </a>
@@ -58,29 +58,29 @@ $activePage = 'messagerie';
                             <?php else: ?>
                                 <?php if ($otherUser->getAvatar()): ?>
                                     <img src="<?= BASE_URL ?>uploads/avatars/<?= $otherUser->getAvatar() ?>" 
-                                         alt="<?= htmlspecialchars($otherUser->getUsername()) ?>" class="small">
+                                         alt="<?= e($otherUser->getUsername()) ?>" class="small">
                                 <?php else: ?>
                                     <div class="avatar-placeholder small">
                                         <?= strtoupper(substr($otherUser->getUsername(), 0, 1)) ?>
                                     </div>
-                                <?php endif; ?>
-                            <?php endif; ?>
+                                <?php endif?>
+                            <?php endif?>
                         </div>
                         
                         <div class="message-content">
                             <div class="message-bubble">
-                                <p class="message-text"><?= nl2br(htmlspecialchars($message->getContent())) ?></p>
+                                <p class="message-text"><?= nl2br(e($message->getContent())) ?></p>
                                 <div class="message-meta">
                                     <span class="message-time"><?= $message->getFormattedDate() ?></span>
                                     <?php if ($message->isSentBy($currentUser->getId()) && $message->isRead()): ?>
                                         <span class="message-status">Lu</span>
-                                    <?php endif; ?>
+                                    <?php endif?>
                                 </div>
                             </div>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                <?php endforeach?>
+            <?php endif?>
         </div>
     </div>
 

@@ -1,12 +1,12 @@
-<?php $activePage = 'login'; ?>
+<?php $activePage = 'login'?>
 <div class="login-container">
     <div class="auth-container">
         <div class="auth-card">
             <h1 class="auth-title">Inscription</h1>
 
-            <form method="POST" action="<?php echo BASE_URL; ?>register" class="auth-form">
+            <form method="POST" action="<?= BASE_URL ?>register" class="auth-form">
                 <!-- Token CSRF -->
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
 
                 <!-- Pseudo -->
                 <div class="form-group">
@@ -15,12 +15,12 @@
                         type="text"
                         id="username"
                         name="username"
-                        class="form-input <?php echo isset($errors['username']) ? 'input-error' : ''; ?>"
-                        value="<?php echo htmlspecialchars($oldInput['username'] ?? ''); ?>"
+                        class="form-input <?= isset($errors['username']) ? 'input-error' : '' ?>"
+                        value="<?= e($oldInput['username'] ?? '') ?>"
                         required>
                     <?php if (isset($errors['username'])): ?>
-                        <span class="error-message"><?php echo htmlspecialchars($errors['username']); ?></span>
-                    <?php endif; ?>
+                        <span class="error-message"><?= e($errors['username']) ?></span>
+                    <?php endif?>
                 </div>
 
                 <!-- Email -->
@@ -30,12 +30,12 @@
                         type="email"
                         id="email"
                         name="email"
-                        class="form-input <?php echo isset($errors['email']) ? 'input-error' : ''; ?>"
-                        value="<?php echo htmlspecialchars($oldInput['email'] ?? ''); ?>"
+                        class="form-input <?= isset($errors['email']) ? 'input-error' : '' ?>"
+                        value="<?= e($oldInput['email'] ?? '') ?>"
                         required>
                     <?php if (isset($errors['email'])): ?>
-                        <span class="error-message"><?php echo htmlspecialchars($errors['email']); ?></span>
-                    <?php endif; ?>
+                        <span class="error-message"><?= e($errors['email']) ?></span>
+                    <?php endif?>
                 </div>
 
                 <!-- Mot de passe -->
@@ -45,11 +45,11 @@
                         type="password"
                         id="password"
                         name="password"
-                        class="form-input <?php echo isset($errors['password']) ? 'input-error' : ''; ?>"
+                        class="form-input <?= isset($errors['password']) ? 'input-error' : '' ?>"
                         required>
                     <?php if (isset($errors['password'])): ?>
-                        <span class="error-message"><?php echo htmlspecialchars($errors['password']); ?></span>
-                    <?php endif; ?>
+                        <span class="error-message"><?= e($errors['password']) ?></span>
+                    <?php endif?>
                 </div>
 
                 <!-- Bouton de soumission -->
@@ -60,11 +60,11 @@
 
             <!-- Lien vers la connexion -->
             <div class="auth-footer">
-                <p>Déjà inscrit ? <a href="<?php echo BASE_URL; ?>login" class="auth-link">Connectez-vous</a></p>
+                <p>Déjà inscrit ? <a href="<?= BASE_URL ?>login" class="auth-link">Connectez-vous</a></p>
             </div>
         </div>
     </div>
     <div class="login-pic">
-        <img src="<?php echo BASE_URL; ?>assets/inscription.png" alt="Person reading a book while sitting comfortably in a cozy library setting with warm lighting, conveying a peaceful and inviting atmosphere for book lovers">
+        <img src="<?= BASE_URL ?>assets/inscription.png" alt="Person reading a book while sitting comfortably in a cozy library setting with warm lighting, conveying a peaceful and inviting atmosphere for book lovers">
     </div>
 </div>

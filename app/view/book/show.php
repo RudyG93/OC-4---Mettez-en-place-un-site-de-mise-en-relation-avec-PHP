@@ -6,9 +6,9 @@ $flash = Session::getFlash();
 <div id="book-detail-container">
     <?php if ($flash): ?>
         <div class="alert alert-<?= $flash['type'] ?>">
-            <?= htmlspecialchars($flash['message']) ?>
+            <?= e($flash['message']) ?>
         </div>
-    <?php endif; ?>
+    <?php endif?>
 
     <div class="book-detail-content">
         <!-- Navigation breadcrumb -->
@@ -25,14 +25,14 @@ $flash = Session::getFlash();
             <div class="book-image-section">
                 <?php if ($book->getImage()): ?>
                     <img src="<?= $book->getImagePath() ?>" 
-                         alt="<?= htmlspecialchars($book->getTitle()) ?>" 
+                         alt="<?= e($book->getTitle()) ?>" 
                          class="book-detail-image">
                 <?php else: ?>
                     <div class="book-image-placeholder">
                         <i class="fas fa-book"></i>
                         <span>Aucune image</span>
                     </div>
-                <?php endif; ?>
+                <?php endif?>
                 
                 <!-- Statut de disponibilité -->
                 <div class="availability-status">
@@ -48,8 +48,8 @@ $flash = Session::getFlash();
                 
                 <!-- En-tête du livre -->
                 <div class="book-header">
-                    <h1 class="book-detail-title"><?= htmlspecialchars($book->getTitle()) ?></h1>
-                    <p class="book-detail-author">par <?= htmlspecialchars($book->getAuthor()) ?></p>
+                    <h1 class="book-detail-title"><?= e($book->getTitle()) ?></h1>
+                    <p class="book-detail-author">par <?= e($book->getAuthor()) ?></p>
                 </div>
 
                 <!-- Métadonnées -->
@@ -64,7 +64,7 @@ $flash = Session::getFlash();
                         <i class="fas fa-edit"></i>
                         <span>Modifié le <?= date('d/m/Y', strtotime($book->getUpdatedAt())) ?></span>
                     </div>
-                    <?php endif; ?>
+                    <?php endif?>
                 </div>
 
                 <!-- Description -->
@@ -72,10 +72,10 @@ $flash = Session::getFlash();
                 <div class="book-description">
                     <h3>Description</h3>
                     <div class="description-content">
-                        <?= nl2br(htmlspecialchars($book->getDescription())) ?>
+                        <?= nl2br(e($book->getDescription())) ?>
                     </div>
                 </div>
-                <?php endif; ?>
+                <?php endif?>
 
                 <!-- Informations du propriétaire -->
                 <div class="owner-info">
@@ -87,15 +87,15 @@ $flash = Session::getFlash();
                         <div class="owner-details">
                             <div class="owner-name">
                                 <a href="<?= BASE_URL ?>profil/<?= $owner->getId() ?>" class="owner-link">
-                                    <?= htmlspecialchars($owner->getUsername()) ?>
+                                    <?= e($owner->getUsername()) ?>
                                 </a>
                             </div>
                             
                             <?php if ($owner->hasBio()): ?>
                             <div class="owner-bio">
-                                <?= htmlspecialchars($owner->getBio()) ?>
+                                <?= e($owner->getBio()) ?>
                             </div>
-                            <?php endif; ?>
+                            <?php endif?>
                             
                             <div class="owner-member-since">
                                 <i class="fas fa-user-clock"></i>
@@ -119,7 +119,7 @@ $flash = Session::getFlash();
                                     </a>
                                     <button class="btn btn-danger delete-book" 
                                             data-book-id="<?= $book->getId() ?>" 
-                                            data-book-title="<?= htmlspecialchars($book->getTitle()) ?>">
+                                            data-book-title="<?= e($book->getTitle()) ?>">
                                         <i class="fas fa-trash"></i> Supprimer
                                     </button>
                                 </div>
@@ -131,18 +131,18 @@ $flash = Session::getFlash();
                                 <h4>Intéressé par ce livre ?</h4>
                                 <div class="action-buttons">
                                     <a href="<?= BASE_URL ?>profil/<?= $owner->getId() ?>" class="btn btn-outline-primary">
-                                        <i class="fas fa-user"></i> Voir le profil de <?= htmlspecialchars($owner->getUsername()) ?>
+                                        <i class="fas fa-user"></i> Voir le profil de <?= e($owner->getUsername()) ?>
                                     </a>
                                     <button class="btn btn-primary btn-send-message" 
                                             data-book-id="<?= $book->getId() ?>"
                                             data-owner-id="<?= $owner->getId() ?>"
-                                            data-owner-name="<?= htmlspecialchars($owner->getUsername()) ?>">
+                                            data-owner-name="<?= e($owner->getUsername()) ?>">
                                         <i class="fas fa-envelope"></i> Envoyer un message
                                     </button>
                                 </div>
                                 
                                 <div class="contact-info">
-                                    <p><i class="fas fa-info-circle"></i> Contactez <?= htmlspecialchars($owner->getUsername()) ?> pour proposer un échange !</p>
+                                    <p><i class="fas fa-info-circle"></i> Contactez <?= e($owner->getUsername()) ?> pour proposer un échange !</p>
                                 </div>
                             </div>
                             <?php else: ?>
@@ -152,8 +152,8 @@ $flash = Session::getFlash();
                                     <span>Ce livre n'est actuellement pas disponible pour l'échange.</span>
                                 </div>
                             </div>
-                            <?php endif; ?>
-                        <?php endif; ?>
+                            <?php endif?>
+                        <?php endif?>
                     <?php else: ?>
                         <!-- Actions pour les utilisateurs non connectés -->
                         <div class="login-prompt">
@@ -168,7 +168,7 @@ $flash = Session::getFlash();
                                 </a>
                             </div>
                         </div>
-                    <?php endif; ?>
+                    <?php endif?>
                     
                 </div>
             </div>
@@ -177,35 +177,35 @@ $flash = Session::getFlash();
         <!-- Livres suggérés (du même propriétaire) -->
         <?php if (!empty($otherBooks)): ?>
         <div class="suggested-books">
-            <h3>Autres livres de <?= htmlspecialchars($owner->getUsername()) ?></h3>
+            <h3>Autres livres de <?= e($owner->getUsername()) ?></h3>
             <div class="suggested-books-grid">
                 <?php foreach ($otherBooks as $otherBook): ?>
                 <div class="suggested-book-card">
                     <div class="suggested-book-image">
                         <?php if ($otherBook->getImage()): ?>
-                            <img src="<?= $otherBook->getImagePath() ?>" alt="<?= htmlspecialchars($otherBook->getTitle()) ?>">
+                            <img src="<?= $otherBook->getImagePath() ?>" alt="<?= e($otherBook->getTitle()) ?>">
                         <?php else: ?>
                             <div class="book-placeholder-small">
                                 <i class="fas fa-book"></i>
                             </div>
-                        <?php endif; ?>
+                        <?php endif?>
                     </div>
                     <div class="suggested-book-info">
                         <h4>
                             <a href="<?= BASE_URL ?>livre/<?= $otherBook->getId() ?>">
-                                <?= htmlspecialchars($otherBook->getTitle()) ?>
+                                <?= e($otherBook->getTitle()) ?>
                             </a>
                         </h4>
-                        <p><?= htmlspecialchars($otherBook->getAuthor()) ?></p>
+                        <p><?= e($otherBook->getAuthor()) ?></p>
                         <span class="availability-badge-small <?= $otherBook->getAvailabilityClass() ?>">
                             <?= $otherBook->getAvailabilityText() ?>
                         </span>
                     </div>
                 </div>
-                <?php endforeach; ?>
+                <?php endforeach?>
             </div>
         </div>
-        <?php endif; ?>
+        <?php endif?>
     </div>
 </div>
 

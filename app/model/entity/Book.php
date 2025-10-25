@@ -6,7 +6,6 @@
  */
 class Book extends Entity
 {
-    protected $id;
     private $user_id;
     private $title;
     private $author;
@@ -19,11 +18,6 @@ class Book extends Entity
     /**
      * Getters
      */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     public function getUserId()
     {
         return $this->user_id;
@@ -72,12 +66,6 @@ class Book extends Entity
     /**
      * Setters
      */
-    public function setId($id)
-    {
-        $this->id = (int) $id;
-        return $this;
-    }
-
     public function setUserId($user_id)
     {
         $this->user_id = (int) $user_id;

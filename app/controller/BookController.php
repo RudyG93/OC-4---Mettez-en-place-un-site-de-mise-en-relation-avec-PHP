@@ -60,22 +60,14 @@ class BookController extends Controller
     {
         $this->requireAuth();
         
-        // Générer un token CSRF
-        $csrfToken = Session::generateCsrfToken();
-
-        // Récupérer les anciennes valeurs et erreurs depuis la session
-        $oldInput = Session::get('old_input', []);
-        $errors = Session::get('errors', []);
-
-        // Nettoyer la session
-        Session::remove('old_input');
-        Session::remove('errors');
+        // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
+        $formState = $this->getFormState();
         
         $this->render('book/add', [
             'title' => 'Ajouter un livre',
-            'csrfToken' => $csrfToken,
-            'oldInput' => $oldInput,
-            'errors' => $errors
+            'csrfToken' => $this->getCsrfToken(),
+            'oldInput' => $formState['oldInput'],
+            'errors' => $formState['errors']
         ]);
     }
 
@@ -92,12 +84,7 @@ class BookController extends Controller
         }
 
         // Valider le token CSRF
-        $csrfToken = $this->getPost('csrf_token', '');
-        if (!Session::verifyCsrfToken($csrfToken)) {
-            Session::setFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
-            $this->redirect('book/add');
-            return;
-        }
+        $this->validateCsrf('book/add');
 
         // Récupérer les données du formulaire
         $title = $this->getPost('title', '');
@@ -122,13 +109,12 @@ class BookController extends Controller
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
-            Session::set('errors', $errors);
-            Session::set('old_input', [
+            $this->saveFormState([
                 'title' => $title,
                 'author' => $author,
                 'description' => $description,
                 'is_available' => $isAvailable
-            ]);
+            ], $errors);
             $this->redirect('book/add');
             return;
         }
@@ -167,7 +153,7 @@ class BookController extends Controller
         }
 
         // Récupérer les infos du propriétaire
-        $owner = $this->userManager->getUserById($book->getUserId());
+        $owner = $this->userManager->findById($book->getUserId());
         
         if (!$owner) {
             Session::setFlash('error', 'Propriétaire du livre introuvable.');
@@ -216,23 +202,15 @@ class BookController extends Controller
             return;
         }
 
-        // Générer un token CSRF
-        $csrfToken = Session::generateCsrfToken();
-
-        // Récupérer les anciennes valeurs et erreurs depuis la session
-        $oldInput = Session::get('old_input', []);
-        $errors = Session::get('errors', []);
-
-        // Nettoyer la session
-        Session::remove('old_input');
-        Session::remove('errors');
+        // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
+        $formState = $this->getFormState();
 
         $this->render('book/edit', [
             'book' => $book,
             'title' => 'Modifier ' . $this->escape($book->getTitle()),
-            'csrfToken' => $csrfToken,
-            'oldInput' => $oldInput,
-            'errors' => $errors
+            'csrfToken' => $this->getCsrfToken(),
+            'oldInput' => $formState['oldInput'],
+            'errors' => $formState['errors']
         ]);
     }
 
@@ -264,12 +242,7 @@ class BookController extends Controller
         }
 
         // Valider le token CSRF
-        $csrfToken = $this->getPost('csrf_token', '');
-        if (!Session::verifyCsrfToken($csrfToken)) {
-            Session::setFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
-            $this->redirect('book/' . $id . '/edit');
-            return;
-        }
+        $this->validateCsrf('book/' . $id . '/edit');
 
         // Récupérer les données du formulaire
         $title = $this->getPost('title', '');
@@ -305,13 +278,12 @@ class BookController extends Controller
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
-            Session::set('errors', $errors);
-            Session::set('old_input', [
+            $this->saveFormState([
                 'title' => $title,
                 'author' => $author,
                 'description' => $description,
                 'available' => $isAvailable
-            ]);
+            ], $errors);
             $this->redirect('book/' . $id . '/edit');
             return;
         }
@@ -363,12 +335,7 @@ class BookController extends Controller
         }
 
         // Valider le token CSRF
-        $csrfToken = $this->getPost('csrf_token', '');
-        if (!Session::verifyCsrfToken($csrfToken)) {
-            Session::setFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
-            $this->redirect('book/my-books');
-            return;
-        }
+        $this->validateCsrf('book/my-books');
 
         $result = $this->bookManager->deleteBook($id);
         

@@ -7,9 +7,9 @@ $activePage = 'messagerie';
 <div class="messaging-container">
     <?php if ($flash): ?>
         <div class="alert alert-<?= $flash['type'] ?>">
-            <?= htmlspecialchars($flash['message']) ?>
+            <?= e($flash['message']) ?>
         </div>
-    <?php endif; ?>
+    <?php endif?>
 
     <div class="messaging-content">
         <!-- En-tête de la messagerie -->
@@ -20,7 +20,7 @@ $activePage = 'messagerie';
                     <span class="unread-count"><?= $unreadCount ?></span>
                     <span class="unread-text">message<?= $unreadCount > 1 ? 's' : '' ?> non lu<?= $unreadCount > 1 ? 's' : '' ?></span>
                 </div>
-            <?php endif; ?>
+            <?php endif?>
         </div>
 
         <!-- Liste des conversations -->
@@ -43,17 +43,17 @@ $activePage = 'messagerie';
                             <div class="conversation-avatar">
                                 <?php if ($conversation->getOtherAvatar()): ?>
                                     <img src="<?= BASE_URL ?>uploads/avatars/<?= $conversation->getOtherAvatar() ?>" 
-                                         alt="<?= htmlspecialchars($conversation->getOtherUsername()) ?>">
+                                         alt="<?= e($conversation->getOtherUsername()) ?>">
                                 <?php else: ?>
                                     <div class="avatar-placeholder">
                                         <?= strtoupper(substr($conversation->getOtherUsername(), 0, 1)) ?>
                                     </div>
-                                <?php endif; ?>
+                                <?php endif?>
                             </div>
                             
                             <div class="conversation-content">
                                 <div class="conversation-header">
-                                    <h3 class="conversation-name"><?= htmlspecialchars($conversation->getOtherUsername()) ?></h3>
+                                    <h3 class="conversation-name"><?= e($conversation->getOtherUsername()) ?></h3>
                                     <span class="conversation-time"><?= $conversation->getFormattedDate() ?></span>
                                 </div>
                                 
@@ -61,19 +61,19 @@ $activePage = 'messagerie';
                                     <p class="last-message">
                                         <?php if ($conversation->isSentBy($currentUser->getId())): ?>
                                             <span class="message-sender">Vous : </span>
-                                        <?php endif; ?>
-                                        <?= htmlspecialchars($conversation->getExcerpt(60)) ?>
+                                        <?php endif?>
+                                        <?= e($conversation->getExcerpt(60)) ?>
                                     </p>
                                     
                                     <?php if ($conversation->getUnreadCount() > 0): ?>
                                         <span class="unread-badge"><?= $conversation->getUnreadCount() ?></span>
-                                    <?php endif; ?>
+                                    <?php endif?>
                                 </div>
                             </div>
                         </a>
-                    <?php endforeach; ?>
+                    <?php endforeach?>
                 </div>
-            <?php endif; ?>
+            <?php endif?>
         </div>
     </div>
 </div>

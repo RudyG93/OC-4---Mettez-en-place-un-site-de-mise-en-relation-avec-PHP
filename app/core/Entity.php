@@ -38,5 +38,6 @@ abstract class Entity
     public function setId($id)
     {
         $this->id = (int) $id;
+        return $this;
     }
 }

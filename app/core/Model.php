@@ -156,4 +156,31 @@ abstract class Model
         $result = $stmt->fetch();
         return (int) $result['total'];
     }
+    
+    /**
+     * Hydrate une entité à partir de données
+     * Méthode helper pour réduire la duplication dans les managers
+     */
+    protected function hydrateEntity($entityClass, $data)
+    {
+        if (!$data) {
+            return null;
+        }
+        
+        $entity = new $entityClass();
+        $entity->hydrate($data);
+        return $entity;
+    }
+    
+    /**
+     * Hydrate plusieurs entités à partir d'un tableau de données
+     */
+    protected function hydrateEntities($entityClass, array $dataArray)
+    {
+        $entities = [];
+        foreach ($dataArray as $data) {
+            $entities[] = $this->hydrateEntity($entityClass, $data);
+        }
+        return $entities;
+    }
 }

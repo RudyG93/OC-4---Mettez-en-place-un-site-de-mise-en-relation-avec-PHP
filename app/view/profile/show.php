@@ -1,4 +1,4 @@
-<?php $activePage = ''; ?>
+<?php $activePage = ''?>
 
 <div class="profile-page">
     <div class="container">
@@ -7,10 +7,10 @@
             <div class="profile-header">
                 <div class="profile-avatar">
                     <div class="avatar-placeholder">
-                        <?php echo strtoupper(substr($user->getUsername(), 0, 1)); ?>
+                        <?= strtoupper(substr($user->getUsername(), 0, 1))?>
                     </div>
                 </div>
-                <h1 class="profile-title"><?php echo htmlspecialchars($user->getUsername()); ?></h1>
+                <h1 class="profile-title"><?= e($user->getUsername()) ?></h1>
                 <p class="profile-subtitle">Profil public</p>
             </div>
 
@@ -42,14 +42,14 @@
 
             <!-- Actions (futures fonctionnalités) -->
             <div class="profile-actions">
-                <a href="<?php echo BASE_URL; ?>books?user_id=<?php echo $user->getId(); ?>" class="btn btn-primary">
+                <a href="<?= BASE_URL?>books?user_id=<?= $user->getId()?>" class="btn btn-primary">
                     Voir ses livres
                 </a>
                 <?php if (Session::isLoggedIn() && Session::get('user_id') != $user->getId()): ?>
-                <a href="<?php echo BASE_URL; ?>messages/new?to=<?php echo $user->getId(); ?>" class="btn btn-secondary">
+                <a href="<?= BASE_URL?>messages/new?to=<?= $user->getId()?>" class="btn btn-secondary">
                     Envoyer un message
                 </a>
-                <?php endif; ?>
+                <?php endif?>
             </div>
         </div>
     </div>

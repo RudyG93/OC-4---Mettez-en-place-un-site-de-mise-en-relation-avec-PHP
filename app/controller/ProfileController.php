@@ -25,16 +25,8 @@ class ProfileController extends Controller
         // Vérifier que l'utilisateur est connecté
         $this->requireAuth();
 
-        // Récupérer l'ID de l'utilisateur depuis la session
-        $userId = Session::get('user_id');
-
-        // Récupérer les informations complètes de l'utilisateur
-        $user = $this->userManager->getUserById($userId);
-
-        if (!$user) {
-            Session::setFlash('error', 'Profil introuvable.');
-            $this->redirect('');
-        }
+        // Récupérer l'utilisateur connecté et vérifier qu'il existe
+        $user = $this->ensureExists($this->getCurrentUser(), 'Profil introuvable.');
 
         // Afficher la vue
         $pageTitle = 'Mon profil';
@@ -56,35 +48,19 @@ class ProfileController extends Controller
         // Vérifier que l'utilisateur est connecté
         $this->requireAuth();
 
-        // Récupérer l'ID de l'utilisateur depuis la session
-        $userId = Session::get('user_id');
+        // Récupérer l'utilisateur connecté et vérifier qu'il existe
+        $user = $this->ensureExists($this->getCurrentUser(), 'Profil introuvable.');
 
-        // Récupérer les informations actuelles
-        $user = $this->userManager->getUserById($userId);
-
-        if (!$user) {
-            Session::setFlash('error', 'Profil introuvable.');
-            $this->redirect('');
-        }
-
-        // Générer un token CSRF
-        $csrfToken = Session::generateCsrfToken();
-
-        // Récupérer les anciennes valeurs et erreurs depuis la session
-        $oldInput = Session::get('old_input', []);
-        $errors = Session::get('errors', []);
-
-        // Nettoyer la session
-        Session::remove('old_input');
-        Session::remove('errors');
+        // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
+        $formState = $this->getFormState();
 
         // Afficher la vue
         $data = [
             'title' => 'Modifier mon profil',
             'user' => $user,
-            'csrfToken' => $csrfToken,
-            'oldInput' => $oldInput,
-            'errors' => $errors
+            'csrfToken' => $this->getCsrfToken(),
+            'oldInput' => $formState['oldInput'],
+            'errors' => $formState['errors']
         ];
 
         $this->render('profile/edit', $data);
@@ -104,11 +80,7 @@ class ProfileController extends Controller
         }
 
         // Valider le token CSRF
-        $csrfToken = $this->getPost('csrf_token', '');
-        if (!Session::verifyCsrfToken($csrfToken)) {
-            Session::setFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
-            $this->redirect('mon-compte/modifier');
-        }
+        $this->validateCsrf('mon-compte/modifier');
 
         // Récupérer les données du formulaire
         $username = $this->getPost('username', '');
@@ -135,8 +107,7 @@ class ProfileController extends Controller
             $errors['email'] = 'L\'email n\'est pas valide.';
         } else {
             // Vérifier si l'email est déjà utilisé par un autre utilisateur
-            $userId = Session::get('user_id');
-            $currentUser = $this->userManager->getUserById($userId);
+            $currentUser = $this->getCurrentUser();
 
             if ($email !== $currentUser->getEmail()) {
                 $existingUser = $this->userManager->getUserByEmail($email);
@@ -157,11 +128,10 @@ class ProfileController extends Controller
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
-            Session::set('errors', $errors);
-            Session::set('old_input', [
+            $this->saveFormState([
                 'username' => $username,
                 'email' => $email
-            ]);
+            ], $errors);
             $this->redirect('mon-compte/modifier');
         }
 
@@ -177,18 +147,15 @@ class ProfileController extends Controller
         }
 
         // Mettre à jour le profil
-        $userId = Session::get('user_id');
-        $success = $this->userManager->updateUser($userId, $data);
+        $currentUser = $this->getCurrentUser();
+        $success = $this->userManager->updateUser($currentUser->getId(), $data);
 
         if ($success) {
             // Mettre à jour les informations dans la session
             Session::set('username', $username);
-
-            Session::setFlash('success', 'Votre profil a été mis à jour avec succès.');
-            $this->redirect('mon-compte');
+            $this->success('Votre profil a été mis à jour avec succès.', 'mon-compte');
         } else {
-            Session::setFlash('error', 'Une erreur est survenue lors de la mise à jour du profil.');
-            $this->redirect('mon-compte/modifier');
+            $this->error('Une erreur est survenue lors de la mise à jour du profil.', 'mon-compte/modifier');
         }
     }
 
@@ -200,13 +167,10 @@ class ProfileController extends Controller
     public function show(int $userId): void
     {
         // Récupérer l'utilisateur
-        $user = $this->userManager->getUserById($userId);
+        $user = $this->userManager->findById($userId);
 
         // Vérifier que l'utilisateur existe
-        if (!$user) {
-            Session::setFlash('error', 'Utilisateur introuvable.');
-            $this->redirect('');
-        }
+        $user = $this->ensureExists($user, 'Utilisateur introuvable.');
 
         // Afficher la vue
         $data = [

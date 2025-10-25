@@ -1,13 +1,13 @@
-<?php $activePage = 'account'; ?>
+<?php $activePage = 'account'?>
 
 <div class="profile-page">
     <div class="container">
         <div class="profile-edit-container">
             <h1 class="auth-title">Modifier mon profil</h1>
 
-            <form method="POST" action="<?php echo BASE_URL; ?>mon-compte/update" class="profile-form">
+            <form method="POST" action="<?= BASE_URL ?>mon-compte/update" class="profile-form">
                 <!-- Token CSRF -->
-                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
 
                 <!-- Pseudo -->
                 <div class="form-group">
@@ -16,13 +16,13 @@
                         type="text"
                         id="username"
                         name="username"
-                        class="form-input <?php echo isset($errors['username']) ? 'input-error' : ''; ?>"
-                        value="<?php echo htmlspecialchars($oldInput['username'] ?? $user->getUsername()); ?>"
+                        class="form-input <?= isset($errors['username']) ? 'input-error' : '' ?>"
+                        value="<?= e($oldInput['username'] ?? $user->getUsername()) ?>"
                         placeholder="Votre pseudo"
                         required>
                     <?php if (isset($errors['username'])): ?>
-                        <span class="error-message"><?php echo htmlspecialchars($errors['username']); ?></span>
-                    <?php endif; ?>
+                        <span class="error-message"><?= e($errors['username']) ?></span>
+                    <?php endif?>
                     <small class="form-help">3 à 50 caractères, lettres, chiffres, tirets et underscores uniquement</small>
                 </div>
 
@@ -33,13 +33,13 @@
                         type="email"
                         id="email"
                         name="email"
-                        class="form-input <?php echo isset($errors['email']) ? 'input-error' : ''; ?>"
-                        value="<?php echo htmlspecialchars($oldInput['email'] ?? $user->getEmail()); ?>"
+                        class="form-input <?= isset($errors['email']) ? 'input-error' : '' ?>"
+                        value="<?= e($oldInput['email'] ?? $user->getEmail()) ?>"
                         placeholder="votre.email@example.com"
                         required>
                     <?php if (isset($errors['email'])): ?>
-                        <span class="error-message"><?php echo htmlspecialchars($errors['email']); ?></span>
-                    <?php endif; ?>
+                        <span class="error-message"><?= e($errors['email']) ?></span>
+                    <?php endif?>
                 </div>
 
                 <!-- Nouveau mot de passe (optionnel) -->
@@ -49,11 +49,11 @@
                         type="password"
                         id="password"
                         name="password"
-                        class="form-input <?php echo isset($errors['password']) ? 'input-error' : ''; ?>"
+                        class="form-input <?= isset($errors['password']) ? 'input-error' : '' ?>"
                         placeholder="••••••••">
                     <?php if (isset($errors['password'])): ?>
-                        <span class="error-message"><?php echo htmlspecialchars($errors['password']); ?></span>
-                    <?php endif; ?>
+                        <span class="error-message"><?= e($errors['password']) ?></span>
+                    <?php endif?>
                     <small class="form-help">Laissez vide pour conserver votre mot de passe actuel</small>
                 </div>
 
@@ -64,11 +64,11 @@
                         type="password"
                         id="password_confirm"
                         name="password_confirm"
-                        class="form-input <?php echo isset($errors['password_confirm']) ? 'input-error' : ''; ?>"
+                        class="form-input <?= isset($errors['password_confirm']) ? 'input-error' : '' ?>"
                         placeholder="••••••••">
                     <?php if (isset($errors['password_confirm'])): ?>
-                        <span class="error-message"><?php echo htmlspecialchars($errors['password_confirm']); ?></span>
-                    <?php endif; ?>
+                        <span class="error-message"><?= e($errors['password_confirm']) ?></span>
+                    <?php endif?>
                 </div>
 
                 <!-- Boutons d'action -->
@@ -76,7 +76,7 @@
                     <button type="submit" class="btn btn-primary">
                         Enregistrer les modifications
                     </button>
-                    <a href="<?php echo BASE_URL; ?>mon-compte" class="btn btn-secondary">
+                    <a href="<?= BASE_URL ?>mon-compte" class="btn btn-secondary">
                         Annuler
                     </a>
                 </div>

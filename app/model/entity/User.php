@@ -6,7 +6,6 @@
  */
 class User extends Entity
 {
-    protected $id;
     private $username;
     private $email;
     private $password;
@@ -30,38 +29,8 @@ class User extends Entity
     }
 
     /**
-     * Hydrate l'objet User avec des données spécifiques
-     * Surcharge la méthode parent pour plus de contrôle
-     */
-    public function hydrate(array $data)
-    {
-        // Liste des propriétés autorisées
-        $allowedProperties = [
-            'id', 'username', 'email', 'password', 
-            'bio', 'avatar', 'created_at', 'updated_at'
-        ];
-        
-        foreach ($data as $key => $value) {
-            // Ignorer les propriétés non autorisées
-            if (!in_array($key, $allowedProperties)) {
-                continue;
-            }
-            
-            $method = 'set' . str_replace('_', '', ucwords($key, '_'));
-            if (method_exists($this, $method)) {
-                $this->$method($value);
-            }
-        }
-    }
-
-    /**
      * Getters
      */
-    public function getId()
-    {
-        return $this->id;
-    }
-
     public function getUsername()
     {
         return $this->username;
@@ -108,12 +77,6 @@ class User extends Entity
     /**
      * Setters
      */
-    public function setId($id)
-    {
-        $this->id = (int) $id;
-        return $this;
-    }
-
     public function setUsername($username)
     {
         $this->username = $username;

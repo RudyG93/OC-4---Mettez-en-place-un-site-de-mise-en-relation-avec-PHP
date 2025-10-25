@@ -3,15 +3,13 @@
 $flash = Session::getFlash();
 ?>
 
-<!-- Styles spécifiques pour la page d'édition -->
-<link rel="stylesheet" href="<?= BASE_URL ?>css/book-edit.css">
 
 <div id="book-edit-container">
     <?php if ($flash): ?>
         <div class="alert alert-<?= $flash['type'] ?>">
-            <?= htmlspecialchars($flash['message']) ?>
+            <?= e($flash['message']) ?>
         </div>
-    <?php endif; ?>
+    <?php endif?>
 
     <div class="book-edit-content">
         <!-- Navigation breadcrumb -->
@@ -40,7 +38,7 @@ $flash = Session::getFlash();
                         <div class="current-image-container">
                             <?php if ($book->getImage()): ?>
                                 <img src="<?= $book->getImagePath() ?>" 
-                                     alt="<?= htmlspecialchars($book->getTitle()) ?>" 
+                                     alt="<?= e($book->getTitle()) ?>" 
                                      class="current-book-image"
                                      id="imagePreview">
                             <?php else: ?>
@@ -48,7 +46,7 @@ $flash = Session::getFlash();
                                     <i class="fas fa-book"></i>
                                     <span>Aucune image</span>
                                 </div>
-                            <?php endif; ?>
+                            <?php endif?>
                             
                             <div class="image-overlay">
                                 <button type="button" class="btn-change-image" onclick="document.getElementById('image').click();">
@@ -80,7 +78,7 @@ $flash = Session::getFlash();
                         <input type="text" 
                                id="title" 
                                name="title" 
-                               value="<?= htmlspecialchars($book->getTitle()) ?>" 
+                               value="<?= e($book->getTitle()) ?>" 
                                required 
                                maxlength="200"
                                class="form-input"
@@ -94,7 +92,7 @@ $flash = Session::getFlash();
                         <input type="text" 
                                id="author" 
                                name="author" 
-                               value="<?= htmlspecialchars($book->getAuthor()) ?>" 
+                               value="<?= e($book->getAuthor()) ?>" 
                                required 
                                maxlength="100"
                                class="form-input"
@@ -110,7 +108,7 @@ $flash = Session::getFlash();
                                   rows="8"
                                   maxlength="1000"
                                   class="form-textarea"
-                                  placeholder="Décrivez ce livre, votre avis, l'état du livre..."><?= htmlspecialchars($book->getDescription() ?? '') ?></textarea>
+                                  placeholder="Décrivez ce livre, votre avis, l'état du livre..."><?= e($book->getDescription() ?? '') ?></textarea>
                         <div class="textarea-underline"></div>
                         <div class="character-count">
                             <span id="charCount">0</span>/1000 caractères
@@ -146,7 +144,7 @@ $flash = Session::getFlash();
                         <button type="button" 
                                 class="btn btn-danger btn-delete" 
                                 data-book-id="<?= $book->getId() ?>" 
-                                data-book-title="<?= htmlspecialchars($book->getTitle()) ?>">
+                                data-book-title="<?= e($book->getTitle()) ?>">
                             <i class="fas fa-trash"></i>
                             Supprimer
                         </button>

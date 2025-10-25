@@ -31,13 +31,12 @@ class MessageController extends Controller {
     public function index() {
         // Vérifier que l'utilisateur est connecté
         if (!Session::isLoggedIn()) {
-            Session::setFlash('error', 'Vous devez être connecté pour accéder à vos messages');
-            $this->redirect('/login');
+            $this->error('Vous devez être connecté pour accéder à vos messages', '/login');
         }
 
         // Récupérer l'utilisateur actuel
         $userId = Session::getUserId();
-        $currentUser = $this->getUserManager()->getUserById($userId);
+        $currentUser = $this->getUserManager()->findById($userId);
         
         $conversations = $this->getMessageManager()->getConversations($userId);
         $unreadCount = $this->getMessageManager()->getUnreadCount($userId);
@@ -67,10 +66,10 @@ class MessageController extends Controller {
 
         // Récupérer l'utilisateur actuel
         $userId = Session::getUserId();
-        $currentUser = $this->getUserManager()->getUserById($userId);
+        $currentUser = $this->getUserManager()->findById($userId);
 
         // Vérifier que l'autre utilisateur existe
-        $otherUser = $this->getUserManager()->getUserById($otherUserId);
+        $otherUser = $this->getUserManager()->findById($otherUserId);
         if (!$otherUser) {
             Session::setFlash('error', 'Utilisateur introuvable');
             $this->redirect('/messages');
@@ -128,7 +127,7 @@ class MessageController extends Controller {
             }
 
             // Vérifier que le destinataire existe
-            $recipient = $this->getUserManager()->getUserById($recipientId);
+            $recipient = $this->getUserManager()->findById($recipientId);
             if (!$recipient) {
                 $errors[] = 'Destinataire introuvable';
             }
@@ -177,10 +176,10 @@ class MessageController extends Controller {
         }
 
         $userId = Session::getUserId();
-        $currentUser = $this->getUserManager()->getUserById($userId);
+        $currentUser = $this->getUserManager()->findById($userId);
 
         // Vérifier que le destinataire existe
-        $recipient = $this->getUserManager()->getUserById($recipientId);
+        $recipient = $this->getUserManager()->findById($recipientId);
         if (!$recipient) {
             Session::setFlash('error', 'Destinataire introuvable');
             $this->redirect('/messages');

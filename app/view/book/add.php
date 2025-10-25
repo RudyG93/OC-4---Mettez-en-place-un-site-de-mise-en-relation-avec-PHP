@@ -6,9 +6,9 @@ $flash = Session::getFlash();
 <div id="profile-container">
     <?php if ($flash): ?>
         <div class="alert alert-<?= $flash['type'] ?>">
-            <?= htmlspecialchars($flash['message']) ?>
+            <?= e($flash['message']) ?>
         </div>
-    <?php endif; ?>
+    <?php endif?>
 
     <div id="profile-content">
         <div class="profile-block">
@@ -27,11 +27,11 @@ $flash = Session::getFlash();
                                id="title" 
                                name="title" 
                                class="form-control <?= isset($errors['title']) ? 'is-invalid' : '' ?>"
-                               value="<?= htmlspecialchars($oldInput['title'] ?? '') ?>"
+                               value="<?= e($oldInput['title'] ?? '') ?>"
                                required>
                         <?php if (isset($errors['title'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['title']) ?></div>
-                        <?php endif; ?>
+                            <div class="invalid-feedback"><?= e($errors['title']) ?></div>
+                        <?php endif?>
                     </div>
                     
                     <div class="form-group">
@@ -40,11 +40,11 @@ $flash = Session::getFlash();
                                id="author" 
                                name="author" 
                                class="form-control <?= isset($errors['author']) ? 'is-invalid' : '' ?>"
-                               value="<?= htmlspecialchars($oldInput['author'] ?? '') ?>"
+                               value="<?= e($oldInput['author'] ?? '') ?>"
                                required>
                         <?php if (isset($errors['author'])): ?>
-                            <div class="invalid-feedback"><?= htmlspecialchars($errors['author']) ?></div>
-                        <?php endif; ?>
+                            <div class="invalid-feedback"><?= e($errors['author']) ?></div>
+                        <?php endif?>
                     </div>
                 </div>
                 
@@ -59,8 +59,8 @@ $flash = Session::getFlash();
                         Formats acceptés : JPEG, PNG, GIF. Taille maximum : 5MB.
                     </small>
                     <?php if (isset($errors['image'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['image']) ?></div>
-                    <?php endif; ?>
+                        <div class="invalid-feedback"><?= e($errors['image']) ?></div>
+                    <?php endif?>
                 </div>
                 
                 <div class="form-group">
@@ -69,11 +69,11 @@ $flash = Session::getFlash();
                               name="description" 
                               class="form-control <?= isset($errors['description']) ? 'is-invalid' : '' ?>"
                               rows="4"
-                              placeholder="Résumé du livre, votre avis, état du livre..."><?= htmlspecialchars($oldInput['description'] ?? '') ?></textarea>
+                              placeholder="Résumé du livre, votre avis, état du livre..."><?= e($oldInput['description'] ?? '') ?></textarea>
                     <small class="form-text text-muted">Maximum 1000 caractères</small>
                     <?php if (isset($errors['description'])): ?>
-                        <div class="invalid-feedback"><?= htmlspecialchars($errors['description']) ?></div>
-                    <?php endif; ?>
+                        <div class="invalid-feedback"><?= e($errors['description']) ?></div>
+                    <?php endif?>
                 </div>
                 
                 <div class="form-group">

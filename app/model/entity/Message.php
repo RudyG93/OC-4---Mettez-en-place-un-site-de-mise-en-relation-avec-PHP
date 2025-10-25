@@ -79,58 +79,72 @@ class Message extends Entity {
     // Setters
     public function setId($id) {
         $this->id = (int) $id;
+        return $this;
     }
 
     public function setSenderId($senderId) {
         $this->senderId = (int) $senderId;
+        return $this;
     }
 
     public function setRecipientId($recipientId) {
         $this->recipientId = (int) $recipientId;
+        return $this;
     }
 
     public function setContent($content) {
         $this->content = $content;
+        return $this;
     }
 
     public function setIsRead($isRead) {
         $this->isRead = (bool) $isRead;
+        return $this;
     }
 
     public function setCreatedAt($createdAt) {
         $this->createdAt = $createdAt;
+        return $this;
     }
 
     public function setSenderUsername($senderUsername) {
         $this->senderUsername = $senderUsername;
+        return $this;
     }
 
     public function setSenderAvatar($senderAvatar) {
         $this->senderAvatar = $senderAvatar;
+        return $this;
     }
 
     public function setRecipientUsername($recipientUsername) {
         $this->recipientUsername = $recipientUsername;
+        return $this;
     }
 
     public function setRecipientAvatar($recipientAvatar) {
         $this->recipientAvatar = $recipientAvatar;
+        return $this;
     }
     
     public function setOtherUserId($otherUserId) {
         $this->otherUserId = (int) $otherUserId;
+        return $this;
     }
 
     public function setOtherUsername($otherUsername) {
         $this->otherUsername = $otherUsername;
+        return $this;
     }
 
     public function setOtherAvatar($otherAvatar) {
         $this->otherAvatar = $otherAvatar;
+        return $this;
     }
 
     public function setUnreadCount($unreadCount) {
         $this->unreadCount = (int) $unreadCount;
+        return $this;
     }
 
     /**

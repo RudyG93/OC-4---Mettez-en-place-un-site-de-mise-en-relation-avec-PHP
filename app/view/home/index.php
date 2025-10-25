@@ -1,8 +1,8 @@
-<?php $activePage = 'home'; ?>
+<?php $activePage = 'home'?>
 <div class="hero">
     <div class="container">
-        <h1 class="hero-title"><?php echo htmlspecialchars($heading); ?></h1>
-        <p class="hero-subtitle"><?php echo htmlspecialchars($message); ?></p>
+        <h1 class="hero-title"><?= e($heading)?></h1>
+        <p class="hero-subtitle"><?= e($message)?></p>
     </div>
 </div>
 
@@ -13,9 +13,9 @@
             <?php foreach ($features as $feature): ?>
                 <div class="feature-card">
                     <div class="feature-icon">✓</div>
-                    <h3 class="feature-title"><?php echo htmlspecialchars($feature); ?></h3>
+                    <h3 class="feature-title"><?= e($feature)?></h3>
                 </div>
-            <?php endforeach; ?>
+            <?php endforeach?>
         </div>
     </div>
 </section>

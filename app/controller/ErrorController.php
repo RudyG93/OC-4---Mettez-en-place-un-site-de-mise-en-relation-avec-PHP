@@ -8,7 +8,7 @@ class ErrorController extends Controller
     /**
      * Page 404 - Page non trouvée
      */
-    public function notFound()
+    public function notFound($message = null)
     {
         $data = [
             'title' => 'Page non trouvée - TomTroc',
