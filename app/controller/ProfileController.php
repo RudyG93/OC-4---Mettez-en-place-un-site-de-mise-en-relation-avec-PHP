@@ -28,42 +28,21 @@ class ProfileController extends Controller
         // Récupérer l'utilisateur connecté et vérifier qu'il existe
         $user = $this->ensureExists($this->getCurrentUser(), 'Profil introuvable.');
 
+        // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
+        $formState = $this->getFormState();
+
         // Afficher la vue
         $pageTitle = 'Mon profil';
         $activePage = 'account';
 
         $data = [
             'title' => $pageTitle,
-            'user' => $user
-        ];
-
-        $this->render('profile/view', $data);
-    }
-
-    /**
-     * Affiche le formulaire de modification du profil
-     */
-    public function edit(): void
-    {
-        // Vérifier que l'utilisateur est connecté
-        $this->requireAuth();
-
-        // Récupérer l'utilisateur connecté et vérifier qu'il existe
-        $user = $this->ensureExists($this->getCurrentUser(), 'Profil introuvable.');
-
-        // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
-        $formState = $this->getFormState();
-
-        // Afficher la vue
-        $data = [
-            'title' => 'Modifier mon profil',
             'user' => $user,
-            'csrfToken' => $this->getCsrfToken(),
             'oldInput' => $formState['oldInput'],
             'errors' => $formState['errors']
         ];
 
-        $this->render('profile/edit', $data);
+        $this->render('profile/view', $data);
     }
 
     /**
@@ -76,17 +55,16 @@ class ProfileController extends Controller
 
         // Vérifier que la requête est en POST
         if (!$this->isPost()) {
-            $this->redirect('mon-compte/modifier');
+            $this->redirect('mon-compte');
         }
 
         // Valider le token CSRF
-        $this->validateCsrf('mon-compte/modifier');
+        $this->validateCsrf('mon-compte');
 
         // Récupérer les données du formulaire
         $username = $this->getPost('username', '');
         $email = $this->getPost('email', '');
         $password = $this->getPost('password', '');
-        $passwordConfirm = $this->getPost('password_confirm', '');
 
         // Tableau d'erreurs
         $errors = [];
@@ -121,8 +99,6 @@ class ProfileController extends Controller
         if (!empty($password)) {
             if (strlen($password) < 6) {
                 $errors['password'] = 'Le mot de passe doit contenir au moins 6 caractères.';
-            } elseif ($password !== $passwordConfirm) {
-                $errors['password_confirm'] = 'Les mots de passe ne correspondent pas.';
             }
         }
 
@@ -132,7 +108,7 @@ class ProfileController extends Controller
                 'username' => $username,
                 'email' => $email
             ], $errors);
-            $this->redirect('mon-compte/modifier');
+            $this->redirect('mon-compte');
         }
 
         // Préparer les données à mettre à jour
@@ -172,12 +148,96 @@ class ProfileController extends Controller
         // Vérifier que l'utilisateur existe
         $user = $this->ensureExists($user, 'Utilisateur introuvable.');
 
+        // Récupérer les livres de l'utilisateur
+        $bookManager = $this->loadManager('Book');
+        $userBooks = $bookManager->findByUserId($userId);
+
         // Afficher la vue
         $data = [
             'title' => 'Profil de ' . $this->escape($user->getUsername()),
-            'user' => $user
+            'user' => $user,
+            'userBooks' => $userBooks
         ];
 
         $this->render('profile/show', $data);
+    }
+
+    /**
+     * Traite l'upload de l'avatar
+     */
+    public function updateAvatar(): void
+    {
+        // Vérifier que l'utilisateur est connecté
+        $this->requireAuth();
+
+        // Vérifier que la requête est en POST
+        if (!$this->isPost()) {
+            $this->redirect('mon-compte');
+        }
+
+        // Valider le token CSRF
+        $this->validateCsrf('mon-compte');
+
+        // Vérifier qu'un fichier a été uploadé
+        if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+            Session::setFlash('error', 'Veuillez sélectionner une image.');
+            $this->redirect('mon-compte');
+        }
+
+        $file = $_FILES['avatar'];
+
+        // Validation du fichier
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $maxSize = 2 * 1024 * 1024; // 2 Mo
+
+        if (!in_array($file['type'], $allowedTypes)) {
+            Session::setFlash('error', 'Format de fichier non autorisé. Utilisez JPG, PNG ou GIF.');
+            $this->redirect('mon-compte');
+        }
+
+        if ($file['size'] > $maxSize) {
+            Session::setFlash('error', 'Le fichier est trop volumineux (max 2 Mo).');
+            $this->redirect('mon-compte');
+        }
+
+        // Créer le dossier uploads/avatars s'il n'existe pas
+        $uploadDir = 'uploads/avatars/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        // Générer un nom de fichier unique
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = 'avatar_' . uniqid() . '_' . time() . '.' . $extension;
+        $uploadPath = $uploadDir . $filename;
+
+        // Déplacer le fichier uploadé
+        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+            // Supprimer l'ancien avatar s'il existe
+            $currentUser = $this->getCurrentUser();
+            if ($currentUser->getAvatar()) {
+                $oldAvatarPath = $uploadDir . $currentUser->getAvatar();
+                if (file_exists($oldAvatarPath)) {
+                    unlink($oldAvatarPath);
+                }
+            }
+
+            // Mettre à jour l'avatar dans la base de données
+            $success = $this->userManager->updateUser($currentUser->getId(), [
+                'username' => $currentUser->getUsername(),
+                'email' => $currentUser->getEmail(),
+                'avatar' => $filename
+            ]);
+
+            if ($success) {
+                Session::setFlash('success', 'Votre avatar a été mis à jour avec succès.');
+            } else {
+                Session::setFlash('error', 'Erreur lors de la mise à jour de l\'avatar.');
+            }
+        } else {
+            Session::setFlash('error', 'Erreur lors de l\'upload du fichier.');
+        }
+
+        $this->redirect('mon-compte');
     }
 }

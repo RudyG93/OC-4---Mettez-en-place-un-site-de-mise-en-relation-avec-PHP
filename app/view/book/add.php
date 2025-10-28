@@ -97,8 +97,8 @@ $flash = Session::getFlash();
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Ajouter le livre
                     </button>
-                    <a href="<?= BASE_URL ?>book/my-books" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Retour à ma bibliothèque
+                    <a href="<?= BASE_URL ?>mon-compte" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à mon compte
                     </a>
                 </div>
             </form>
@@ -255,76 +255,3 @@ $flash = Session::getFlash();
     }
 }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Prévisualisation de l'image
-    const imageInput = document.getElementById('image');
-    
-    if (imageInput) {
-        imageInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Vérifier la taille
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('L\'image est trop volumineuse. La taille maximum est de 5MB.');
-                    this.value = '';
-                    return;
-                }
-                
-                // Optionnel : Ajouter une prévisualisation
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    // Créer ou mettre à jour l'élément de prévisualisation
-                    let preview = document.getElementById('image-preview');
-                    if (!preview) {
-                        preview = document.createElement('div');
-                        preview.id = 'image-preview';
-                        preview.style.marginTop = '0.5rem';
-                        imageInput.parentNode.insertBefore(preview, imageInput.nextSibling);
-                    }
-                    
-                    preview.innerHTML = `
-                        <img src="${e.target.result}" 
-                             alt="Aperçu" 
-                             style="max-width: 200px; max-height: 150px; border-radius: 4px; border: 1px solid #ddd;">
-                        <p style="font-size: 0.875rem; color: #6c757d; margin: 0.25rem 0 0 0;">Aperçu de l'image</p>
-                    `;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-    
-    // Compteur de caractères pour la description
-    const descriptionTextarea = document.getElementById('description');
-    if (descriptionTextarea) {
-        const maxLength = 1000;
-        
-        // Créer le compteur
-        const counter = document.createElement('div');
-        counter.style.fontSize = '0.875rem';
-        counter.style.color = '#6c757d';
-        counter.style.textAlign = 'right';
-        counter.style.marginTop = '0.25rem';
-        
-        descriptionTextarea.parentNode.insertBefore(counter, descriptionTextarea.nextSibling);
-        
-        function updateCounter() {
-            const remaining = maxLength - descriptionTextarea.value.length;
-            counter.textContent = `${descriptionTextarea.value.length}/${maxLength} caractères`;
-            
-            if (remaining < 100) {
-                counter.style.color = '#dc3545';
-            } else if (remaining < 200) {
-                counter.style.color = '#ffc107';
-            } else {
-                counter.style.color = '#6c757d';
-            }
-        }
-        
-        descriptionTextarea.addEventListener('input', updateCounter);
-        updateCounter(); // Initialiser
-    }
-});
-</script>

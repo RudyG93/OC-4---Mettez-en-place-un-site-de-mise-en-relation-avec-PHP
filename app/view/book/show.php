@@ -133,12 +133,10 @@ $flash = Session::getFlash();
                                     <a href="<?= BASE_URL ?>profil/<?= $owner->getId() ?>" class="btn btn-outline-primary">
                                         <i class="fas fa-user"></i> Voir le profil de <?= e($owner->getUsername()) ?>
                                     </a>
-                                    <button class="btn btn-primary btn-send-message" 
-                                            data-book-id="<?= $book->getId() ?>"
-                                            data-owner-id="<?= $owner->getId() ?>"
-                                            data-owner-name="<?= e($owner->getUsername()) ?>">
+                                    <a href="<?= BASE_URL ?>messages/compose/<?= $owner->getId() ?>?book_title=<?= urlencode($book->getTitle()) ?>" 
+                                       class="btn btn-primary">
                                         <i class="fas fa-envelope"></i> Envoyer un message
-                                    </button>
+                                    </a>
                                 </div>
                                 
                                 <div class="contact-info">
@@ -736,63 +734,3 @@ $flash = Session::getFlash();
     color: #721c24;
 }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Gestion du bouton de suppression (pour les propriétaires)
-    const deleteButton = document.querySelector('.delete-book');
-    const deleteModal = document.getElementById('deleteBookModal');
-    const deleteForm = document.getElementById('deleteBookForm');
-    const bookTitleSpan = document.getElementById('bookTitleToDelete');
-    
-    if (deleteButton) {
-        deleteButton.addEventListener('click', function() {
-            const bookId = this.dataset.bookId;
-            const bookTitle = this.dataset.bookTitle;
-            
-            bookTitleSpan.textContent = bookTitle;
-            deleteForm.action = '<?= BASE_URL ?>book/' + bookId + '/delete';
-            
-            // Si vous utilisez Bootstrap modal
-            if (typeof bootstrap !== 'undefined') {
-                const modal = new bootstrap.Modal(deleteModal);
-                modal.show();
-            } else {
-                // Fallback confirmation simple
-                if (confirm('Êtes-vous sûr de vouloir supprimer le livre "' + bookTitle + '" ?\n\nCette action est irréversible.')) {
-                    deleteForm.submit();
-                }
-            }
-        });
-    }
-    
-    // Gestion du bouton "Envoyer un message"
-    const sendMessageButton = document.querySelector('.btn-send-message');
-    
-    if (sendMessageButton) {
-        sendMessageButton.addEventListener('click', function() {
-            const ownerId = this.dataset.ownerId;
-            const ownerName = this.dataset.ownerName;
-            const bookTitle = '<?= addslashes($book->getTitle()) ?>';
-            
-            // Rediriger vers la page de composition de message
-            window.location.href = '<?= BASE_URL ?>messages/compose/' + ownerId + 
-                                   '?book_title=' + encodeURIComponent(bookTitle);
-        });
-    }
-    
-    // Animation smooth scroll pour les liens internes
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-});
-</script>

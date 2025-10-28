@@ -94,13 +94,12 @@ $activePage = 'messagerie';
                 <textarea 
                     name="content" 
                     id="messageContent" 
-                    placeholder="Tapez votre message..." 
+                    placeholder="Tapez votre message (max 1000 caractères)..." 
                     rows="2"
                     maxlength="1000"
                     required></textarea>
                 <div class="form-actions">
-                    <span class="char-counter">0/1000</span>
-                    <button type="submit" class="btn btn-primary" disabled>
+                    <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i> Envoyer
                     </button>
                 </div>
@@ -404,75 +403,3 @@ $activePage = 'messagerie';
     }
 }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const messageForm = document.getElementById('messageForm');
-    const messageContent = document.getElementById('messageContent');
-    const charCounter = document.querySelector('.char-counter');
-    const submitButton = document.querySelector('button[type="submit"]');
-    const messagesList = document.getElementById('messagesList');
-
-    // Faire défiler vers le bas au chargement
-    messagesList.scrollTop = messagesList.scrollHeight;
-
-    // Gestion du compteur de caractères
-    messageContent.addEventListener('input', function() {
-        const length = this.value.length;
-        charCounter.textContent = `${length}/1000`;
-        
-        // Activer/désactiver le bouton d'envoi
-        submitButton.disabled = length === 0 || length > 1000;
-        
-        // Ajuster la hauteur du textarea
-        this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-    });
-
-    // Gestion de l'envoi du message
-    messageForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(this);
-        
-        // Désactiver le bouton pendant l'envoi
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi...';
-        
-        fetch('<?= BASE_URL ?>messages/send', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Recharger la page pour afficher le nouveau message
-                window.location.reload();
-            } else {
-                alert('Erreur: ' + data.message);
-                submitButton.disabled = false;
-                submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer';
-            }
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            alert('Une erreur est survenue lors de l\'envoi du message.');
-            submitButton.disabled = false;
-            submitButton.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer';
-        });
-    });
-
-    // Envoi avec Ctrl+Enter
-    messageContent.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.key === 'Enter') {
-            e.preventDefault();
-            if (!submitButton.disabled) {
-                messageForm.dispatchEvent(new Event('submit'));
-            }
-        }
-    });
-});
-</script>

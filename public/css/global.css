@@ -69,6 +69,7 @@ a:hover {
 .main-content {
     min-height: calc(100vh - 200px);
     padding: 20px 0;
+    background-color: #FAF9F7;
 }
 
 /* === HEADER === */
@@ -143,6 +144,34 @@ a:hover {
     width: 15px;
     height: 15px;
     vertical-align: middle;
+}
+
+/* === NOTIFICATION BADGE === */
+.notification-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000 !important;
+    color: #fff !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 15px;        
+    height: 24px;           
+    padding: 2px 4px;       
+    border-radius: 12px;   
+    margin-left: 6px;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
+.nav-link .notification-badge {
+    background-color: #000 !important;
+}
+
+.nav-link-icon .notification-badge {
+    position: relative;
+    top: -2px;
+    background-color: #000 !important;
 }
 
 /* === BUTTONS === */

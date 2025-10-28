@@ -19,55 +19,26 @@ class BookController extends Controller
      */
     public function index(): void
     {
+        // Récupérer le terme de recherche s'il existe
+        $searchTerm = $this->getQuery('q', '');
+        
         // Exclure les livres de l'utilisateur connecté s'il est connecté
         $excludeUserId = null;
         if (Session::isLoggedIn()) {
             $excludeUserId = Session::getUserId();
         }
 
-        $books = $this->bookManager->findAvailableBooks($excludeUserId);
+        // Si recherche, utiliser searchBooks, sinon tous les livres
+        if (!empty($searchTerm)) {
+            $books = $this->bookManager->searchBooks($searchTerm, $excludeUserId);
+        } else {
+            $books = $this->bookManager->findAvailableBooks($excludeUserId);
+        }
         
         $this->render('book/index', [
             'books' => $books,
+            'searchTerm' => $searchTerm,
             'title' => 'Tous les livres disponibles'
-        ]);
-    }
-
-    /**
-     * Affiche les livres de l'utilisateur connecté (bibliothèque personnelle)
-     */
-    public function myBooks(): void
-    {
-        $this->requireAuth();
-        
-        $userId = Session::getUserId();
-        $books = $this->bookManager->findByUserId($userId);
-        $totalBooks = $this->bookManager->countUserBooks($userId);
-        $availableBooks = $this->bookManager->countAvailableUserBooks($userId);
-        
-        $this->render('book/my-books', [
-            'books' => $books,
-            'totalBooks' => $totalBooks,
-            'availableBooks' => $availableBooks,
-            'title' => 'Ma bibliothèque'
-        ]);
-    }
-
-    /**
-     * Affiche le formulaire d'ajout d'un livre
-     */
-    public function add(): void
-    {
-        $this->requireAuth();
-        
-        // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
-        $formState = $this->getFormState();
-        
-        $this->render('book/add', [
-            'title' => 'Ajouter un livre',
-            'csrfToken' => $this->getCsrfToken(),
-            'oldInput' => $formState['oldInput'],
-            'errors' => $formState['errors']
         ]);
     }
 
@@ -79,12 +50,12 @@ class BookController extends Controller
         $this->requireAuth();
         
         if (!$this->isPost()) {
-            $this->redirect('book/add');
+            $this->redirect('mon-compte');
             return;
         }
 
         // Valider le token CSRF
-        $this->validateCsrf('book/add');
+        $this->validateCsrf('mon-compte');
 
         // Récupérer les données du formulaire
         $title = $this->getPost('title', '');
@@ -115,7 +86,7 @@ class BookController extends Controller
                 'description' => $description,
                 'is_available' => $isAvailable
             ], $errors);
-            $this->redirect('book/add');
+            $this->redirect('mon-compte#add-book-modal');
             return;
         }
 
@@ -132,10 +103,10 @@ class BookController extends Controller
         
         if ($book) {
             Session::setFlash('success', 'Livre ajouté avec succès !');
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
         } else {
             Session::setFlash('error', 'Erreur lors de l\'ajout du livre.');
-            $this->redirect('book/add');
+            $this->redirect('mon-compte#add-book-modal');
         }
     }
 
@@ -191,14 +162,14 @@ class BookController extends Controller
         
         if (!$book) {
             Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
             return;
         }
 
         // Vérifier que l'utilisateur est le propriétaire du livre
         if ($book->getUserId() !== Session::getUserId()) {
             Session::setFlash('error', 'Vous n\'êtes pas autorisé à modifier ce livre.');
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
             return;
         }
 
@@ -230,14 +201,14 @@ class BookController extends Controller
         
         if (!$book) {
             Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
             return;
         }
 
         // Vérifier que l'utilisateur est le propriétaire du livre
         if ($book->getUserId() !== Session::getUserId()) {
             Session::setFlash('error', 'Vous n\'êtes pas autorisé à modifier ce livre.');
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
             return;
         }
 
@@ -300,7 +271,7 @@ class BookController extends Controller
         
         if ($updatedBook) {
             Session::setFlash('success', 'Livre modifié avec succès !');
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
         } else {
             Session::setFlash('error', 'Erreur lors de la modification du livre.');
             $this->redirect('book/' . $id . '/edit');
@@ -315,7 +286,7 @@ class BookController extends Controller
         $this->requireAuth();
         
         if (!$this->isPost()) {
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
             return;
         }
 
@@ -323,19 +294,19 @@ class BookController extends Controller
         
         if (!$book) {
             Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
             return;
         }
 
         // Vérifier que l'utilisateur est le propriétaire du livre
         if ($book->getUserId() !== Session::getUserId()) {
             Session::setFlash('error', 'Vous n\'êtes pas autorisé à supprimer ce livre.');
-            $this->redirect('book/my-books');
+            $this->redirect('mon-compte');
             return;
         }
 
         // Valider le token CSRF
-        $this->validateCsrf('book/my-books');
+        $this->validateCsrf('mon-compte');
 
         $result = $this->bookManager->deleteBook($id);
         
@@ -353,7 +324,7 @@ class BookController extends Controller
             Session::setFlash('error', $result['error']);
         }
         
-        $this->redirect('book/my-books');
+        $this->redirect('mon-compte');
     }
 
     /**
@@ -382,42 +353,46 @@ class BookController extends Controller
     }
 
     /**
-     * Change le statut de disponibilité d'un livre (AJAX)
+     * Change le statut de disponibilité d'un livre
      */
     public function toggleAvailability(int $id): void
     {
         $this->requireAuth();
         
         if (!$this->isPost()) {
-            $this->json(['success' => false, 'error' => 'Méthode non autorisée'], 405);
+            $this->redirect('mon-compte');
             return;
         }
 
         $book = $this->bookManager->findById($id);
         
         if (!$book) {
-            $this->json(['success' => false, 'error' => 'Livre non trouvé'], 404);
+            Session::setFlash('error', 'Livre introuvable.');
+            $this->redirect('mon-compte');
             return;
         }
 
         // Vérifier que l'utilisateur est le propriétaire du livre
         if ($book->getUserId() !== Session::getUserId()) {
-            $this->json(['success' => false, 'error' => 'Non autorisé'], 403);
+            Session::setFlash('error', 'Vous n\'êtes pas autorisé à modifier ce livre.');
+            $this->redirect('mon-compte');
             return;
         }
+
+        // Valider le token CSRF
+        $this->validateCsrf('mon-compte');
 
         $newAvailability = !$book->isAvailable();
         $success = $this->bookManager->updateAvailability($id, $newAvailability);
         
         if ($success) {
-            $this->json([
-                'success' => true, 
-                'isAvailable' => $newAvailability,
-                'text' => $newAvailability ? 'Disponible' : 'Non disponible'
-            ]);
+            $statusText = $newAvailability ? 'disponible' : 'non disponible';
+            Session::setFlash('success', 'Le livre est maintenant ' . $statusText . '.');
         } else {
-            $this->json(['success' => false, 'error' => 'Erreur lors de la mise à jour'], 500);
+            Session::setFlash('error', 'Erreur lors de la mise à jour de la disponibilité.');
         }
+        
+        $this->redirect('mon-compte');
     }
 
     /**

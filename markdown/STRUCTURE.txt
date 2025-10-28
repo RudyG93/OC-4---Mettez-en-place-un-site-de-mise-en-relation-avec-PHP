@@ -4,59 +4,118 @@ Projet4/
 │
 ├── .gitignore                          # Fichiers à ignorer (config.local.php, uploads, etc.)
 ├── .htaccess                           # Redirection vers /public
-├── README.md                           # Documentation complète
 │
 ├── app/                                # APPLICATION
 │   │
 │   ├── core/                           # CLASSES SYSTÈME
-│   │   ├── App.php                    # ✅ Routeur principal
-│   │   ├── Controller.php             # ✅ Contrôleur de base
-│   │   ├── Model.php                  # ✅ Manager de base (CRUD)
-│   │   ├── Entity.php                 # ✅ Entité de base
+│   │   ├── App.php                    # ✅ Routeur principal avec paramètres dynamiques
+│   │   ├── Controller.php             # ✅ Contrôleur de base (render, redirect)
+│   │   ├── Model.php                  # ✅ Manager de base (CRUD générique)
+│   │   ├── Entity.php                 # ✅ Entité de base (hydratation)
 │   │   ├── Database.php               # ✅ Connexion PDO Singleton
-│   │   └── Session.php                # ✅ Gestion sessions + CSRF
+│   │   ├── Session.php                # ✅ Gestion sessions + CSRF + flash
+│   │   └── helpers.php                # ✅ Fonctions utilitaires globales
 │   │
-│   ├── controllers/                    # CONTRÔLEURS
-│   │   ├── HomeController.php         # ✅ Page d'accueil (Hello World)
-│   │   └── ErrorController.php        # ✅ Pages 404, 403
+│   ├── controller/                     # CONTRÔLEURS
+│   │   ├── HomeController.php         # ✅ Page d'accueil
+│   │   ├── ErrorController.php        # ✅ Pages 404, 403
+│   │   ├── AuthController.php         # ✅ Authentification (login, register, logout)
+│   │   ├── ProfileController.php      # ✅ Profils (view, edit, show)
+│   │   ├── BookController.php         # ✅ Livres (myBooks, add, edit, show, index)
+│   │   └── MessageController.php      # ✅ Messagerie (index, conversation, compose, send)
 │   │
-│   ├── models/                         # MODÈLES
-│   │   ├── entities/                  # Entités métier (à créer)
-│   │   └── managers/                  # Managers (à créer)
+│   ├── model/                          # MODÈLES
+│   │   ├── entity/                    # ENTITÉS MÉTIER
+│   │   │   ├── User.php              # ✅ Entité utilisateur (avec méthodes utilitaires)
+│   │   │   ├── Book.php              # ✅ Entité livre
+│   │   │   └── Message.php           # ✅ Entité message
+│   │   │
+│   │   └── manager/                   # MANAGERS (Accès BDD)
+│   │       ├── UserManager.php       # ✅ CRUD utilisateurs + authentification
+│   │       ├── BookManager.php       # ✅ CRUD livres + recherche
+│   │       └── MessageManager.php    # ✅ CRUD messages + conversations
 │   │
-│   └── views/                          # VUES
+│   └── view/                           # VUES
 │       ├── layouts/                   
-│       │   └── main.php               # ✅ Layout principal (header/footer)
+│       │   └── main.php              # ✅ Layout principal (header, nav, footer)
+│       │
 │       ├── home/
-│       │   └── index.php              # ✅ Vue Hello World
-│       ├── auth/                      # (à créer)
-│       ├── user/                      # (à créer)
-│       ├── book/                      # (à créer)
-│       ├── message/                   # (à créer)
+│       │   └── index.php             # ✅ Page d'accueil
+│       │
+│       ├── auth/
+│       │   ├── login.php             # ✅ Formulaire connexion
+│       │   └── register.php          # ✅ Formulaire inscription
+│       │
+│       ├── profile/
+│       │   ├── view.php              # ✅ Mon profil (privé)
+│       │   ├── edit.php              # ✅ Modifier mon profil
+│       │   └── show.php              # ✅ Profil public
+│       │
+│       ├── book/
+│       │   ├── my-books.php          # ✅ Ma bibliothèque
+│       │   ├── add.php               # ✅ Ajouter un livre
+│       │   ├── edit.php              # ✅ Modifier un livre (design avancé)
+│       │   ├── show.php              # ✅ Détail d'un livre
+│       │   └── index.php             # ✅ Catalogue public
+│       │
+│       ├── message/
+│       │   ├── index.php             # ✅ Liste conversations
+│       │   ├── conversation.php      # ✅ Fil de discussion
+│       │   └── compose.php           # ✅ Nouveau message
+│       │
 │       └── error/
-│           ├── 404.php                # ✅ Page 404
-│           └── 403.php                # ✅ Page 403
+│           ├── 404.php               # ✅ Page 404
+│           └── 403.php               # ✅ Page 403
 │
 ├── config/                             # CONFIGURATION
 │   ├── config.php                     # ✅ Config générale + constantes
 │   ├── config.example.php             # ✅ Template pour config BDD
 │   ├── config.local.php               # ✅ Config locale (GITIGNORED)
-│   └── routes.php                     # ✅ Routes personnalisées
+│   └── routes.php                     # ✅ Routes personnalisées complètes
 │
-├── public/                             # DOSSIER PUBLIC (DocumentRoot)
+├── public/                             # DOSSIER PUBLIC (seul accessible web)
 │   ├── index.php                      # ✅ Point d'entrée + autoloader
 │   ├── .htaccess                      # ✅ Réécriture d'URL
+│   │
 │   ├── css/
-│   │   └── style.css                  # ✅ Styles principaux
-│   ├── js/
-│   │   └── app.js                     # ✅ JavaScript principal
-│   └── uploads/                       # Uploads utilisateurs
-│       ├── .gitkeep
-│       └── books/
-│           └── .gitkeep
+│   │   ├── style.css                 # ✅ Styles principaux
+│   │   ├── global.css                # ✅ Styles globaux (variables, reset)
+│   │   ├── auth.css                  # ✅ Styles authentification
+│   │   ├── profile.css               # ✅ Styles profils
+│   │   ├── book-edit.css             # ✅ Styles édition livres
+│   │   └── README.md                 # Documentation CSS
+│   │
+│   ├── assets/                        # Assets statiques
+│   │
+│   └── uploads/                       # Uploads utilisateurs (GITIGNORED)
+│       └── books/                    # Images de livres
+│
+├── markdown/                           # DOCUMENTATION
+│   ├── README.md                      # Documentation complète projet
+│   ├── QUICKSTART.md                  # Guide démarrage rapide
+│   ├── STRUCTURE.txt                  # Ce fichier
+│   ├── 01-INSTALLATION.md             # Installation et configuration
+│   ├── 02-ARCHITECTURE.md             # Architecture MVC
+│   ├── 03-AUTHENTICATION.md           # Système authentification
+│   ├── 04-PROFILS.md                  # Gestion profils
+│   ├── 05-LIVRES.md                   # Bibliothèque et catalogue
+│   ├── 06-MESSAGERIE.md               # Système messagerie
+│   └── 07-DEVELOPPEMENT.md            # Guide développement
 │
 └── sql/                                # BASE DE DONNÉES
-    └── database.sql                    # ✅ Script de création BDD complète
+    ├── database.sql                    # ✅ Script création BDD + données test
+    └── migration_remove_login.sql      # Migration suppression champ login
 
-TOTAL : 17 fichiers PHP créés
-STATUT : ✅ Hello World fonctionnel !
+═══════════════════════════════════════════════════════════════
+
+STATISTIQUES :
+- Contrôleurs : 6 (Home, Error, Auth, Profile, Book, Message)
+- Managers : 3 (User, Book, Message)
+- Entités : 3 (User, Book, Message)
+- Vues : 16 fichiers répartis sur 6 modules
+- CSS : 5 fichiers spécialisés
+- Routes personnalisées : 25+
+
+STATUT : ✅ Application complète et fonctionnelle !
+FONCTIONNALITÉS : Authentification, Profils, Livres, Messagerie
+PROGRESSION : 85% (6 étapes sur 7)

@@ -124,18 +124,6 @@ class BookManager extends Model
      */
     public function deleteBook($id)
     {
-        // Vérifier s'il y a des messages liés à ce livre
-        $checkSql = "SELECT COUNT(*) as count FROM messages WHERE book_id = :book_id";
-        $checkQuery = $this->db->prepare($checkSql);
-        $checkQuery->bindValue(':book_id', $id, PDO::PARAM_INT);
-        $checkQuery->execute();
-        $result = $checkQuery->fetch(PDO::FETCH_ASSOC);
-        
-        if ($result['count'] > 0) {
-            // Il y a des messages, on ne peut pas supprimer
-            return ['success' => false, 'error' => 'Ce livre ne peut pas être supprimé car il y a des messages associés.'];
-        }
-        
         $sql = "DELETE FROM books WHERE id = :id";
         $query = $this->db->prepare($sql);
         $query->bindValue(':id', $id, PDO::PARAM_INT);
@@ -173,9 +161,13 @@ class BookManager extends Model
                 FROM books b
                 INNER JOIN users u ON b.user_id = u.id
                 WHERE b.is_available = 1 
-                  AND (b.title LIKE :search_term OR b.author LIKE :search_term)";
+                  AND (b.title LIKE :search_term_title OR b.author LIKE :search_term_author)";
         
-        $params = [':search_term' => '%' . $searchTerm . '%'];
+        $searchPattern = '%' . $searchTerm . '%';
+        $params = [
+            ':search_term_title' => $searchPattern,
+            ':search_term_author' => $searchPattern
+        ];
         
         if ($excludeUserId) {
             $sql .= " AND b.user_id != :exclude_user_id";
@@ -189,7 +181,7 @@ class BookManager extends Model
             if ($key === ':exclude_user_id') {
                 $query->bindValue($key, $value, PDO::PARAM_INT);
             } else {
-                $query->bindValue($key, $value);
+                $query->bindValue($key, $value, PDO::PARAM_STR);
             }
         }
         $query->execute();

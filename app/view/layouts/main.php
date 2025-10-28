@@ -28,10 +28,18 @@
                     </li>
                     <li class="nav-separator"></li>
                     <?php if (Session::isLoggedIn()): ?>
+                        <?php 
+                            $messageManager = new MessageManager();
+                            $unreadCount = $messageManager->getUnreadCount(Session::get('user_id'));
+                        ?>
                         <li class="nav-group nav-group-right">
                             <a href="<?= BASE_URL?>messagerie" class="nav-link nav-link-icon<?= (isset($activePage) && $activePage === 'messagerie') ? ' active' : ''?>">
                                 <img src="<?= BASE_URL?>assets/ico_message.svg" alt="Message Icon" class="nav-icon">
-                                Messagerie</a>
+                                Messagerie
+                                <?php if ($unreadCount > 0): ?>
+                                    <span class="notification-badge" style="background-color: #000; color: #fff;"><?= $unreadCount ?></span>
+                                <?php endif; ?>
+                            </a>
                             <a href="<?= BASE_URL?>mon-compte" class="nav-link nav-link-icon<?= (isset($activePage) && $activePage === 'account') ? ' active' : ''?>">
                                 <img src="<?= BASE_URL?>assets/ico_account.svg" alt="User Icon" class="nav-icon">
                                 Mon compte

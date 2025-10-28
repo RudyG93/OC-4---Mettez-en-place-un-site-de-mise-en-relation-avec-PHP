@@ -1,56 +1,112 @@
-<?php $activePage = ''?>
+<?php $activePage = 'profil' ?>
 
-<div class="profile-page">
-    <div class="container">
-        <div class="profile-container profile-public">
-            <!-- En-tête du profil -->
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <div class="avatar-placeholder">
-                        <?= strtoupper(substr($user->getUsername(), 0, 1))?>
+<link rel="stylesheet" href="<?= BASE_URL ?>css/profile.css">
+
+<div class="public-profile-container">
+    <div class="public-profile-content">
+        <!-- Colonne gauche : Informations utilisateur -->
+        <div class="user-info-sidebar">
+            <div class="user-avatar-section">
+                <div class="user-avatar">
+                    <?php if ($user->getAvatar()): ?>
+                        <img src="<?= BASE_URL ?>uploads/avatars/<?= e($user->getAvatar()) ?>" 
+                             alt="Avatar de <?= e($user->getUsername()) ?>" 
+                             class="avatar-image">
+                    <?php else: ?>
+                        <div class="avatar-placeholder">
+                            <?= strtoupper(substr($user->getUsername(), 0, 1)) ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                
+                <h1 class="user-username"><?= e($user->getUsername()) ?></h1>
+                
+                <p class="user-member-since">
+                    Membre depuis 
+                    <?php 
+                    $createdAt = $user->getCreatedAt();
+                    if ($createdAt) {
+                        $date = new DateTime($createdAt);
+                        $now = new DateTime();
+                        $interval = $date->diff($now);
+                        $years = $interval->y;
+                        if ($years > 0) {
+                            echo $years . ' an' . ($years > 1 ? 's' : '');
+                        } else {
+                            echo 'moins d\'un an';
+                        }
+                    } else {
+                        echo 'récemment';
+                    }
+                    ?>
+                </p>
+                
+                <div class="user-library-info">
+                    <h3 class="library-title">BIBLIOTHÈQUE</h3>
+                    <div class="library-count">
+                        <span class="book-icon">📚</span>
+                        <span><?= count($userBooks) ?> livre<?= count($userBooks) > 1 ? 's' : '' ?></span>
                     </div>
                 </div>
-                <h1 class="profile-title"><?= e($user->getUsername()) ?></h1>
-                <p class="profile-subtitle">Profil public</p>
+                
+                <?php if (Session::isLoggedIn() && Session::getUserId() != $user->getId()): ?>
+                    <a href="<?= BASE_URL ?>messages/compose/<?= $user->getId() ?>" class="btn-write-message">
+                        Écrire un message
+                    </a>
+                <?php endif; ?>
             </div>
-
-            <!-- Informations publiques -->
-            <div class="profile-info">
-                <div class="profile-info-item">
-                    <span class="info-label">Membre depuis :</span>
-                    <span class="info-value">
-                        <?php 
-                        $createdAt = $user->getCreatedAt();
-                        if ($createdAt) {
-                            $date = new DateTime($createdAt);
-                            echo $date->format('F Y');
-                        } else {
-                            echo 'Date inconnue';
-                        }
-                        ?>
-                    </span>
+        </div>
+        
+        <!-- Colonne droite : Liste des livres -->
+        <div class="user-books-section">
+            <?php if (empty($userBooks)): ?>
+                <div class="no-books-message">
+                    <p><?= e($user->getUsername()) ?> n'a pas encore ajouté de livres.</p>
                 </div>
-            </div>
-
-            <!-- Statistiques -->
-            <div class="profile-stats">
-                <div class="stat-item">
-                    <span class="stat-value">0</span>
-                    <span class="stat-label">Livres partagés</span>
-                </div>
-            </div>
-
-            <!-- Actions (futures fonctionnalités) -->
-            <div class="profile-actions">
-                <a href="<?= BASE_URL?>books?user_id=<?= $user->getId()?>" class="btn btn-primary">
-                    Voir ses livres
-                </a>
-                <?php if (Session::isLoggedIn() && Session::get('user_id') != $user->getId()): ?>
-                <a href="<?= BASE_URL?>messages/new?to=<?= $user->getId()?>" class="btn btn-secondary">
-                    Envoyer un message
-                </a>
-                <?php endif?>
-            </div>
+            <?php else: ?>
+                <table class="books-table">
+                    <thead>
+                        <tr>
+                            <th>PHOTO</th>
+                            <th>TITRE</th>
+                            <th>AUTEUR</th>
+                            <th>DESCRIPTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($userBooks as $book): ?>
+                            <tr>
+                                <td class="book-photo-cell">
+                                    <?php if ($book->getImage()): ?>
+                                        <img src="<?= $book->getImagePath() ?>" 
+                                             alt="<?= e($book->getTitle()) ?>" 
+                                             class="book-thumbnail">
+                                    <?php else: ?>
+                                        <div class="book-thumbnail-placeholder">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="book-title-cell">
+                                    <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>">
+                                        <?= e($book->getTitle()) ?>
+                                    </a>
+                                </td>
+                                <td class="book-author-cell">
+                                    <?= e($book->getAuthor()) ?>
+                                </td>
+                                <td class="book-description-cell">
+                                    <?php if ($book->getDescription()): ?>
+                                        <?= e($book->getShortDescription(150)) ?>
+                                    <?php else: ?>
+                                        <span class="no-description">Aucune description</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
         </div>
     </div>
 </div>

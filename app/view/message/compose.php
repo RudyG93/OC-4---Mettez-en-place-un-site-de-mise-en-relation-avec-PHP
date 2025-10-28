@@ -63,8 +63,7 @@ $activePage = 'messagerie';
                     maxlength="1000"
                     required></textarea>
                 <div class="form-meta">
-                    <span class="char-counter">0/1000 caractères</span>
-                    <small class="form-help">Conseil : Présentez-vous et expliquez pourquoi vous souhaitez entrer en contact.</small>
+                    <small class="form-help">Maximum 1000 caractères. Présentez-vous et expliquez pourquoi vous souhaitez entrer en contact.</small>
                 </div>
             </div>
 
@@ -339,56 +338,3 @@ $activePage = 'messagerie';
     }
 }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const messageContent = document.getElementById('messageContent');
-    const charCounter = document.querySelector('.char-counter');
-    const submitButton = document.querySelector('button[type="submit"]');
-    const composeForm = document.getElementById('composeForm');
-
-    // Gestion du compteur de caractères
-    messageContent.addEventListener('input', function() {
-        const length = this.value.length;
-        charCounter.textContent = `${length}/1000 caractères`;
-        
-        // Activer/désactiver le bouton d'envoi
-        submitButton.disabled = length === 0 || length > 1000;
-        
-        // Changer la couleur du compteur quand on approche de la limite
-        if (length > 900) {
-            charCounter.style.color = '#dc3545';
-        } else if (length > 800) {
-            charCounter.style.color = '#fd7e14';
-        } else {
-            charCounter.style.color = '#666';
-        }
-    });
-
-    // Gestion de l'envoi du formulaire
-    composeForm.addEventListener('submit', function(e) {
-        const content = messageContent.value.trim();
-        
-        if (content.length === 0) {
-            e.preventDefault();
-            alert('Veuillez saisir un message.');
-            messageContent.focus();
-            return;
-        }
-        
-        if (content.length > 1000) {
-            e.preventDefault();
-            alert('Votre message dépasse la limite de 1000 caractères.');
-            messageContent.focus();
-            return;
-        }
-        
-        // Désactiver le bouton pendant l'envoi
-        submitButton.disabled = true;
-        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
-    });
-
-    // Focus automatique sur le textarea
-    messageContent.focus();
-});
-</script>

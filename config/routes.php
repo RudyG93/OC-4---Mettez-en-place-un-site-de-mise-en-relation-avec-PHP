@@ -16,8 +16,8 @@ return [
     
     // Mon compte
     'mon-compte' => ['controller' => 'Profile', 'action' => 'view'],
-    'mon-compte/modifier' => ['controller' => 'Profile', 'action' => 'edit'],
     'mon-compte/update' => ['controller' => 'Profile', 'action' => 'update'],
+    'mon-compte/update-avatar' => ['controller' => 'Profile', 'action' => 'updateAvatar'],
     'profil/{id}' => ['controller' => 'Profile', 'action' => 'show'],
     
     // Livres
@@ -25,9 +25,7 @@ return [
     'livre/{id}' => ['controller' => 'Book', 'action' => 'show'],
     'livre/recherche' => ['controller' => 'Book', 'action' => 'search'],
     
-    // Bibliothèque personnelle
-    'book/my-books' => ['controller' => 'Book', 'action' => 'myBooks'],
-    'book/add' => ['controller' => 'Book', 'action' => 'add'],
+    // Gestion des livres
     'book/create' => ['controller' => 'Book', 'action' => 'create'],
     'book/{id}/edit' => ['controller' => 'Book', 'action' => 'edit'],
     'book/{id}/update' => ['controller' => 'Book', 'action' => 'update'],

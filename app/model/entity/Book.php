@@ -150,7 +150,7 @@ class Book extends Entity
      */
     public function getAvailabilityText()
     {
-        return $this->isAvailable() ? 'Disponible' : 'Non disponible';
+        return $this->isAvailable() ? 'disponible' : 'non dispo.';
     }
 
     /**
