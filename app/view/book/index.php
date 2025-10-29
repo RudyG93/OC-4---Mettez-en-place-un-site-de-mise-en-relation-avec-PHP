@@ -17,7 +17,6 @@ $searchTerm = $searchTerm ?? '';
         <!-- En-tête -->
         <div class="books-header">
             <h1 class="books-title">Nos livres à l'échange</h1>
-            <p class="books-subtitle">Découvrez tous les livres disponibles de la communauté TomTroc</p>
             
             <!-- Barre de recherche -->
             <div class="search-container">
@@ -26,7 +25,7 @@ $searchTerm = $searchTerm ?? '';
                         <input type="text" 
                                name="q" 
                                class="search-input" 
-                               placeholder="Rechercher un livre ou un auteur..."
+                               placeholder="Rechercher un livre"
                                value="<?= e($searchTerm) ?>"
                                autocomplete="off">
                         <?php if (!empty($searchTerm)): ?>
@@ -113,7 +112,7 @@ $searchTerm = $searchTerm ?? '';
                                         <?= e($book->getTitle()) ?>
                                     </a>
                                 </h3>
-                                <p class="book-author">par <?= e($book->getAuthor()) ?></p>
+                                <p class="book-author"><?= e($book->getAuthor()) ?></p>
                                 
                                 <?php if ($book->getDescription()): ?>
                                     <p class="book-description"><?= e($book->getShortDescription(120)) ?></p>
@@ -122,7 +121,7 @@ $searchTerm = $searchTerm ?? '';
                                 <div class="book-meta">
                                     <div class="book-owner">
                                         <i class="fas fa-user"></i>
-                                        <span>Par <?= e($owner['username']) ?></span>
+                                        <span>Vendu par : <?= e($owner['username']) ?></span>
                                     </div>
                                     
                                     <div class="book-date">

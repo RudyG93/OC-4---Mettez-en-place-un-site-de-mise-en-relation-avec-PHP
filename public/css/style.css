@@ -6,8 +6,12 @@
  */
 
 /* === IMPORTS === */
-@import url('global.css');      /* Styles globaux, layout, navigation, composants */
-@import url('auth.css');        /* Styles pour login et register */
-@import url('profile.css');     /* Styles pour les profils */
-@import url('book-edit.css');   /* Styles pour l'édition des livres */
+@import url('global.css');      /* Variables, reset, layout, navigation */
+@import url('components.css');  /* Composants réutilisables */
+@import url('auth.css');        /* Login & Register */
+@import url('books.css');       /* Liste publique des livres */
+@import url('book-edit.css');   /* Édition d'un livre */
+@import url('account.css');     /* Mon compte (page privée) */
+@import url('profile.css');     /* Profil public */
+
 
