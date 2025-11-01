@@ -13,8 +13,19 @@ $flash = Session::getFlash();
     <?php endif?>
 
     <div class="book-edit-content">
+        <!-- Lien retour -->
+        <a href="<?= BASE_URL ?>mon-compte" class="back-link">← retour</a>
+        
         <!-- Titre de la page -->
         <h1 class="page-title">Modifier les informations</h1>
+
+        <!-- Formulaire de suppression d'image (en dehors du formulaire principal) -->
+        <?php if ($book->getImage() && $book->getImage() !== 'book_placeholder.png'): ?>
+            <form method="POST" action="<?= BASE_URL ?>book/delete-image" class="image-delete-form-hidden" id="deleteImageForm" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette photo ?');">
+                <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
+                <input type="hidden" name="book_id" value="<?= $book->getId() ?>">
+            </form>
+        <?php endif ?>
 
         <!-- Formulaire d'édition -->
         <form method="POST" action="<?= BASE_URL ?>book/<?= $book->getId() ?>/update" enctype="multipart/form-data" class="book-edit-form">
@@ -23,6 +34,7 @@ $flash = Session::getFlash();
             <div class="form-container">
                 <!-- Colonne gauche : Photo -->
                 <div class="photo-column">
+                    <label class="photo-label">Photo</label>
                     <div class="photo-wrapper">
                         <div class="photo-display" id="photoDisplay">
                             <?php if ($book->getImage()): ?>
@@ -36,9 +48,15 @@ $flash = Session::getFlash();
                             <?php endif?>
                         </div>
                         
-                        <label for="imageInput" class="btn-modify-photo">
-                            Modifier la photo
-                        </label>
+                        <div class="photo-actions-container">
+                            <label for="imageInput" class="link-modify-photo">
+                                Modifier la photo
+                            </label>
+                            
+                            <?php if ($book->getImage() && $book->getImage() !== 'book_placeholder.png'): ?>
+                                <button type="submit" form="deleteImageForm" class="link-delete-photo">Supprimer</button>
+                            <?php endif ?>
+                        </div>
                         
                         <input type="file" 
                                id="imageInput" 
@@ -101,20 +119,6 @@ $flash = Session::getFlash();
                 </div>
             </div>
         </form>
-        
-        <!-- Section suppression -->
-        <div class="delete-section">
-            <h3>Zone dangereuse</h3>
-            <p>La suppression d'un livre est irréversible.</p>
-            <form method="POST" action="<?= BASE_URL ?>book/<?= $book->getId() ?>/delete" 
-                  onsubmit="return confirm('Êtes-vous vraiment sûr de vouloir supprimer le livre « <?= e($book->getTitle()) ?> » ?\n\nCette action est irréversible.');">
-                <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
-                <button type="submit" class="btn btn-danger">
-                    <i class="fas fa-trash"></i>
-                    Supprimer définitivement ce livre
-                </button>
-            </form>
-        </div>
     </div>
 </div>
 

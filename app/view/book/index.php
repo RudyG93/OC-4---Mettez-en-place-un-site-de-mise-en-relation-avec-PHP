@@ -89,61 +89,24 @@ $searchTerm = $searchTerm ?? '';
                         $book = $bookData['book'];
                         $owner = $bookData['owner'];
                         ?>
-                        <div class="book-card">
-                            <div class="book-image">
-                                <?php if ($book->getImage()): ?>
+                        <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>" class="book-card-link">
+                            <div class="book-card">
+                                <div class="book-image">
                                     <img src="<?= $book->getImagePath() ?>" alt="<?= e($book->getTitle()) ?>">
-                                <?php else: ?>
-                                    <div class="book-placeholder">
-                                        <i class="fas fa-book"></i>
-                                    </div>
-                                <?php endif?>
-                                
-                                <div class="book-overlay">
-                                    <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-eye"></i> Voir le détail
-                                    </a>
                                 </div>
-                            </div>
-                            
-                            <div class="book-info">
-                                <h3 class="book-title">
-                                    <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>">
-                                        <?= e($book->getTitle()) ?>
-                                    </a>
-                                </h3>
-                                <p class="book-author"><?= e($book->getAuthor()) ?></p>
                                 
-                                <?php if ($book->getDescription()): ?>
-                                    <p class="book-description"><?= e($book->getShortDescription(120)) ?></p>
-                                <?php endif?>
-                                
-                                <div class="book-meta">
-                                    <div class="book-owner">
-                                        <i class="fas fa-user"></i>
-                                        <span>Vendu par : <?= e($owner['username']) ?></span>
-                                    </div>
+                                <div class="book-info">
+                                    <h3 class="book-title"><?= e($book->getTitle()) ?></h3>
+                                    <p class="book-author"><?= e($book->getAuthor()) ?></p>
                                     
-                                    <div class="book-date">
-                                        <i class="fas fa-calendar"></i>
-                                        <span><?= date('d/m/Y', strtotime($book->getCreatedAt())) ?></span>
+                                    <div class="book-meta">
+                                        <div class="book-owner">
+                                            <span>Vendu par : <?= e($owner['username']) ?></span>
+                                        </div>
                                     </div>
                                 </div>
-                                
-                                <div class="book-actions">
-                                    <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>" class="btn btn-outline-primary">
-                                        Voir ce livre
-                                    </a>
-                                    <?php if (Session::isLoggedIn()): ?>
-                                        <button class="btn btn-outline-secondary btn-contact" 
-                                                data-book-id="<?= $book->getId() ?>"
-                                                data-owner-id="<?= $book->getUserId() ?>">
-                                            <i class="fas fa-envelope"></i> Contacter
-                                        </button>
-                                    <?php endif?>
-                                </div>
                             </div>
-                        </div>
+                        </a>
                     <?php endforeach?>
                 </div>
             <?php endif?>

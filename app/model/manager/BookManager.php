@@ -67,6 +67,37 @@ class BookManager extends Model
     }
 
     /**
+     * Récupère les derniers livres ajoutés
+     */
+    public function getLatestBooks($limit = 4)
+    {
+        $sql = "SELECT b.id, b.user_id, b.title, b.author, b.image, b.description, b.is_available, b.created_at, b.updated_at,
+                       u.username
+                FROM books b
+                INNER JOIN users u ON b.user_id = u.id
+                ORDER BY b.created_at DESC
+                LIMIT :limit";
+        
+        $query = $this->db->prepare($sql);
+        $query->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $query->execute();
+        
+        $books = [];
+        while ($bookData = $query->fetch(PDO::FETCH_ASSOC)) {
+            $book = new Book();
+            $book->hydrate($bookData);
+            $books[] = [
+                'book' => $book,
+                'owner' => [
+                    'username' => $bookData['username']
+                ]
+            ];
+        }
+        
+        return $books;
+    }
+
+    /**
      * Crée un nouveau livre
      */
     public function createBook($bookData)

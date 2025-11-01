@@ -81,10 +81,14 @@ class MessageController extends Controller {
         // Marquer la conversation comme lue
         $this->getMessageManager()->markConversationAsRead($userId, $otherUserId);
 
+        // Récupérer toutes les conversations pour la sidebar
+        $conversations = $this->getMessageManager()->getConversations($userId);
+
         $this->render('message/conversation', [
             'messages' => $messages,
             'otherUser' => $otherUser,
             'currentUser' => $currentUser,
+            'conversations' => $conversations,
             'csrfToken' => Session::generateCsrfToken(),
             'pageTitle' => 'Conversation avec ' . $otherUser->getUsername()
         ]);
@@ -96,68 +100,71 @@ class MessageController extends Controller {
     public function send() {
         // Vérifier que l'utilisateur est connecté
         if (!Session::isLoggedIn()) {
-            echo json_encode(['success' => false, 'message' => 'Vous devez être connecté']);
-            exit;
+            Session::setFlash('error', 'Vous devez être connecté');
+            $this->redirect('login');
+            return;
+        }
+
+        // Vérifier que c'est une requête POST
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('messages');
+            return;
         }
 
         // Vérifier le token CSRF
         if (!Session::verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-            echo json_encode(['success' => false, 'message' => 'Token de sécurité invalide']);
-            exit;
+            Session::setFlash('error', 'Token de sécurité invalide');
+            $this->redirect('messages');
+            return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userId = Session::getUserId();
-            $recipientId = (int) ($_POST['recipient_id'] ?? 0);
-            $content = trim($_POST['content'] ?? '');
+        $userId = Session::getUserId();
+        $recipientId = (int) ($_POST['recipient_id'] ?? 0);
+        $content = trim($_POST['content'] ?? '');
 
-            // Validation
-            $errors = [];
-            
-            if (empty($content)) {
-                $errors[] = 'Le message ne peut pas être vide';
-            }
-            
-            if (strlen($content) > 1000) {
-                $errors[] = 'Le message ne peut pas dépasser 1000 caractères';
-            }
-
-            if (!$recipientId || $recipientId === $userId) {
-                $errors[] = 'Destinataire invalide';
-            }
-
-            // Vérifier que le destinataire existe
-            $recipient = $this->getUserManager()->findById($recipientId);
-            if (!$recipient) {
-                $errors[] = 'Destinataire introuvable';
-            }
-
-            if (empty($errors)) {
-                $messageId = $this->getMessageManager()->sendMessage(
-                    $userId,
-                    $recipientId,
-                    $content
-                );
-
-                if ($messageId) {
-                    echo json_encode([
-                        'success' => true, 
-                        'message' => 'Message envoyé avec succès',
-                        'messageId' => $messageId
-                    ]);
-                    exit;
-                } else {
-                    $errors[] = 'Erreur lors de l\'envoi du message';
-                }
-            }
-
-            // En cas d'erreur
-            echo json_encode(['success' => false, 'message' => implode(', ', $errors)]);
-            exit;
+        // Validation
+        $errors = [];
+        
+        if (empty($content)) {
+            $errors[] = 'Le message ne peut pas être vide';
+        }
+        
+        if (strlen($content) > 1000) {
+            $errors[] = 'Le message ne peut pas dépasser 1000 caractères';
         }
 
-        // Si ce n'est pas POST, rediriger vers les messages
-        $this->redirect('/messages');
+        if (!$recipientId || $recipientId === $userId) {
+            $errors[] = 'Destinataire invalide';
+        }
+
+        // Vérifier que le destinataire existe
+        $recipient = $this->getUserManager()->findById($recipientId);
+        if (!$recipient) {
+            $errors[] = 'Destinataire introuvable';
+        }
+
+        if (empty($errors)) {
+            $messageId = $this->getMessageManager()->sendMessage(
+                $userId,
+                $recipientId,
+                $content
+            );
+
+            if ($messageId) {
+                $this->redirect('messages/conversation/' . $recipientId);
+                return;
+            } else {
+                $errors[] = 'Erreur lors de l\'envoi du message';
+            }
+        }
+
+        // En cas d'erreur, rediriger vers la conversation avec le message d'erreur
+        Session::setFlash('error', implode(', ', $errors));
+        if ($recipientId) {
+            $this->redirect('messages/conversation/' . $recipientId);
+        } else {
+            $this->redirect('messages');
+        }
     }
 
     /**
@@ -167,40 +174,34 @@ class MessageController extends Controller {
         // Vérifier que l'utilisateur est connecté
         if (!Session::isLoggedIn()) {
             Session::setFlash('error', 'Vous devez être connecté pour envoyer un message');
-            $this->redirect('/login');
+            $this->redirect('login');
+            return;
         }
 
         if (!$recipientId) {
             Session::setFlash('error', 'Destinataire non spécifié');
-            $this->redirect('/messages');
+            $this->redirect('messages');
+            return;
         }
 
         $userId = Session::getUserId();
-        $currentUser = $this->getUserManager()->findById($userId);
 
         // Vérifier que le destinataire existe
         $recipient = $this->getUserManager()->findById($recipientId);
         if (!$recipient) {
             Session::setFlash('error', 'Destinataire introuvable');
-            $this->redirect('/messages');
+            $this->redirect('messages');
+            return;
         }
 
         // Vérifier qu'on n'essaie pas de s'envoyer un message à soi-même
         if ($recipientId == $userId) {
             Session::setFlash('error', 'Vous ne pouvez pas vous envoyer un message à vous-même');
-            $this->redirect('/messages');
+            $this->redirect('messages');
+            return;
         }
 
-        // Si une conversation existe déjà, rediriger vers celle-ci
-        if ($this->getMessageManager()->hasConversation($userId, $recipientId)) {
-            $this->redirect('/messages/conversation/' . $recipientId);
-        }
-
-        $this->render('message/compose', [
-            'recipient' => $recipient,
-            'currentUser' => $currentUser,
-            'csrfToken' => Session::generateCsrfToken(),
-            'pageTitle' => 'Nouveau message à ' . $recipient->getUsername()
-        ]);
+        // Rediriger directement vers la conversation (même si elle est vide)
+        $this->redirect('messages/conversation/' . $recipientId);
     }
 }

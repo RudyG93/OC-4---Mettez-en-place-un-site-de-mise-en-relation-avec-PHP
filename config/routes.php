@@ -18,6 +18,7 @@ return [
     'mon-compte' => ['controller' => 'Profile', 'action' => 'view'],
     'mon-compte/update' => ['controller' => 'Profile', 'action' => 'update'],
     'mon-compte/update-avatar' => ['controller' => 'Profile', 'action' => 'updateAvatar'],
+    'mon-compte/delete-avatar' => ['controller' => 'Profile', 'action' => 'deleteAvatar'],
     'profil/{id}' => ['controller' => 'Profile', 'action' => 'show'],
     
     // Livres
@@ -27,10 +28,11 @@ return [
     
     // Gestion des livres
     'book/create' => ['controller' => 'Book', 'action' => 'create'],
+    'book/delete-image' => ['controller' => 'Book', 'action' => 'deleteImage'],
+    'book/{id}/toggle-availability' => ['controller' => 'Book', 'action' => 'toggleAvailability'],
     'book/{id}/edit' => ['controller' => 'Book', 'action' => 'edit'],
     'book/{id}/update' => ['controller' => 'Book', 'action' => 'update'],
     'book/{id}/delete' => ['controller' => 'Book', 'action' => 'delete'],
-    'book/{id}/toggle-availability' => ['controller' => 'Book', 'action' => 'toggleAvailability'],
     
     // Messagerie
     'messages' => ['controller' => 'Message', 'action' => 'index'],

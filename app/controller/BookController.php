@@ -70,10 +70,12 @@ class BookController extends Controller
         ]);
         
         // Gestion de l'upload d'image
-        $imageName = null;
+        $imageName = 'book_placeholder.png'; // Par défaut, utiliser le placeholder
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $imageName = $this->handleImageUpload($_FILES['image']);
-            if (!$imageName) {
+            $uploadedImage = $this->handleImageUpload($_FILES['image']);
+            if ($uploadedImage) {
+                $imageName = $uploadedImage;
+            } else {
                 $errors['image'] = 'Erreur lors de l\'upload de l\'image.';
             }
         }
@@ -234,8 +236,8 @@ class BookController extends Controller
             $newImageName = $this->handleImageUpload($_FILES['image']);
             
             if ($newImageName) {
-                // Supprimer l'ancienne image si elle existe
-                if ($book->getImage()) {
+                // Supprimer l'ancienne image si elle existe et que ce n'est pas le placeholder
+                if ($book->getImage() && $book->getImage() !== 'book_placeholder.png') {
                     $oldImagePath = 'uploads/books/' . $book->getImage();
                     if (file_exists($oldImagePath)) {
                         unlink($oldImagePath);
@@ -325,6 +327,77 @@ class BookController extends Controller
         }
         
         $this->redirect('mon-compte');
+    }
+
+    /**
+     * Supprime l'image d'un livre
+     */
+    public function deleteImage(): void
+    {
+        $this->requireAuth();
+        
+        if (!$this->isPost()) {
+            $this->redirect('mon-compte');
+            return;
+        }
+
+        // Récupérer l'ID du livre depuis le POST
+        $id = (int) $this->getPost('book_id', 0);
+        
+        if ($id === 0) {
+            Session::setFlash('error', 'ID du livre invalide.');
+            $this->redirect('mon-compte');
+            return;
+        }
+
+        $book = $this->bookManager->findById($id);
+        
+        if (!$book) {
+            Session::setFlash('error', 'Livre introuvable.');
+            $this->redirect('mon-compte');
+            return;
+        }
+
+        // Vérifier que l'utilisateur est le propriétaire du livre
+        if ($book->getUserId() !== Session::getUserId()) {
+            Session::setFlash('error', 'Vous n\'êtes pas autorisé à modifier ce livre.');
+            $this->redirect('mon-compte');
+            return;
+        }
+
+        // Valider le token CSRF
+        if (!isset($_POST['csrf_token']) || !Session::verifyCsrfToken($_POST['csrf_token'])) {
+            Session::setFlash('error', 'Token de sécurité invalide.');
+            $this->redirect('book/' . $id . '/edit');
+            return;
+        }
+
+        // Supprimer le fichier image si ce n'est pas le placeholder
+        if ($book->getImage() && $book->getImage() !== 'book_placeholder.png') {
+            $imagePath = 'uploads/books/' . $book->getImage();
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        // Mettre à jour le livre avec le placeholder
+        $bookData = [
+            'title' => $book->getTitle(),
+            'author' => $book->getAuthor(),
+            'image' => 'book_placeholder.png',
+            'description' => $book->getDescription(),
+            'is_available' => $book->isAvailable() ? 1 : 0
+        ];
+
+        $updatedBook = $this->bookManager->updateBook($id, $bookData);
+        
+        if ($updatedBook) {
+            Session::setFlash('success', 'Image supprimée avec succès !');
+        } else {
+            Session::setFlash('error', 'Erreur lors de la suppression de l\'image.');
+        }
+        
+        $this->redirect('book/' . $id . '/edit');
     }
 
     /**

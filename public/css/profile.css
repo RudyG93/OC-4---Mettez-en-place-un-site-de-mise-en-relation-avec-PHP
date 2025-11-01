@@ -3,27 +3,33 @@
  * Page de visualisation du profil d'un utilisateur
  */
 
+/* === PAGE WRAPPER === */
+.main-content {
+    background-color: var(--bg-light);
+}
+
 /* === PAGE LAYOUT === */
 .public-profile-container {
     max-width: 1200px;
-    margin: 3rem auto;
-    padding: 0 2rem;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    background-color: var(--bg-light);
+    min-height: calc(100vh - 300px); /* Assure que la page tienne en une seule page avec footer visible */
 }
 
 .public-profile-content {
     display: grid;
     grid-template-columns: 350px 1fr;
     gap: 3rem;
+    align-items: start;
 }
 
 /* === SIDEBAR UTILISATEUR === */
 .user-info-sidebar {
     background: white;
-    border-radius: 12px;
+    border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    position: sticky;
-    top: 2rem;
+    height: fit-content;
 }
 
 .user-avatar-section {
@@ -36,7 +42,6 @@
     margin: 0 auto 1.5rem;
     border-radius: 50%;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .user-avatar .avatar-image {
@@ -105,8 +110,9 @@
     display: block;
     width: 100%;
     padding: 0.9rem 1.5rem;
-    background: linear-gradient(135deg, var(--third-color) 0%, #00d97e 100%);
-    color: white;
+    background: var(--bg-color);
+    color: var(--third-color);
+    border: 2px solid var(--third-color);
     text-align: center;
     text-decoration: none;
     border-radius: 8px;
@@ -114,20 +120,18 @@
     font-size: 1rem;
     margin-top: 1.5rem;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 172, 102, 0.3);
 }
 
 .btn-write-message:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 172, 102, 0.4);
+    background: var(--third-color);
+    color: white;
 }
 
 /* === SECTION LIVRES === */
 .user-books-section {
     background: white;
-    border-radius: 12px;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .no-books-message {
@@ -143,27 +147,29 @@
 }
 
 .books-table thead {
-    background-color: #f8f9fa;
+    background-color: white;
 }
 
 .books-table thead th {
     padding: 1rem 1.5rem;
     text-align: left;
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.7rem;
+    font-weight: 600;
     letter-spacing: 0.5px;
-    color: #95a5a6;
     text-transform: uppercase;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
-.books-table tbody tr {
-    border-bottom: 1px solid #f0f0f0;
-    transition: background-color 0.2s;
+.books-table tbody tr:nth-child(odd) {
+    background-color: white;
+}
+
+.books-table tbody tr:nth-child(even) {
+    background-color: #EDF2F6;
 }
 
 .books-table tbody tr:hover {
-    background-color: #f8f9fa;
+    opacity: 0.9;
 }
 
 .books-table tbody td {
@@ -177,15 +183,14 @@
 
 .book-thumbnail {
     width: 80px;
-    height: 100px;
+    height: 80px;
     object-fit: cover;
     border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .book-thumbnail-placeholder {
     width: 80px;
-    height: 100px;
+    height: 80px;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     border-radius: 6px;
     display: flex;
@@ -204,27 +209,24 @@
 .book-title-cell a {
     color: var(--text-color);
     text-decoration: none;
-    transition: color 0.2s;
-}
-
-.book-title-cell a:hover {
-    color: var(--third-color);
 }
 
 .book-author-cell {
-    color: #7f8c8d;
-    font-style: italic;
+    color: var(--text-color);
+    font-weight: 400;
+    font-style: normal;
     width: 20%;
 }
 
 .book-description-cell {
-    color: #5a6c7d;
+    color: var(--text-color);
     line-height: 1.6;
     font-size: 0.95rem;
+    font-style: italic;
 }
 
 .no-description {
-    color: #bdc3c7;
+    color: var(--text-color);
     font-style: italic;
 }
 

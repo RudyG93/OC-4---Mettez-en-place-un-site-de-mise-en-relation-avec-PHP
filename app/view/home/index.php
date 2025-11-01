@@ -1,48 +1,121 @@
-<?php $activePage = 'home'?>
-<div class="hero">
-    <div class="container">
-        <h1 class="hero-title"><?= e($heading)?></h1>
-        <p class="hero-subtitle"><?= e($message)?></p>
-    </div>
+<?php $activePage = 'home' ?>
+
+<link rel="stylesheet" href="<?= BASE_URL ?>css/home.css">
+
+<div class="home-container">
+    <!-- Bloc 1 - Fond #F5F3EF -->
+    <section class="home-block-1">
+        <div class="block-1-content">
+            <div class="block-1-left">
+                <h2>Rejoignez nos lecteurs passionnés</h2>
+                <p>
+                    Donnez une nouvelle vie à vos livres en les échangeant avec d'autres amoureux de la lecture.
+                    Nous croyons en la magie du partage de connaissances et d'histoires à travers les livres.
+                </p>
+                <a href="<?= BASE_URL ?>nos-livres" class="btn-discover">Découvrir</a>
+            </div>
+            
+            <div class="block-1-right">
+                <img src="<?= BASE_URL ?>assets/hamza-home.png" alt="Hamza">
+                <p class="image-caption">Hamza</p>
+            </div>
+        </div>
+    </section>
 </div>
 
-<section class="features-section">
-    <div class="container">
-        <h2 class="section-title">Architecture du projet</h2>
-        <div class="features-grid">
-            <?php foreach ($features as $feature): ?>
-                <div class="feature-card">
-                    <div class="feature-icon">✓</div>
-                    <h3 class="feature-title"><?= e($feature)?></h3>
-                </div>
-            <?php endforeach?>
+<!-- Bloc 2 - Fond #FAF9F7 -->
+<section class="home-block-2">
+    <div class="home-container">
+        <h2>Les derniers livres ajoutés</h2>
+        
+        <div class="latest-books-grid">
+            <?php foreach ($latestBooks as $bookData): 
+                $book = $bookData['book'];
+                $owner = $bookData['owner'];
+            ?>
+                <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>" class="book-card-link">
+                    <div class="book-card">
+                        <div class="book-image">
+                            <?php if ($book->getImage()): ?>
+                                <img src="<?= $book->getImagePath() ?>" alt="<?= e($book->getTitle()) ?>">
+                            <?php else: ?>
+                                <div class="book-placeholder">📚</div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="book-info">
+                            <h3 class="book-title"><?= e($book->getTitle()) ?></h3>
+                            <p class="book-author"><?= e($book->getAuthor()) ?></p>
+                            <p class="book-owner">
+                                <span>Vendu par: <?= e($owner['username']) ?></span>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        
+        <div class="block-2-action">
+            <a href="<?= BASE_URL ?>nos-livres" class="btn-see-all">Voir tous les livres</a>
         </div>
     </div>
 </section>
 
-<section class="info-section">
-    <div class="container">
-        <div class="info-box">
-            <h2>Prochaines étapes</h2>
-            <ul class="info-list">
-                <li>✅ Structure MVC créée</li>
-                <li>✅ Base de données SQL définie</li>
-                <li>✅ Système de routage fonctionnel</li>
-                <li>✅ Classes core implémentées</li>
-                <li>⏳ Système d'authentification (à venir)</li>
-                <li>⏳ Gestion des livres (à venir)</li>
-                <li>⏳ Messagerie (à venir)</li>
-            </ul>
+<div class="home-container">
+    <!-- Bloc 3 - Fond #F5F3EF -->
+    <section class="home-block-3">
+        <h2>Comment ça marche ?</h2>
+        <p class="block-3-subtitle">
+            Échanger des livres avec TomTroc c'est simple et amusant ! Suivez ces étapes pour commencer :
+        </p>
+        
+        <div class="steps-grid">
+            <div class="step-card">
+                <p>Inscrivez-vous gratuitement sur notre plateforme.</p>
+            </div>
+            <div class="step-card">
+                <p>Ajoutez les livres que vous souhaitez échanger à votre profil.</p>
+            </div>
+            <div class="step-card">
+                <p>Parcourez les livres disponibles chez d'autres membres.</p>
+            </div>
+            <div class="step-card">
+                <p>Proposez un échange et discutez avec d'autres passionnés de lecture.</p>
+            </div>
         </div>
         
-        <div class="info-box">
-            <h2>Installation de la base de données</h2>
-            <p>Pour initialiser la base de données :</p>
-            <ol class="info-list">
-                <li>Importez le fichier <code>sql/database.sql</code> dans phpMyAdmin</li>
-                <li>Configurez vos identifiants dans <code>config/config.local.php</code></li>
-                <li>La base contient des données de test pour démarrer rapidement</li>
-            </ol>
+        <div class="block-3-action">
+            <a href="<?= BASE_URL ?>nos-livres" class="btn-see-all-outline">Voir tous les livres</a>
         </div>
-    </div>
-</section>
+    </section>
+</div>
+
+<!-- Image bandeau séparateur -->
+<div class="home-banner">
+    <img src="<?= BASE_URL ?>assets/bandeau-home.png" alt="Bannière TomTroc">
+</div>
+
+<div class="home-container">
+    <!-- Bloc 4 - Fond #F5F3EF -->
+    <section class="home-block-4">
+        <h2>Nos valeurs</h2>
+        <div class="block-4-content">
+            <p>
+                Chez Tom Troc, nous mettons l'accent sur le partage, la découverte et la communauté. 
+                Nos valeurs sont ancrées dans notre passion pour les livres et notre désir de créer des liens entre les lecteurs. 
+                Nous croyons en la puissance des histoires pour rassembler les gens et inspirer des conversations enrichissantes.
+            </p>
+            <p>
+                Notre association a été fondée avec une conviction profonde : chaque livre mérite d'être lu et partagé. 
+            </p>
+            <p>
+                Nous sommes passionnés par la création d'une plateforme conviviale qui permet aux lecteurs de se connecter, 
+                de partager leurs découvertes littéraires et d'échanger des livres qui attendent patiemment sur les étagères.
+            </p>
+        </div>
+        
+        <div class="block-4-signature">
+            <img src="<?= BASE_URL ?>assets/heart-home.svg" alt="Signature">
+            <p>L'équipe Tom Troc</p>
+        </div>
+    </section>
+</div>

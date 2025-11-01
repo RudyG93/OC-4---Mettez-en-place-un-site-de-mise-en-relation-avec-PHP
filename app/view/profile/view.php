@@ -17,30 +17,39 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                 <!-- BLOC 1: PROFIL UTILISATEUR (GAUCHE) -->
                 <div class="profile-user-block">
                     <div class="profile-avatar">
-                        <?php if ($user->getAvatar()): ?>
+                        <?php if ($user->getAvatar() && $user->getAvatar() !== 'pp_placeholder.png'): ?>
                             <img src="<?= BASE_URL ?>uploads/avatars/<?= e($user->getAvatar()) ?>" 
                                  alt="Avatar de <?= e($user->getUsername()) ?>" 
                                  class="avatar-image">
                         <?php else: ?>
-                            <div class="avatar-placeholder">
-                                <?= strtoupper(substr($user->getUsername(), 0, 1)) ?>
-                            </div>
+                            <img src="<?= BASE_URL ?>uploads/avatars/pp_placeholder.png" 
+                                 alt="Avatar par défaut" 
+                                 class="avatar-image">
                         <?php endif; ?>
                     </div>
                     
-                    <!-- Formulaire de modification d'avatar inline -->
-                    <form method="POST" action="<?= BASE_URL ?>mon-compte/update-avatar" enctype="multipart/form-data" class="avatar-upload-form">
-                        <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
-                        <label for="avatar-upload" class="btn-modify-avatar">
-                            Modifier
-                        </label>
-                        <input type="file" 
-                               id="avatar-upload" 
-                               name="avatar" 
-                               accept="image/jpeg,image/png,image/gif"
-                               style="display: none;"
-                               onchange="if(confirm('Voulez-vous vraiment changer votre avatar ?')) this.form.submit();">
-                    </form>
+                    <!-- Boutons de gestion d'avatar -->
+                    <div class="avatar-actions">
+                        <form method="POST" action="<?= BASE_URL ?>mon-compte/update-avatar" enctype="multipart/form-data" class="avatar-upload-form">
+                            <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
+                            <label for="avatar-upload" class="btn-modify-avatar">
+                                Modifier
+                            </label>
+                            <input type="file" 
+                                   id="avatar-upload" 
+                                   name="avatar" 
+                                   accept="image/jpeg,image/png,image/gif"
+                                   style="display: none;"
+                                   onchange="if(confirm('Voulez-vous vraiment changer votre avatar ?')) this.form.submit();">
+                        </form>
+                        
+                        <?php if ($user->getAvatar() && $user->getAvatar() !== 'pp_placeholder.png'): ?>
+                            <form method="POST" action="<?= BASE_URL ?>mon-compte/delete-avatar" class="avatar-delete-form" onsubmit="return confirm('Voulez-vous vraiment supprimer votre photo de profil ?');">
+                                <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
+                                <button type="submit" class="btn-delete-avatar">Supprimer</button>
+                            </form>
+                        <?php endif; ?>
+                    </div>
                     
                     <h1 class="profile-username"><?= e($user->getUsername()) ?></h1>
                     
@@ -158,7 +167,7 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                             <a href="#add-book-modal" class="btn-add-book">Ajouter mon premier livre</a>
                         </div>
                     <?php else: ?>
-                        <table class="books-table">
+                        <table class="account-books-table">
                             <thead>
                                 <tr>
                                     <th>PHOTO</th>
@@ -173,13 +182,7 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                                 <?php foreach ($userBooks as $book): ?>
                                     <tr>
                                         <td>
-                                            <?php if ($book->getImage()): ?>
-                                                <img src="<?= e($book->getImagePath()) ?>" alt="Couverture de <?= e($book->getTitle()) ?>" class="book-cover">
-                                            <?php else: ?>
-                                                <div class="book-cover-placeholder">
-                                                    📚
-                                                </div>
-                                            <?php endif?>
+                                            <img src="<?= e($book->getImagePath()) ?>" alt="Couverture de <?= e($book->getTitle()) ?>" class="book-cover">
                                         </td>
                                         <td>
                                             <div class="book-title"><?= e($book->getTitle()) ?></div>

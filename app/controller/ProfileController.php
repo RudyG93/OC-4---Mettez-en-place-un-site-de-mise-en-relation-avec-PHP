@@ -213,9 +213,9 @@ class ProfileController extends Controller
 
         // Déplacer le fichier uploadé
         if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-            // Supprimer l'ancien avatar s'il existe
+            // Supprimer l'ancien avatar s'il existe et que ce n'est pas le placeholder
             $currentUser = $this->getCurrentUser();
-            if ($currentUser->getAvatar()) {
+            if ($currentUser->getAvatar() && $currentUser->getAvatar() !== 'pp_placeholder.png') {
                 $oldAvatarPath = $uploadDir . $currentUser->getAvatar();
                 if (file_exists($oldAvatarPath)) {
                     unlink($oldAvatarPath);
@@ -236,6 +236,54 @@ class ProfileController extends Controller
             }
         } else {
             Session::setFlash('error', 'Erreur lors de l\'upload du fichier.');
+        }
+
+        $this->redirect('mon-compte');
+    }
+
+    /**
+     * Supprime l'avatar de l'utilisateur connecté
+     */
+    public function deleteAvatar(): void
+    {
+        // Vérifier que l'utilisateur est connecté
+        $this->requireAuth();
+
+        // Vérifier que la requête est en POST
+        if (!$this->isPost()) {
+            $this->redirect('mon-compte');
+        }
+
+        // Valider le token CSRF
+        $this->validateCsrf('mon-compte');
+
+        // Récupérer l'utilisateur actuel
+        $currentUser = $this->getCurrentUser();
+
+        // Vérifier qu'il a bien un avatar
+        if (!$currentUser->getAvatar()) {
+            Session::setFlash('error', 'Aucune photo de profil à supprimer.');
+            $this->redirect('mon-compte');
+        }
+
+        // Supprimer le fichier physique (sauf si c'est le placeholder)
+        $uploadDir = 'uploads/avatars/';
+        $avatarPath = $uploadDir . $currentUser->getAvatar();
+        if (file_exists($avatarPath) && $currentUser->getAvatar() !== 'pp_placeholder.png') {
+            unlink($avatarPath);
+        }
+
+        // Mettre à jour la base de données avec le placeholder
+        $success = $this->userManager->updateUser($currentUser->getId(), [
+            'username' => $currentUser->getUsername(),
+            'email' => $currentUser->getEmail(),
+            'avatar' => 'pp_placeholder.png'
+        ]);
+
+        if ($success) {
+            Session::setFlash('success', 'Votre photo de profil a été supprimée avec succès.');
+        } else {
+            Session::setFlash('error', 'Erreur lors de la suppression de la photo de profil.');
         }
 
         $this->redirect('mon-compte');

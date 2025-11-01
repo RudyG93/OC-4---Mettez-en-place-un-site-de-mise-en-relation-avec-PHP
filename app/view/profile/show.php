@@ -8,14 +8,14 @@
         <div class="user-info-sidebar">
             <div class="user-avatar-section">
                 <div class="user-avatar">
-                    <?php if ($user->getAvatar()): ?>
+                    <?php if ($user->getAvatar() && $user->getAvatar() !== 'pp_placeholder.png'): ?>
                         <img src="<?= BASE_URL ?>uploads/avatars/<?= e($user->getAvatar()) ?>" 
                              alt="Avatar de <?= e($user->getUsername()) ?>" 
                              class="avatar-image">
                     <?php else: ?>
-                        <div class="avatar-placeholder">
-                            <?= strtoupper(substr($user->getUsername(), 0, 1)) ?>
-                        </div>
+                        <img src="<?= BASE_URL ?>uploads/avatars/pp_placeholder.png" 
+                             alt="Avatar par défaut" 
+                             class="avatar-image">
                     <?php endif; ?>
                 </div>
                 

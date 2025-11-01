@@ -73,14 +73,25 @@
     box-shadow: var(--shadow-hover);
 }
 
-.avatar-upload-form {
+/* Container pour les actions d'avatar */
+.avatar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
     margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e0e0e0;
-    width: 60%;
+    min-height: 20px;
 }
 
-.btn-modify-avatar {
+.avatar-upload-form,
+.avatar-delete-form {
+    margin: 0;
+    padding: 0;
+    display: inline;
+}
+
+.btn-modify-avatar,
+.btn-delete-avatar {
     background: transparent;
     color: #95a5a6;
     border: none;
@@ -88,10 +99,13 @@
     cursor: pointer;
     font-size: 0.9rem;
     text-decoration: underline;
+    transition: color 0.2s;
+    display: inline;
+    line-height: 1;
 }
 
-.btn-modify-avatar:hover {
-    color: var(--text-color);
+.btn-delete-avatar {
+    color: #e74c3c;
 }
 
 .profile-username {
@@ -256,35 +270,33 @@
     padding: 0;
 }
 
-.books-table {
+.account-books-table {
     width: 100%;
     border-collapse: collapse;
     background-color: white;
 }
 
-.books-table th {
+.account-books-table th {
     background-color: white;
     color: var(--text-color);
-    font-weight: 700;
     padding: 1rem 1.5rem;
     text-align: left;
-    border: none;
-    font-size: 0.875rem;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.7rem;
     text-transform: none;
-    letter-spacing: 0;
 }
 
-.books-table td {
+.account-books-table td {
     padding: 1rem 1.5rem;
     border: none;
     vertical-align: middle;
 }
 
-.books-table tbody tr:nth-child(odd) {
+.account-books-table tbody tr:nth-child(odd) {
     background-color: white;
 }
 
-.books-table tbody tr:nth-child(even) {
+.account-books-table tbody tr:nth-child(even) {
     background-color: #EDF2F6;
 }
 
@@ -321,17 +333,48 @@
 }
 
 .book-description {
-    color: var(--text-color);
+    color: var(--text-light);
     font-size: 0.9rem;
     max-width: 250px;
     line-height: 1.4;
     font-style: italic;
+    display: block;
+}
+
+/* Badges de disponibilité */
+.availability-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.availability-available {
+    background-color: #6DC5A1;
+    color: #ffffff;
+    border: 1px solid #6DC5A1;
+}
+
+.availability-unavailable {
+    background-color: #C56D6D;
+    color: #ffffff;
+    border: 1px solid #C56D6D;
 }
 
 .action-buttons {
     display: flex;
     gap: 1rem;
     align-items: center;
+}
+
+.action-buttons a:hover,
+.action-buttons button:hover {
+    opacity: 1 !important;
+    text-decoration: underline;
+    background-color: transparent !important;
+    background: none !important;
 }
 
 .btn-action {
@@ -341,10 +384,15 @@
     font-size: 0.875rem;
     font-weight: 400;
     cursor: pointer;
-    transition: var(--transition);
     text-decoration: underline;
     display: inline;
     color: inherit;
+}
+
+.btn-action:hover {
+    opacity: 1;
+    background-color: transparent !important;
+    background: none !important;
 }
 
 .btn-edit {
@@ -352,7 +400,10 @@
 }
 
 .btn-edit:hover {
-    color: var(--third-color);
+    opacity: 1 !important;
+    color: var(--text-color) !important;
+    background-color: transparent !important;
+    background: none !important;
 }
 
 .btn-delete {
@@ -360,7 +411,10 @@
 }
 
 .btn-delete:hover {
-    color: #8B0000;
+    opacity: 1 !important;
+    color: var(--error-color) !important;
+    background-color: transparent !important;
+    background: none !important;
 }
 
 /* Message aucun livre */
@@ -427,8 +481,8 @@
         font-size: 1.5rem;
     }
     
-    .books-table th,
-    .books-table td {
+    .account-books-table th,
+    .account-books-table td {
         padding: 0.75rem 0.5rem;
         font-size: 0.85rem;
     }
