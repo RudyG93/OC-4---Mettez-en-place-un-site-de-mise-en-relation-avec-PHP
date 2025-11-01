@@ -2,16 +2,22 @@
 
 /**
  * Contrôleur pour la gestion des livres
+ * 
+ * Refactorisé pour utiliser les services BookValidator et ImageUploader
  */
 class BookController extends Controller
 {
     private BookManager $bookManager;
     private UserManager $userManager;
+    private BookValidator $validator;
+    private ImageUploader $imageUploader;
 
     public function __construct()
     {
         $this->bookManager = $this->loadManager('Book');
         $this->userManager = $this->loadManager('User');
+        $this->validator = new BookValidator();
+        $this->imageUploader = new ImageUploader();
     }
 
     /**
@@ -57,49 +63,42 @@ class BookController extends Controller
         // Valider le token CSRF
         $this->validateCsrf('mon-compte');
 
-        // Récupérer les données du formulaire
-        $title = $this->getPost('title', '');
-        $author = $this->getPost('author', '');
-        $description = $this->getPost('description', '');
-        $isAvailable = $this->getPost('is_available', '0');
+        // Récupérer et valider les données du formulaire
+        $data = [
+            'title' => $this->getPost('title', ''),
+            'author' => $this->getPost('author', ''),
+            'description' => $this->getPost('description', ''),
+            'is_available' => $this->getPost('is_available', '0')
+        ];
 
-        $errors = $this->validateBookData([
-            'title' => $title,
-            'author' => $author,
-            'description' => $description
-        ]);
+        $errors = $this->validator->validate($data);
         
         // Gestion de l'upload d'image
-        $imageName = 'book_placeholder.png'; // Par défaut, utiliser le placeholder
+        $imageName = $this->imageUploader->getPlaceholder('book');
+        
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadedImage = $this->handleImageUpload($_FILES['image']);
-            if ($uploadedImage) {
-                $imageName = $uploadedImage;
+            $uploadResult = $this->imageUploader->upload($_FILES['image'], 'book');
+            
+            if ($uploadResult['success']) {
+                $imageName = $uploadResult['filename'];
             } else {
-                $errors['image'] = 'Erreur lors de l\'upload de l\'image.';
+                $errors['image'] = $uploadResult['error'];
             }
         }
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
-            $this->saveFormState([
-                'title' => $title,
-                'author' => $author,
-                'description' => $description,
-                'is_available' => $isAvailable
-            ], $errors);
+            $this->saveFormState($data, $errors);
             $this->redirect('mon-compte#add-book-modal');
             return;
         }
 
-        $bookData = [
+        // Préparer les données nettoyées
+        $cleanData = $this->validator->sanitize($data);
+        $bookData = array_merge($cleanData, [
             'user_id' => Session::getUserId(),
-            'title' => $title,
-            'author' => $author,
-            'image' => $imageName,
-            'description' => $description,
-            'is_available' => $isAvailable === '1' ? 1 : 0
-        ];
+            'image' => $imageName
+        ]);
 
         $book = $this->bookManager->createBook($bookData);
         
@@ -217,57 +216,43 @@ class BookController extends Controller
         // Valider le token CSRF
         $this->validateCsrf('book/' . $id . '/edit');
 
-        // Récupérer les données du formulaire
-        $title = $this->getPost('title', '');
-        $author = $this->getPost('author', '');
-        $description = $this->getPost('description', '');
-        $isAvailable = $this->getPost('available', '0');
+        // Récupérer et valider les données du formulaire
+        $data = [
+            'title' => $this->getPost('title', ''),
+            'author' => $this->getPost('author', ''),
+            'description' => $this->getPost('description', ''),
+            'is_available' => $this->getPost('available', '0')
+        ];
 
-        $errors = $this->validateBookData([
-            'title' => $title,
-            'author' => $author,
-            'description' => $description
-        ]);
+        $errors = $this->validator->validate($data);
 
         // Gestion de l'upload d'image
         $imageName = $book->getImage(); // Conserver l'ancienne image par défaut
         
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $newImageName = $this->handleImageUpload($_FILES['image']);
+            $uploadResult = $this->imageUploader->upload($_FILES['image'], 'book');
             
-            if ($newImageName) {
-                // Supprimer l'ancienne image si elle existe et que ce n'est pas le placeholder
-                if ($book->getImage() && $book->getImage() !== 'book_placeholder.png') {
-                    $oldImagePath = 'uploads/books/' . $book->getImage();
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
-                }
-                $imageName = $newImageName;
+            if ($uploadResult['success']) {
+                // Supprimer l'ancienne image
+                $this->imageUploader->delete($book->getImage(), 'book');
+                $imageName = $uploadResult['filename'];
             } else {
-                $errors['image'] = 'Erreur lors de l\'upload de l\'image.';
+                $errors['image'] = $uploadResult['error'];
             }
         }
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
-            $this->saveFormState([
-                'title' => $title,
-                'author' => $author,
-                'description' => $description,
-                'available' => $isAvailable
-            ], $errors);
+            $this->saveFormState($data, $errors);
             $this->redirect('book/' . $id . '/edit');
             return;
         }
 
-        $bookData = [
-            'title' => $title,
-            'author' => $author,
-            'image' => $imageName,
-            'description' => $description,
-            'is_available' => $isAvailable === '1' ? 1 : 0
-        ];
+        // Préparer les données nettoyées
+        $cleanData = $this->validator->sanitize($data);
+        $bookData = array_merge($cleanData, [
+            'image' => $imageName
+        ]);
 
         $updatedBook = $this->bookManager->updateBook($id, $bookData);
         
@@ -313,13 +298,8 @@ class BookController extends Controller
         $result = $this->bookManager->deleteBook($id);
         
         if ($result['success']) {
-            // Supprimer l'image si elle existe
-            if ($book->getImage()) {
-                $imagePath = 'uploads/books/' . $book->getImage();
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-            }
+            // Supprimer l'image
+            $this->imageUploader->delete($book->getImage(), 'book');
             
             Session::setFlash('success', 'Livre supprimé avec succès !');
         } else {
@@ -372,19 +352,14 @@ class BookController extends Controller
             return;
         }
 
-        // Supprimer le fichier image si ce n'est pas le placeholder
-        if ($book->getImage() && $book->getImage() !== 'book_placeholder.png') {
-            $imagePath = 'uploads/books/' . $book->getImage();
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
-        }
+        // Supprimer le fichier image
+        $this->imageUploader->delete($book->getImage(), 'book');
 
         // Mettre à jour le livre avec le placeholder
         $bookData = [
             'title' => $book->getTitle(),
             'author' => $book->getAuthor(),
-            'image' => 'book_placeholder.png',
+            'image' => $this->imageUploader->getPlaceholder('book'),
             'description' => $book->getDescription(),
             'is_available' => $book->isAvailable() ? 1 : 0
         ];
@@ -466,64 +441,5 @@ class BookController extends Controller
         }
         
         $this->redirect('mon-compte');
-    }
-
-    /**
-     * Valide les données d'un livre
-     */
-    private function validateBookData(array $data): array
-    {
-        $errors = [];
-
-        if (empty(trim($data['title'] ?? ''))) {
-            $errors['title'] = 'Le titre est obligatoire.';
-        } elseif (strlen(trim($data['title'])) > 255) {
-            $errors['title'] = 'Le titre ne doit pas dépasser 255 caractères.';
-        }
-
-        if (empty(trim($data['author'] ?? ''))) {
-            $errors['author'] = 'L\'auteur est obligatoire.';
-        } elseif (strlen(trim($data['author'])) > 255) {
-            $errors['author'] = 'L\'auteur ne doit pas dépasser 255 caractères.';
-        }
-
-        if (!empty($data['description']) && strlen(trim($data['description'])) > 1000) {
-            $errors['description'] = 'La description ne doit pas dépasser 1000 caractères.';
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Gère l'upload d'une image de livre
-     */
-    private function handleImageUpload(array $file): ?string
-    {
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        $maxSize = 5 * 1024 * 1024; // 5MB
-        
-        if (!in_array($file['type'], $allowedTypes)) {
-            return null;
-        }
-        
-        if ($file['size'] > $maxSize) {
-            return null;
-        }
-        
-        $uploadDir = 'uploads/books/';
-        
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
-        
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = uniqid('book_', true) . '.' . $extension;
-        $uploadPath = $uploadDir . $filename;
-        
-        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-            return $filename;
-        }
-        
-        return null;
     }
 }

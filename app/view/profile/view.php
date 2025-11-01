@@ -80,12 +80,6 @@ require_once APP_PATH . '/model/manager/BookManager.php';
                         <div class="profile-stats-title">Bibliothèque</div>
                         <div class="profile-book-count">
                             <span class="book-count-icon">📚</span>
-                            <?php
-                            // Compter les livres de l'utilisateur
-                            $bookManager = new BookManager();
-                            $totalBooks = $bookManager->countUserBooks($user->getId());
-                            $availableBooks = $bookManager->countAvailableUserBooks($user->getId());
-                            ?>
                             <span><?= $totalBooks ?> livre<?= $totalBooks > 1 ? 's' : '' ?></span>
                         </div>
                         <a href="#add-book-modal" class="btn-library btn-add-book-modal">
@@ -154,11 +148,6 @@ require_once APP_PATH . '/model/manager/BookManager.php';
             <!-- Bloc 3: Tableau des livres -->
             <div class="books-block">
                 <div class="books-table-container">
-                    <?php
-                    // Récupérer TOUS les livres de l'utilisateur
-                    $userBooks = $bookManager->findByUserId($user->getId());
-                    ?>
-                    
                     <?php if (empty($userBooks)): ?>
                         <div class="no-books-message">
                             <div class="no-books-icon">📚</div>

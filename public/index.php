@@ -16,6 +16,7 @@ spl_autoload_register(function ($className) {
         APP_PATH . '/controller/',
         APP_PATH . '/model/manager/',
         APP_PATH . '/model/entity/',
+        APP_PATH . '/service/',
     ];
     
     foreach ($paths as $path) {

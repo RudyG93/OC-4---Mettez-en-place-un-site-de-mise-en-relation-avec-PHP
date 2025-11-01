@@ -10,11 +10,13 @@ class ProfileController extends Controller
 {
     private UserManager $userManager;
     private BookManager $bookManager;
+    private ImageUploader $imageUploader;
 
     public function __construct()
     {
         $this->userManager = $this->loadManager('User');
         $this->bookManager = $this->loadManager('Book');
+        $this->imageUploader = new ImageUploader();
     }
 
     /**
@@ -31,6 +33,13 @@ class ProfileController extends Controller
         // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
         $formState = $this->getFormState();
 
+        // Compter les livres de l'utilisateur
+        $totalBooks = $this->bookManager->countUserBooks($user->getId());
+        $availableBooks = $this->bookManager->countAvailableUserBooks($user->getId());
+
+        // Récupérer tous les livres de l'utilisateur
+        $userBooks = $this->bookManager->findByUserId($user->getId());
+
         // Afficher la vue
         $pageTitle = 'Mon profil';
         $activePage = 'account';
@@ -39,7 +48,10 @@ class ProfileController extends Controller
             'title' => $pageTitle,
             'user' => $user,
             'oldInput' => $formState['oldInput'],
-            'errors' => $formState['errors']
+            'errors' => $formState['errors'],
+            'totalBooks' => $totalBooks,
+            'availableBooks' => $availableBooks,
+            'userBooks' => $userBooks
         ];
 
         $this->render('profile/view', $data);
@@ -178,64 +190,36 @@ class ProfileController extends Controller
         // Valider le token CSRF
         $this->validateCsrf('mon-compte');
 
-        // Vérifier qu'un fichier a été uploadé
+        // Vérifier qu'un fichier a été uploadé et l'uploader
         if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
             Session::setFlash('error', 'Veuillez sélectionner une image.');
             $this->redirect('mon-compte');
         }
 
-        $file = $_FILES['avatar'];
+        $uploadResult = $this->imageUploader->upload($_FILES['avatar'], 'avatar');
 
-        // Validation du fichier
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        $maxSize = 2 * 1024 * 1024; // 2 Mo
-
-        if (!in_array($file['type'], $allowedTypes)) {
-            Session::setFlash('error', 'Format de fichier non autorisé. Utilisez JPG, PNG ou GIF.');
+        if (!$uploadResult['success']) {
+            Session::setFlash('error', $uploadResult['error']);
             $this->redirect('mon-compte');
         }
 
-        if ($file['size'] > $maxSize) {
-            Session::setFlash('error', 'Le fichier est trop volumineux (max 2 Mo).');
-            $this->redirect('mon-compte');
-        }
+        // Récupérer l'utilisateur actuel
+        $currentUser = $this->getCurrentUser();
+        
+        // Supprimer l'ancien avatar
+        $this->imageUploader->delete($currentUser->getAvatar(), 'avatar');
 
-        // Créer le dossier uploads/avatars s'il n'existe pas
-        $uploadDir = 'uploads/avatars/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
+        // Mettre à jour l'avatar dans la base de données
+        $success = $this->userManager->updateUser($currentUser->getId(), [
+            'username' => $currentUser->getUsername(),
+            'email' => $currentUser->getEmail(),
+            'avatar' => $uploadResult['filename']
+        ]);
 
-        // Générer un nom de fichier unique
-        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = 'avatar_' . uniqid() . '_' . time() . '.' . $extension;
-        $uploadPath = $uploadDir . $filename;
-
-        // Déplacer le fichier uploadé
-        if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-            // Supprimer l'ancien avatar s'il existe et que ce n'est pas le placeholder
-            $currentUser = $this->getCurrentUser();
-            if ($currentUser->getAvatar() && $currentUser->getAvatar() !== 'pp_placeholder.png') {
-                $oldAvatarPath = $uploadDir . $currentUser->getAvatar();
-                if (file_exists($oldAvatarPath)) {
-                    unlink($oldAvatarPath);
-                }
-            }
-
-            // Mettre à jour l'avatar dans la base de données
-            $success = $this->userManager->updateUser($currentUser->getId(), [
-                'username' => $currentUser->getUsername(),
-                'email' => $currentUser->getEmail(),
-                'avatar' => $filename
-            ]);
-
-            if ($success) {
-                Session::setFlash('success', 'Votre avatar a été mis à jour avec succès.');
-            } else {
-                Session::setFlash('error', 'Erreur lors de la mise à jour de l\'avatar.');
-            }
+        if ($success) {
+            Session::setFlash('success', 'Votre avatar a été mis à jour avec succès.');
         } else {
-            Session::setFlash('error', 'Erreur lors de l\'upload du fichier.');
+            Session::setFlash('error', 'Erreur lors de la mise à jour de l\'avatar.');
         }
 
         $this->redirect('mon-compte');
@@ -266,18 +250,14 @@ class ProfileController extends Controller
             $this->redirect('mon-compte');
         }
 
-        // Supprimer le fichier physique (sauf si c'est le placeholder)
-        $uploadDir = 'uploads/avatars/';
-        $avatarPath = $uploadDir . $currentUser->getAvatar();
-        if (file_exists($avatarPath) && $currentUser->getAvatar() !== 'pp_placeholder.png') {
-            unlink($avatarPath);
-        }
+        // Supprimer le fichier physique
+        $this->imageUploader->delete($currentUser->getAvatar(), 'avatar');
 
         // Mettre à jour la base de données avec le placeholder
         $success = $this->userManager->updateUser($currentUser->getId(), [
             'username' => $currentUser->getUsername(),
             'email' => $currentUser->getEmail(),
-            'avatar' => 'pp_placeholder.png'
+            'avatar' => $this->imageUploader->getPlaceholder('avatar')
         ]);
 
         if ($success) {
