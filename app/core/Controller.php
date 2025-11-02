@@ -2,6 +2,8 @@
 /**
  * Classe Controller - Contrôleur de base
  * Tous les contrôleurs héritent de cette classe
+ * 
+ * Optimisé : Suppression des méthodes inutilisées
  */
 
 abstract class Controller
@@ -130,7 +132,7 @@ abstract class Controller
     }
 
     /**
-     * Récupère l'utilisateur connecté (évite la duplication)
+     * Récupère l'utilisateur connecté
      */
     protected function getCurrentUser()
     {
@@ -138,13 +140,12 @@ abstract class Controller
             return null;
         }
         
-        $userId = Session::get('user_id');
         $userManager = $this->loadManager('User');
-        return $userManager->findById($userId);
+        return $userManager->findById(Session::getUserId());
     }
 
     /**
-     * Affiche une erreur et redirige (évite la duplication)
+     * Affiche une erreur et redirige
      */
     protected function error($message, $redirectTo = '')
     {
@@ -153,7 +154,7 @@ abstract class Controller
     }
 
     /**
-     * Affiche un succès et redirige (évite la duplication)
+     * Affiche un succès et redirige
      */
     protected function success($message, $redirectTo = '')
     {
@@ -172,18 +173,8 @@ abstract class Controller
         return $resource;
     }
 
-
-
     /**
-     * Récupère l'ID de l'utilisateur connecté
-     */
-    protected function getCurrentUserId()
-    {
-        return Session::get('user_id');
-    }
-
-    /**
-     * Valide le token CSRF (méthode simplifiée)
+     * Valide le token CSRF
      */
     protected function validateCsrf($redirectTo = '')
     {
@@ -191,47 +182,6 @@ abstract class Controller
             $this->error('Token de sécurité invalide. Veuillez réessayer.', $redirectTo);
         }
         return true;
-    }
-
-    /**
-     * Récupère et supprime les erreurs de formulaire de la session
-     */
-    protected function getFormErrors()
-    {
-        $errors = Session::get('form_errors', []);
-        Session::remove('form_errors');
-        return $errors;
-    }
-
-    /**
-     * Récupère et supprime les anciennes données de formulaire de la session
-     */
-    protected function getOldInput()
-    {
-        $data = Session::get('form_data', []);
-        Session::remove('form_data');
-        return $data;
-    }
-
-    /**
-     * Affiche une erreur 404
-     */
-    protected function notFound($message = 'Page introuvable')
-    {
-        Session::setFlash('error', $message);
-        $this->redirect('');
-    }
-
-    /**
-     * Vérifie qu'un utilisateur est propriétaire d'une ressource
-     */
-    protected function ensureOwnership($resourceOwnerId, $errorMessage = 'Accès non autorisé', $redirectTo = '')
-    {
-        $currentUserId = $this->getCurrentUserId();
-        if (!$currentUserId || $currentUserId != $resourceOwnerId) {
-            Session::setFlash('error', $errorMessage);
-            $this->redirect($redirectTo);
-        }
     }
 
     /**
@@ -244,7 +194,6 @@ abstract class Controller
 
     /**
      * Récupère l'état du formulaire (old input, errors) et nettoie la session
-     * Utile pour afficher les formulaires avec anciennes valeurs et erreurs
      */
     protected function getFormState()
     {
@@ -262,7 +211,7 @@ abstract class Controller
     }
 
     /**
-     * Sauvegarde l'état du formulaire pour redirection (old input, errors)
+     * Sauvegarde l'état du formulaire pour redirection
      */
     protected function saveFormState(array $oldInput, array $errors = [])
     {
@@ -273,5 +222,4 @@ abstract class Controller
             Session::set('errors', $errors);
         }
     }
-
 }

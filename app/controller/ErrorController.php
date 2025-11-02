@@ -17,7 +17,7 @@ class ErrorController extends Controller
             'errorDescription' => 'Désolé, la page que vous recherchez n\'existe pas ou a été déplacée.'
         ];
         
-        $this->render('error/404', $data);
+        $this->render('error/error', $data);
     }
     
     /**
@@ -34,6 +34,6 @@ class ErrorController extends Controller
             'errorDescription' => 'Vous n\'avez pas les permissions nécessaires pour accéder à cette page.'
         ];
         
-        $this->render('error/403', $data);
+        $this->render('error/error', $data);
     }
 }

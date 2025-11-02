@@ -1,9 +1,4 @@
-<?php 
-$activePage = 'account';
-
-// Charger le BookManager pour afficher les livres
-require_once APP_PATH . '/model/manager/BookManager.php';
-?>
+<?php $activePage = 'account'; ?>
 
 <div class="profile-page">
     <div class="container">

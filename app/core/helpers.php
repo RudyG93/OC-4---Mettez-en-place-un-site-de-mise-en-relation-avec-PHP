@@ -2,6 +2,8 @@
 /**
  * Fichier de fonctions helper pour les vues
  * Ces fonctions simplifient l'écriture des templates
+ * 
+ * Optimisé : Suppression des fonctions inutilisées
  */
 
 /**
@@ -22,27 +24,4 @@ function e($string)
 function escape($string)
 {
     return e($string);
-}
-
-/**
- * Vérifie si une valeur existe et n'est pas vide
- * 
- * @param mixed $value La valeur à vérifier
- * @return bool
- */
-function has($value)
-{
-    return isset($value) && !empty($value);
-}
-
-/**
- * Retourne une valeur par défaut si la valeur est vide
- * 
- * @param mixed $value La valeur à vérifier
- * @param mixed $default La valeur par défaut
- * @return mixed
- */
-function default_value($value, $default = '')
-{
-    return !empty($value) ? $value : $default;
 }

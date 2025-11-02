@@ -41,7 +41,7 @@ class MessageController extends Controller {
         $conversations = $this->getMessageManager()->getConversations($userId);
         $unreadCount = $this->getMessageManager()->getUnreadCount($userId);
 
-        $this->render('message/index', [
+        $this->render('message/empty', [
             'conversations' => $conversations,
             'unreadCount' => $unreadCount,
             'currentUser' => $currentUser,

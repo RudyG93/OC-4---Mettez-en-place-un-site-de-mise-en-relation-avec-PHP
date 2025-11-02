@@ -53,8 +53,8 @@ class ProfileController extends Controller
             'availableBooks' => $availableBooks,
             'userBooks' => $userBooks
         ];
-
-        $this->render('profile/view', $data);
+        
+        $this->render('profile/account', $data);
     }
 
     /**
@@ -171,7 +171,7 @@ class ProfileController extends Controller
             'userBooks' => $userBooks
         ];
 
-        $this->render('profile/show', $data);
+        $this->render('profile/public', $data);
     }
 
     /**

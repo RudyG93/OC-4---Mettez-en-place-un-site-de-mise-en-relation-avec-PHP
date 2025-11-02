@@ -1,17 +1,6 @@
-<?php
-// Récupérer le message flash s'il existe
-$flash = Session::getFlash();
-?>
-
-<link rel="stylesheet" href="<?= BASE_URL ?>css/book-edit.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>css/bookedit.css">
 
 <div id="book-edit-container">
-    <?php if ($flash): ?>
-        <div class="alert alert-<?= $flash['type'] ?>">
-            <?= e($flash['message']) ?>
-        </div>
-    <?php endif?>
-
     <div class="book-edit-content">
         <!-- Lien retour -->
         <a href="<?= BASE_URL ?>mon-compte" class="back-link">← retour</a>

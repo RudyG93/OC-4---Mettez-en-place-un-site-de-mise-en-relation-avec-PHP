@@ -1,21 +1,12 @@
-<?php
-// Récupérer le message flash s'il existe
-$flash = Session::getFlash();
-?>
-
 <div id="profile-container">
-    <?php if ($flash): ?>
-        <div class="alert alert-<?= $flash['type'] ?>">
-            <?= e($flash['message']) ?>
-        </div>
-    <?php endif?>
-
     <div id="profile-content">
         <div class="profile-block">
             <div class="profile-header">
                 <h1 class="profile-title">Ajouter un livre</h1>
                 <p class="profile-subtitle">Ajoutez un nouveau livre à votre bibliothèque personnelle</p>
             </div>
+            
+            <link rel="stylesheet" href="<?= BASE_URL ?>css/bookadd.css">
             
             <form method="POST" action="<?= BASE_URL ?>book/create" enctype="multipart/form-data" class="book-form">
                 <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
@@ -104,154 +95,6 @@ $flash = Session::getFlash();
             </form>
         </div>
     </div>
+        </div>
+    </div>
 </div>
-
-<style>
-.book-form {
-    max-width: 600px;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #333;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-}
-
-.form-control.is-invalid {
-    border-color: #dc3545;
-}
-
-.form-control.is-invalid:focus {
-    border-color: #dc3545;
-    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
-}
-
-.invalid-feedback {
-    display: block;
-    color: #dc3545;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-}
-
-.form-check {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-}
-
-.form-check-input {
-    margin-top: 0.125rem;
-}
-
-.form-check-label {
-    font-weight: normal;
-    cursor: pointer;
-}
-
-.form-text {
-    font-size: 0.875rem;
-    color: #6c757d;
-    margin-top: 0.25rem;
-}
-
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #eee;
-    margin-top: 2rem;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    text-decoration: none;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-}
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: #5a6268;
-}
-
-.alert {
-    padding: 0.75rem 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-}
-
-.alert-success {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-}
-
-.alert-error,
-.alert-danger {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-    
-    .btn {
-        justify-content: center;
-    }
-}
-</style>

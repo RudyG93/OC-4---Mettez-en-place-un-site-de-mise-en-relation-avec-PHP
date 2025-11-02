@@ -29,8 +29,8 @@ ini_set('session.cookie_httponly', 1);
 ini_set('session.use_strict_mode', 1);
 
 // Charger la configuration locale (identifiants BDD)
-if (file_exists(CONFIG_PATH . '/config.local.php')) {
-    require_once CONFIG_PATH . '/config.local.php';
+if (file_exists(CONFIG_PATH . '/app.local.php')) {
+    require_once CONFIG_PATH . '/app.local.php';
 } else {
-    die('Erreur : Le fichier config.local.php est manquant. Veuillez copier config.example.php vers config.local.php et le configurer.');
+    die('Erreur : Le fichier app.local.php est manquant. Veuillez copier app.example.php vers app.local.php et le configurer.');
 }

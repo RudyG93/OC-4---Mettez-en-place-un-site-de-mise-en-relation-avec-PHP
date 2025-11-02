@@ -3,10 +3,13 @@
 /**
  * Contrôleur pour la gestion des livres
  * 
- * Refactorisé pour utiliser les services BookValidator et ImageUploader
+ * Refactorisé avec services (BookValidator, ImageUploader) 
+ * et trait (ManagesBookOwnership) pour réduire la duplication
  */
 class BookController extends Controller
 {
+    use ManagesBookOwnership;
+
     private BookManager $bookManager;
     private UserManager $userManager;
     private BookValidator $validator;
@@ -29,19 +32,14 @@ class BookController extends Controller
         $searchTerm = $this->getQuery('q', '');
         
         // Exclure les livres de l'utilisateur connecté s'il est connecté
-        $excludeUserId = null;
-        if (Session::isLoggedIn()) {
-            $excludeUserId = Session::getUserId();
-        }
+        $excludeUserId = Session::isLoggedIn() ? Session::getUserId() : null;
 
         // Si recherche, utiliser searchBooks, sinon tous les livres
-        if (!empty($searchTerm)) {
-            $books = $this->bookManager->searchBooks($searchTerm, $excludeUserId);
-        } else {
-            $books = $this->bookManager->findAvailableBooks($excludeUserId);
-        }
+        $books = !empty($searchTerm) 
+            ? $this->bookManager->searchBooks($searchTerm, $excludeUserId)
+            : $this->bookManager->findAvailableBooks($excludeUserId);
         
-        $this->render('book/index', [
+        $this->render('book/list', [
             'books' => $books,
             'searchTerm' => $searchTerm,
             'title' => 'Tous les livres disponibles'
@@ -60,10 +58,9 @@ class BookController extends Controller
             return;
         }
 
-        // Valider le token CSRF
         $this->validateCsrf('mon-compte');
 
-        // Récupérer et valider les données du formulaire
+        // Récupérer et valider les données
         $data = [
             'title' => $this->getPost('title', ''),
             'author' => $this->getPost('author', ''),
@@ -74,17 +71,7 @@ class BookController extends Controller
         $errors = $this->validator->validate($data);
         
         // Gestion de l'upload d'image
-        $imageName = $this->imageUploader->getPlaceholder('book');
-        
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadResult = $this->imageUploader->upload($_FILES['image'], 'book');
-            
-            if ($uploadResult['success']) {
-                $imageName = $uploadResult['filename'];
-            } else {
-                $errors['image'] = $uploadResult['error'];
-            }
-        }
+        $imageName = $this->handleImageUpload($_FILES['image'] ?? null, $errors);
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
@@ -93,22 +80,18 @@ class BookController extends Controller
             return;
         }
 
-        // Préparer les données nettoyées
+        // Créer le livre
         $cleanData = $this->validator->sanitize($data);
-        $bookData = array_merge($cleanData, [
+        $book = $this->bookManager->createBook(array_merge($cleanData, [
             'user_id' => Session::getUserId(),
             'image' => $imageName
-        ]);
-
-        $book = $this->bookManager->createBook($bookData);
+        ]));
         
-        if ($book) {
-            Session::setFlash('success', 'Livre ajouté avec succès !');
-            $this->redirect('mon-compte');
-        } else {
-            Session::setFlash('error', 'Erreur lors de l\'ajout du livre.');
-            $this->redirect('mon-compte#add-book-modal');
-        }
+        $message = $book ? 'Livre ajouté avec succès !' : 'Erreur lors de l\'ajout du livre.';
+        $type = $book ? 'success' : 'error';
+        
+        Session::setFlash($type, $message);
+        $this->redirect($book ? 'mon-compte' : 'mon-compte#add-book-modal');
     }
 
     /**
@@ -116,33 +99,26 @@ class BookController extends Controller
      */
     public function show(int $id): void
     {
-        $book = $this->bookManager->findById($id);
-        
-        if (!$book) {
-            Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('nos-livres');
-            return;
-        }
+        $book = $this->findBookOrFail($id, 'nos-livres');
+        if (!$book) return;
 
-        // Récupérer les infos du propriétaire
+        // Récupérer le propriétaire
         $owner = $this->userManager->findById($book->getUserId());
-        
         if (!$owner) {
             Session::setFlash('error', 'Propriétaire du livre introuvable.');
             $this->redirect('nos-livres');
             return;
         }
 
-        // Récupérer d'autres livres du même propriétaire (max 4)
-        $otherBooks = $this->bookManager->findByUserId($owner->getId(), 4);
-        
-        // Exclure le livre actuel de la liste des suggestions
-        $otherBooks = array_filter($otherBooks, function($otherBook) use ($id) {
-            return $otherBook->getId() !== $id;
-        });
-        
-        // Limiter à 3 suggestions pour ne pas surcharger
-        $otherBooks = array_slice($otherBooks, 0, 3);
+        // Récupérer d'autres livres du propriétaire (max 3, excluant le livre actuel)
+        $otherBooks = array_slice(
+            array_filter(
+                $this->bookManager->findByUserId($owner->getId(), 4),
+                fn($book) => $book->getId() !== $id
+            ),
+            0,
+            3
+        );
         
         $this->render('book/show', [
             'book' => $book,
@@ -159,22 +135,9 @@ class BookController extends Controller
     {
         $this->requireAuth();
         
-        $book = $this->bookManager->findById($id);
-        
-        if (!$book) {
-            Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('mon-compte');
-            return;
-        }
+        $book = $this->findOwnBookOrFail($id);
+        if (!$book) return;
 
-        // Vérifier que l'utilisateur est le propriétaire du livre
-        if ($book->getUserId() !== Session::getUserId()) {
-            Session::setFlash('error', 'Vous n\'êtes pas autorisé à modifier ce livre.');
-            $this->redirect('mon-compte');
-            return;
-        }
-
-        // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
         $formState = $this->getFormState();
 
         $this->render('book/edit', [
@@ -198,25 +161,12 @@ class BookController extends Controller
             return;
         }
 
-        $book = $this->bookManager->findById($id);
-        
-        if (!$book) {
-            Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('mon-compte');
-            return;
-        }
+        $book = $this->findOwnBookOrFail($id);
+        if (!$book) return;
 
-        // Vérifier que l'utilisateur est le propriétaire du livre
-        if ($book->getUserId() !== Session::getUserId()) {
-            Session::setFlash('error', 'Vous n\'êtes pas autorisé à modifier ce livre.');
-            $this->redirect('mon-compte');
-            return;
-        }
-
-        // Valider le token CSRF
         $this->validateCsrf('book/' . $id . '/edit');
 
-        // Récupérer et valider les données du formulaire
+        // Récupérer et valider les données
         $data = [
             'title' => $this->getPost('title', ''),
             'author' => $this->getPost('author', ''),
@@ -226,20 +176,8 @@ class BookController extends Controller
 
         $errors = $this->validator->validate($data);
 
-        // Gestion de l'upload d'image
-        $imageName = $book->getImage(); // Conserver l'ancienne image par défaut
-        
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $uploadResult = $this->imageUploader->upload($_FILES['image'], 'book');
-            
-            if ($uploadResult['success']) {
-                // Supprimer l'ancienne image
-                $this->imageUploader->delete($book->getImage(), 'book');
-                $imageName = $uploadResult['filename'];
-            } else {
-                $errors['image'] = $uploadResult['error'];
-            }
-        }
+        // Gestion de l'upload d'image (conserver l'ancienne par défaut)
+        $imageName = $this->handleImageUpdate($_FILES['image'] ?? null, $book, $errors);
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
@@ -248,21 +186,17 @@ class BookController extends Controller
             return;
         }
 
-        // Préparer les données nettoyées
+        // Mettre à jour le livre
         $cleanData = $this->validator->sanitize($data);
-        $bookData = array_merge($cleanData, [
+        $updated = $this->bookManager->updateBook($id, array_merge($cleanData, [
             'image' => $imageName
-        ]);
-
-        $updatedBook = $this->bookManager->updateBook($id, $bookData);
+        ]));
         
-        if ($updatedBook) {
-            Session::setFlash('success', 'Livre modifié avec succès !');
-            $this->redirect('mon-compte');
-        } else {
-            Session::setFlash('error', 'Erreur lors de la modification du livre.');
-            $this->redirect('book/' . $id . '/edit');
-        }
+        $message = $updated ? 'Livre modifié avec succès !' : 'Erreur lors de la modification du livre.';
+        $type = $updated ? 'success' : 'error';
+        
+        Session::setFlash($type, $message);
+        $this->redirect($updated ? 'mon-compte' : 'book/' . $id . '/edit');
     }
 
     /**
@@ -277,30 +211,15 @@ class BookController extends Controller
             return;
         }
 
-        $book = $this->bookManager->findById($id);
-        
-        if (!$book) {
-            Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('mon-compte');
-            return;
-        }
+        $book = $this->findOwnBookOrFail($id);
+        if (!$book) return;
 
-        // Vérifier que l'utilisateur est le propriétaire du livre
-        if ($book->getUserId() !== Session::getUserId()) {
-            Session::setFlash('error', 'Vous n\'êtes pas autorisé à supprimer ce livre.');
-            $this->redirect('mon-compte');
-            return;
-        }
-
-        // Valider le token CSRF
         $this->validateCsrf('mon-compte');
 
         $result = $this->bookManager->deleteBook($id);
         
         if ($result['success']) {
-            // Supprimer l'image
             $this->imageUploader->delete($book->getImage(), 'book');
-            
             Session::setFlash('success', 'Livre supprimé avec succès !');
         } else {
             Session::setFlash('error', $result['error']);
@@ -321,57 +240,38 @@ class BookController extends Controller
             return;
         }
 
-        // Récupérer l'ID du livre depuis le POST
         $id = (int) $this->getPost('book_id', 0);
-        
         if ($id === 0) {
             Session::setFlash('error', 'ID du livre invalide.');
             $this->redirect('mon-compte');
             return;
         }
 
-        $book = $this->bookManager->findById($id);
-        
-        if (!$book) {
-            Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('mon-compte');
-            return;
-        }
+        $book = $this->findOwnBookOrFail($id, 'book/' . $id . '/edit');
+        if (!$book) return;
 
-        // Vérifier que l'utilisateur est le propriétaire du livre
-        if ($book->getUserId() !== Session::getUserId()) {
-            Session::setFlash('error', 'Vous n\'êtes pas autorisé à modifier ce livre.');
-            $this->redirect('mon-compte');
-            return;
-        }
-
-        // Valider le token CSRF
+        // Valider CSRF
         if (!isset($_POST['csrf_token']) || !Session::verifyCsrfToken($_POST['csrf_token'])) {
             Session::setFlash('error', 'Token de sécurité invalide.');
             $this->redirect('book/' . $id . '/edit');
             return;
         }
 
-        // Supprimer le fichier image
+        // Supprimer l'image et mettre à jour avec le placeholder
         $this->imageUploader->delete($book->getImage(), 'book');
 
-        // Mettre à jour le livre avec le placeholder
-        $bookData = [
+        $updated = $this->bookManager->updateBook($id, [
             'title' => $book->getTitle(),
             'author' => $book->getAuthor(),
             'image' => $this->imageUploader->getPlaceholder('book'),
             'description' => $book->getDescription(),
             'is_available' => $book->isAvailable() ? 1 : 0
-        ];
-
-        $updatedBook = $this->bookManager->updateBook($id, $bookData);
+        ]);
         
-        if ($updatedBook) {
-            Session::setFlash('success', 'Image supprimée avec succès !');
-        } else {
-            Session::setFlash('error', 'Erreur lors de la suppression de l\'image.');
-        }
+        $message = $updated ? 'Image supprimée avec succès !' : 'Erreur lors de la suppression de l\'image.';
+        $type = $updated ? 'success' : 'error';
         
+        Session::setFlash($type, $message);
         $this->redirect('book/' . $id . '/edit');
     }
 
@@ -381,17 +281,11 @@ class BookController extends Controller
     public function search(): void
     {
         $searchTerm = $this->getQuery('q', '');
-        $books = [];
+        $excludeUserId = Session::isLoggedIn() ? Session::getUserId() : null;
         
-        if (!empty($searchTerm)) {
-            // Exclure les livres de l'utilisateur connecté s'il est connecté
-            $excludeUserId = null;
-            if (Session::isLoggedIn()) {
-                $excludeUserId = Session::getUserId();
-            }
-            
-            $books = $this->bookManager->searchBooks($searchTerm, $excludeUserId);
-        }
+        $books = !empty($searchTerm) 
+            ? $this->bookManager->searchBooks($searchTerm, $excludeUserId)
+            : [];
         
         $this->render('book/search', [
             'books' => $books,
@@ -412,22 +306,9 @@ class BookController extends Controller
             return;
         }
 
-        $book = $this->bookManager->findById($id);
-        
-        if (!$book) {
-            Session::setFlash('error', 'Livre introuvable.');
-            $this->redirect('mon-compte');
-            return;
-        }
+        $book = $this->findOwnBookOrFail($id);
+        if (!$book) return;
 
-        // Vérifier que l'utilisateur est le propriétaire du livre
-        if ($book->getUserId() !== Session::getUserId()) {
-            Session::setFlash('error', 'Vous n\'êtes pas autorisé à modifier ce livre.');
-            $this->redirect('mon-compte');
-            return;
-        }
-
-        // Valider le token CSRF
         $this->validateCsrf('mon-compte');
 
         $newAvailability = !$book->isAvailable();
@@ -441,5 +322,55 @@ class BookController extends Controller
         }
         
         $this->redirect('mon-compte');
+    }
+
+    /**
+     * Gère l'upload d'une nouvelle image
+     * 
+     * @param array|null $file Fichier uploadé
+     * @param array &$errors Tableau d'erreurs (passé par référence)
+     * @return string Nom du fichier (nouveau ou placeholder)
+     */
+    private function handleImageUpload(?array $file, array &$errors): string
+    {
+        $imageName = $this->imageUploader->getPlaceholder('book');
+        
+        if (isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+            $uploadResult = $this->imageUploader->upload($file, 'book');
+            
+            if ($uploadResult['success']) {
+                $imageName = $uploadResult['filename'];
+            } else {
+                $errors['image'] = $uploadResult['error'];
+            }
+        }
+        
+        return $imageName;
+    }
+
+    /**
+     * Gère la mise à jour d'une image existante
+     * 
+     * @param array|null $file Fichier uploadé
+     * @param Book $book Livre existant
+     * @param array &$errors Tableau d'erreurs (passé par référence)
+     * @return string Nom du fichier (nouveau ou ancien)
+     */
+    private function handleImageUpdate(?array $file, Book $book, array &$errors): string
+    {
+        $imageName = $book->getImage();
+        
+        if (isset($file) && $file['error'] === UPLOAD_ERR_OK) {
+            $uploadResult = $this->imageUploader->upload($file, 'book');
+            
+            if ($uploadResult['success']) {
+                $this->imageUploader->delete($book->getImage(), 'book');
+                $imageName = $uploadResult['filename'];
+            } else {
+                $errors['image'] = $uploadResult['error'];
+            }
+        }
+        
+        return $imageName;
     }
 }

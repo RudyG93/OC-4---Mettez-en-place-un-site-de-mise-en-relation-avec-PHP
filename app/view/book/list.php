@@ -1,18 +1,8 @@
-<?php
-// Récupérer le message flash s'il existe
-$flash = Session::getFlash();
-$searchTerm = $searchTerm ?? '';
-?>
+<?php $searchTerm = $searchTerm ?? ''; ?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>css/books.css">
 
 <div id="books-public-container">
-    <?php if ($flash): ?>
-        <div class="alert alert-<?= $flash['type'] ?>">
-            <?= e($flash['message']) ?>
-        </div>
-    <?php endif?>
-
     <div class="books-public-content">
         <!-- En-tête -->
         <div class="books-header">

@@ -197,26 +197,4 @@ class Message extends Entity {
     public function isReceivedBy($userId) {
         return $this->recipientId == $userId;
     }
-
-    /**
-     * Retourne l'ID de l'autre participant dans la conversation
-     * (l'expéditeur si on est le destinataire, et vice versa)
-     */
-    public function getOtherParticipantId($currentUserId) {
-        return $this->senderId == $currentUserId ? $this->recipientId : $this->senderId;
-    }
-
-    /**
-     * Retourne le nom d'utilisateur de l'autre participant
-     */
-    public function getOtherParticipantUsername($currentUserId) {
-        return $this->senderId == $currentUserId ? $this->recipientUsername : $this->senderUsername;
-    }
-
-    /**
-     * Retourne l'avatar de l'autre participant
-     */
-    public function getOtherParticipantAvatar($currentUserId) {
-        return $this->senderId == $currentUserId ? $this->recipientAvatar : $this->senderAvatar;
-    }
 }

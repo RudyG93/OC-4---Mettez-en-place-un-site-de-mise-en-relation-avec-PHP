@@ -1,8 +1,4 @@
-<?php
-// Récupérer le message flash s'il existe
-$flash = Session::getFlash();
-$activePage = 'messagerie';
-?>
+<?php $activePage = 'messagerie'; ?>
 
 <div class="messagerie-layout">
     <?php include __DIR__ . '/_sidebar.php'; ?>

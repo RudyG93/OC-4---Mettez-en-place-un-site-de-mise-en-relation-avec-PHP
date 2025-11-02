@@ -1,15 +1,4 @@
-<?php
-// Récupérer le message flash s'il existe
-$flash = Session::getFlash();
-?>
-
 <div id="book-detail-container">
-    <?php if ($flash): ?>
-        <div class="alert alert-<?= $flash['type'] ?>">
-            <?= e($flash['message']) ?>
-        </div>
-    <?php endif?>
-
     <!-- Breadcrumb en haut à gauche -->
     <nav class="breadcrumb-top">
         <a href="<?= BASE_URL ?>nos-livres" class="breadcrumb-link">Nos livres</a>

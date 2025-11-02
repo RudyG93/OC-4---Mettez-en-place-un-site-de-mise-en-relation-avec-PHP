@@ -160,27 +160,6 @@ class UserManager extends Model {
     }
 
     /**
-     * Supprime un utilisateur
-     */
-    public function deleteUser($id) {
-        $sql = "DELETE FROM users WHERE id = :id";
-        
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        
-        return $statement->execute();
-    }
-
-    /**
-     * Récupère tous les utilisateurs (pour l'administration future)
-     */
-    public function getAllUsers() {
-        $this->table = 'users';
-        $rows = parent::findBy([], 'created_at DESC');
-        return $this->hydrateEntities('User', $rows);
-    }
-
-    /**
      * Authentifie un utilisateur
      */
     public function authenticate($email, $password) {
@@ -191,56 +170,5 @@ class UserManager extends Model {
         }
         
         return null;
-    }
-
-    /**
-     * Recherche des utilisateurs par nom d'utilisateur
-     */
-    public function searchUsers($query, $limit = 10) {
-        $sql = "
-            SELECT * FROM users 
-            WHERE username LIKE :query 
-            ORDER BY username ASC 
-            LIMIT :limit
-        ";
-
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':query', '%' . $query . '%', PDO::PARAM_STR);
-        $statement->bindValue(':limit', $limit, PDO::PARAM_INT);
-        $statement->execute();
-        
-        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return $this->hydrateEntities('User', $rows);
-    }
-
-    /**
-     * Compte le nombre d'utilisateurs actifs
-     */
-    public function getActiveUsersCount() {
-        $this->table = 'users';
-        return parent::count();
-    }
-
-    /**
-     * Récupère les statistiques d'un utilisateur
-     */
-    public function getUserStats($userId) {
-        $sql = "
-            SELECT 
-                u.*,
-                (SELECT COUNT(*) FROM books WHERE user_id = u.id) as total_books,
-                (SELECT COUNT(*) FROM books WHERE user_id = u.id AND is_available = 1) as available_books,
-                (SELECT COUNT(*) FROM messages WHERE sender_id = u.id) as messages_sent,
-                (SELECT COUNT(*) FROM messages WHERE recipient_id = u.id) as messages_received
-            FROM users u 
-            WHERE u.id = :user_id
-        ";
-
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
-        $statement->execute();
-        
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
-        return $this->hydrateEntity('User', $row);
     }
 }

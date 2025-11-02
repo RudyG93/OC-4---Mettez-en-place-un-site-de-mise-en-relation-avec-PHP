@@ -4,7 +4,7 @@
  */
 
 // Charger la configuration
-require_once __DIR__ . '/../config/config.php';
+require_once __DIR__ . '/../config/app.php';
 
 // Charger les helpers pour les vues
 require_once APP_PATH . '/core/helpers.php';
@@ -17,6 +17,7 @@ spl_autoload_register(function ($className) {
         APP_PATH . '/model/manager/',
         APP_PATH . '/model/entity/',
         APP_PATH . '/service/',
+        APP_PATH . '/traits/',
     ];
     
     foreach ($paths as $path) {

@@ -126,12 +126,4 @@ class User extends Entity
     {
         return password_verify($password, $this->password);
     }
-
-    /**
-     * Hash un mot de passe
-     */
-    public static function hashPassword($password)
-    {
-        return password_hash($password, PASSWORD_DEFAULT);
-    }
 }
