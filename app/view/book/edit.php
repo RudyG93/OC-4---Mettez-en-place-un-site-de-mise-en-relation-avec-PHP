@@ -47,12 +47,12 @@
                             <?php endif ?>
                         </div>
                         
-                        <input type="file" 
+               <input type="file" 
                                id="imageInput" 
                                name="image" 
                                accept="image/jpeg,image/png,image/gif" 
                                onchange="if(this.files && this.files[0]){var reader = new FileReader(); reader.onload = function(e){document.getElementById('imagePreview').src = e.target.result;}; reader.readAsDataURL(this.files[0]);}"
-                               style="display: none;">
+                   class="is-hidden">
                     </div>
                 </div>
 

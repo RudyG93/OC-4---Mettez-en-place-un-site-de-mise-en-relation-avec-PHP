@@ -120,8 +120,17 @@ class AuthController extends Controller
             return;
         }
 
-        // Créer le nouvel utilisateur
-        $user = $this->userManager->createUser($username, $email, $password);
+        // Créer le nouvel utilisateur (hash du mot de passe avant insertion)
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $userData = [
+            'username' => $username,
+            'email' => $email,
+            'password' => $hashedPassword,
+            'bio' => null,
+            'avatar' => null,
+        ];
+
+        $user = $this->userManager->createUser($userData);
 
         // Enregistrer en base de données
         if ($user) {

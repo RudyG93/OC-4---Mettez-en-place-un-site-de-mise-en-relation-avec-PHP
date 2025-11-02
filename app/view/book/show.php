@@ -85,7 +85,7 @@
 </div>
 
 <!-- Modal de confirmation de suppression -->
-<div class="modal fade" id="deleteBookModal" tabindex="-1" aria-labelledby="deleteBookModalLabel" aria-hidden="true" style="display: none;">
+<div class="modal fade is-hidden" id="deleteBookModal" tabindex="-1" aria-labelledby="deleteBookModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -98,7 +98,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <form method="POST" id="deleteBookForm" style="display: inline;">
+                <form method="POST" id="deleteBookForm">
                     <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
                     <button type="submit" class="btn btn-danger">Supprimer</button>
                 </form>

@@ -205,9 +205,12 @@ class ProfileController extends Controller
 
         // Récupérer l'utilisateur actuel
         $currentUser = $this->getCurrentUser();
-        
-        // Supprimer l'ancien avatar
-        $this->imageUploader->delete($currentUser->getAvatar(), 'avatar');
+
+        // Supprimer l'ancien avatar si présent et non placeholder
+        $oldAvatar = $currentUser->getAvatar();
+        if ($oldAvatar && !$this->imageUploader->isPlaceholder($oldAvatar, 'avatar')) {
+            $this->imageUploader->delete($oldAvatar, 'avatar');
+        }
 
         // Mettre à jour l'avatar dans la base de données
         $success = $this->userManager->updateUser($currentUser->getId(), [

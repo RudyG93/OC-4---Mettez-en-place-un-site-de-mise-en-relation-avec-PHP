@@ -30,12 +30,12 @@
                             <label for="avatar-upload" class="btn-modify-avatar">
                                 Modifier
                             </label>
-                            <input type="file" 
-                                   id="avatar-upload" 
-                                   name="avatar" 
-                                   accept="image/jpeg,image/png,image/gif"
-                                   style="display: none;"
-                                   onchange="if(confirm('Voulez-vous vraiment changer votre avatar ?')) this.form.submit();">
+                <input type="file" 
+                    id="avatar-upload" 
+                    name="avatar" 
+                    accept="image/jpeg,image/png,image/gif"
+                    class="is-hidden"
+                    onchange="if(confirm('Voulez-vous vraiment changer votre avatar ?')) this.form.submit();">
                         </form>
                         
                         <?php if ($user->getAvatar() && $user->getAvatar() !== 'pp_placeholder.png'): ?>
@@ -185,7 +185,7 @@
                                         <td>
                                             <div class="action-buttons">
                                                 <a href="<?= BASE_URL ?>book/<?= $book->getId() ?>/edit" class="btn-action btn-edit">Éditer</a>
-                                                <form method="POST" action="<?= BASE_URL ?>book/<?= $book->getId() ?>/delete" style="display: inline; margin: 0;"
+                                <form method="POST" action="<?= BASE_URL ?>book/<?= $book->getId() ?>/delete" 
                                                       onsubmit="return confirm('Voulez-vous vraiment supprimer « <?= e($book->getTitle()) ?> » ?');">
                                                     <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
                                                     <button type="submit" class="btn-action btn-delete">Supprimer</button>
@@ -228,12 +228,12 @@
                         <label for="bookImage" class="btn-upload-image">
                             Choisir une image
                         </label>
-                        <input type="file" 
-                               id="bookImage" 
-                               name="image" 
-                               accept="image/jpeg,image/png,image/gif"
-                               style="display: none;"
-                               onchange="if(this.files && this.files[0]){var reader = new FileReader(); reader.onload = function(e){document.getElementById('imagePreviewModal').innerHTML = '<img src=\'' + e.target.result + '\' alt=\'Aperçu\' style=\'max-width: 100%; max-height: 200px; object-fit: contain;\'>';}; reader.readAsDataURL(this.files[0]);}">
+               <input type="file" 
+                   id="bookImage" 
+                   name="image" 
+                   accept="image/jpeg,image/png,image/gif"
+                   class="is-hidden"
+                   onchange="if(this.files && this.files[0]){var reader = new FileReader(); reader.onload = function(e){var el=document.getElementById('imagePreviewModal'); el.innerHTML=''; var img=document.createElement('img'); img.className='preview-img'; img.alt='Aperçu'; img.src=e.target.result; el.appendChild(img);}; reader.readAsDataURL(this.files[0]);}">
                     <small class="form-help">Formats acceptés : JPG, PNG, GIF (max 2Mo)</small>
                 </div>
                 
@@ -295,249 +295,3 @@
     </div>
 </div>
 
-<style>
-/* MODAL OVERLAY */
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 9999;
-    overflow-y: auto;
-    padding: 2rem 1rem;
-}
-
-.modal-overlay:target {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-container {
-    background: white;
-    border-radius: 12px;
-    max-width: 600px;
-    width: 100%;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: modalSlideIn 0.3s ease;
-    margin: auto;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* MODAL HEADER */
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 2rem;
-    border-bottom: 2px solid #e9ecef;
-}
-
-.modal-title {
-    font-size: 1.5rem;
-    color: #2c3e50;
-    margin: 0;
-    font-weight: 600;
-}
-
-.modal-close {
-    font-size: 2rem;
-    color: #6c757d;
-    text-decoration: none;
-    line-height: 1;
-    transition: color 0.2s;
-}
-
-.modal-close:hover {
-    color: #dc3545;
-}
-
-/* MODAL BODY */
-.modal-body {
-    padding: 2rem;
-}
-
-.book-add-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-/* IMAGE UPLOAD AREA */
-.image-upload-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-.image-preview {
-    width: 100%;
-    max-width: 250px;
-    height: 200px;
-    border: 2px dashed #dee2e6;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-}
-
-.image-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    color: #6c757d;
-}
-
-.image-placeholder i {
-    font-size: 3rem;
-}
-
-.btn-upload-image {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background: #f8f9fa;
-    color: #2c3e50;
-    border: 2px solid #dee2e6;
-    border-radius: 8px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-upload-image:hover {
-    background: #e9ecef;
-    border-color: #adb5bd;
-}
-
-/* FORM ELEMENTS */
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.form-label {
-    font-weight: 500;
-    color: #2c3e50;
-    font-size: 0.95rem;
-}
-
-.form-input,
-.form-textarea,
-.form-select {
-    padding: 0.75rem 1rem;
-    border: 2px solid #e9ecef;
-    border-radius: 8px;
-    font-size: 1rem;
-    color: #2c3e50;
-    transition: all 0.3s;
-    outline: none;
-    font-family: inherit;
-}
-
-.form-input:focus,
-.form-textarea:focus,
-.form-select:focus {
-    border-color: #00AC66;
-    box-shadow: 0 0 0 3px rgba(0, 172, 102, 0.1);
-}
-
-.form-textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.form-help {
-    color: #6c757d;
-    font-size: 0.85rem;
-}
-
-/* MODAL ACTIONS */
-.modal-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    padding-top: 1rem;
-    border-top: 1px solid #e9ecef;
-}
-
-.btn-cancel {
-    padding: 0.75rem 1.5rem;
-    background: transparent;
-    color: #6c757d;
-    border: 2px solid #6c757d;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.btn-cancel:hover {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-submit {
-    padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #00AC66 0%, #00d97e 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.btn-submit:hover {
-    background: linear-gradient(135deg, #009955 0%, #00c76d 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 172, 102, 0.3);
-}
-
-/* BOUTON MODAL TRIGGER */
-.btn-add-book-modal {
-    background: linear-gradient(135deg, #00AC66 0%, #00d97e 100%) !important;
-}
-
-.btn-add-book-modal:hover {
-    background: linear-gradient(135deg, #009955 0%, #00c76d 100%) !important;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-    .modal-container {
-        margin: 1rem;
-    }
-    
-    .modal-header,
-    .modal-body {
-        padding: 1.5rem;
-    }
-    
-    .modal-actions {
-        flex-direction: column;
-    }
-    
-    .btn-cancel,
-    .btn-submit {
-        width: 100%;
-        text-align: center;
-    }
-}
-</style>

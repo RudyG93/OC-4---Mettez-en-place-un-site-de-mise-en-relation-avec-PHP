@@ -52,6 +52,20 @@
                     <?php endif?>
                 </div>
 
+                <!-- Confirmation du mot de passe -->
+                <div class="form-group">
+                    <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
+                    <input
+                        type="password"
+                        id="password_confirm"
+                        name="password_confirm"
+                        class="form-input <?= isset($errors['password_confirm']) ? 'input-error' : '' ?>"
+                        required>
+                    <?php if (isset($errors['password_confirm'])): ?>
+                        <span class="error-message"><?= e($errors['password_confirm']) ?></span>
+                    <?php endif?>
+                </div>
+
                 <!-- Bouton de soumission -->
                 <button type="submit" class="btn btn-primary btn-block">
                     S'inscrire

@@ -1,5 +1,5 @@
 # Configuration locale (contient les identifiants BDD)
-config/config.local.php
+config/app.local.php
 
 # Uploads utilisateurs
 public/uploads/*
