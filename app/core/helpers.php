@@ -8,10 +8,18 @@
 
 /**
  * Échappe les caractères HTML pour sécuriser l'affichage
- * Raccourci pour htmlspecialchars()
  * 
- * @param string $string La chaîne à échapper
- * @return string La chaîne échappée
+ * Protection contre les attaques XSS (Cross-Site Scripting).
+ * Convertit les caractères spéciaux HTML en entités HTML.
+ * 
+ * Raccourci pour htmlspecialchars($string, ENT_QUOTES, 'UTF-8')
+ * 
+ * @param string|null $string La chaîne à échapper
+ * @return string La chaîne échappée (ou vide si null)
+ * 
+ * @example
+ * <?= e($book->getTitle()) ?>
+ * <?= e($user->getBio()) ?>
  */
 function e($string)
 {
@@ -19,7 +27,12 @@ function e($string)
 }
 
 /**
- * Alias de e() pour compatibilité
+ * Alias de e() pour compatibilité et clarté
+ * 
+ * Certains développeurs préfèrent un nom plus explicite.
+ * 
+ * @param string|null $string La chaîne à échapper
+ * @return string La chaîne échappée
  */
 function escape($string)
 {

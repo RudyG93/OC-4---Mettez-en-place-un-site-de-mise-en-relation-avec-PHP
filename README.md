@@ -40,6 +40,8 @@ app/
 │   └── manager/    # Classes de gestion BDD
 ├── view/           # Vues (templates PHP)
 │   └── layouts/    # Layout principal
+├── service/        # Services réutilisables (ImageUploader, BookValidator)
+├── traits/         # Traits PHP (ManagesBookOwnership)
 └── core/           # Classes système (App, Controller, Model, etc.)
 ```
 
@@ -101,15 +103,16 @@ chmod 755 public/uploads
 L'application utilise une architecture CSS modulaire :
 
 - `global.css` - Variables, reset, layout, navigation
-- `components.css` - Composants réutilisables
-- `auth.css` - Authentification
-- `books.css` - Liste des livres
-- `book-detail.css` - Détail d'un livre
-- `book-edit.css` - Édition de livre
-- `account.css` - Page Mon compte
-- `profile.css` - Profil public
-- `messagerie.css` - Système de messagerie
+- `components.css` - Composants réutilisables (boutons, formulaires, cartes)
+- `auth.css` - Pages d'authentification (login, register)
 - `home.css` - Page d'accueil
+- `books.css` - Liste des livres disponibles
+- `bookdetail.css` - Page de détail d'un livre
+- `bookadd.css` - Formulaire d'ajout de livre
+- `bookedit.css` - Formulaire d'édition de livre
+- `account.css` - Page "Mon compte"
+- `profile.css` - Profil public d'un utilisateur
+- `messagerie.css` - Système de messagerie
 
 Toutes les feuilles de style sont importées via `style.css`.
 
@@ -140,10 +143,14 @@ Toutes les feuilles de style sont importées via `style.css`.
 - `/register` - Inscription
 
 ### Pages privées (authentification requise)
-- `/mon-compte` - Page Mon compte
+- `/mon-compte` - Page Mon compte (gestion profil et livres)
+- `/book/create` - Ajouter un livre
 - `/book/{id}/edit` - Éditer un livre
-- `/messages` - Messagerie
-- `/messages/conversation/{userId}` - Conversation avec un utilisateur
+- `/book/{id}/delete` - Supprimer un livre
+- `/book/{id}/toggle-availability` - Changer la disponibilité
+- `/messages` - Liste des conversations
+- `/messages/conversation/{id}` - Conversation avec un utilisateur
+- `/messages/compose/{id}` - Composer un message
 
 ## 🧪 Données de test
 
@@ -152,14 +159,29 @@ La base de données contient des données de test :
 - Livres disponibles
 - Conversations de démonstration
 
+## 🧩 Patterns et Bonnes Pratiques
+
+### Design Patterns implémentés
+- **Singleton**: Connexion base de données unique (`Database.php`)
+- **Repository**: Managers pour l'accès aux données
+- **Front Controller**: Routeur centralisé (`App.php`)
+- **Service Layer**: Services métier réutilisables (`ImageUploader`, `BookValidator`)
+- **Trait**: Code partagé sans héritage (`ManagesBookOwnership`)
+
+### Principes SOLID
+- **Single Responsibility**: Chaque classe a une responsabilité unique
+- **Separation of Concerns**: MVC strict sans mélange des couches
+- **DRY** (Don't Repeat Yourself): Code factorisé dans des services et traits
+
 ## 🚀 Améliorations futures possibles
 
-- [ ] Système de recherche avancée
-- [ ] Notifications en temps réel
-- [ ] Système de favoris
-- [ ] API REST
-- [ ] Application mobile
-- [ ] Système de notation des utilisateurs
+- [ ] Système de recherche avancée (filtres multiples, tri)
+- [ ] Notifications par email
+- [ ] Système de favoris/wishlist
+- [ ] API REST pour application mobile
+- [ ] Système de notation et avis
+- [ ] Pagination sur la liste des livres
+- [ ] Tests automatisés (PHPUnit)
 
 ## 📄 Licence
 
@@ -168,7 +190,3 @@ Ce projet est développé dans un cadre éducatif.
 ## 👤 Auteur
 
 Développé dans le cadre du projet OpenClassrooms.
-
----
-
-**Note**: Ce projet utilise du PHP natif sans framework pour des raisons pédagogiques. En production, l'utilisation d'un framework moderne (Symfony, Laravel) serait recommandée.

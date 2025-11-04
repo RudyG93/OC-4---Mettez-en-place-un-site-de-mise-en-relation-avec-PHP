@@ -1,7 +1,9 @@
 <?php
 /**
  * Classe App - Routeur principal de l'application
- * Gère le routing et l'exécution des contrôleurs
+ * 
+ * Gère le routing et l'exécution des contrôleurs.
+ * C'est le point d'entrée de toutes les requêtes HTTP.
  */
 
 class App

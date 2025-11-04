@@ -1,7 +1,9 @@
 <?php
 /**
- * AuthController
- * Gère l'authentification (inscription, connexion, déconnexion)
+ * Contrôleur d'authentification
+ * 
+ * Gère l'inscription, la connexion et la déconnexion des utilisateurs.
+ * Assure la sécurité avec CSRF tokens et password hashing.
  */
 class AuthController extends Controller
 {

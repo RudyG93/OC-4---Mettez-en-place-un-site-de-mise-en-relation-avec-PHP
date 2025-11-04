@@ -1,9 +1,9 @@
 <?php
 /**
  * Classe Controller - Contrôleur de base
- * Tous les contrôleurs héritent de cette classe
  * 
- * Optimisé : Suppression des méthodes inutilisées
+ * Tous les contrôleurs de l'application héritent de cette classe.
+ * Fournit des méthodes utilitaires pour charger les vues, rediriger, etc.
  */
 
 abstract class Controller

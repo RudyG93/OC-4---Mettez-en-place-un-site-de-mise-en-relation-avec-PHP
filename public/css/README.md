@@ -4,10 +4,18 @@
 
 ```
 public/css/
-├── style.css       ← Fichier principal (importe tous les modules)
-├── global.css      ← Styles globaux (layout, navigation, boutons, etc.)
-├── auth.css        ← Styles pour login et register
-└── profile.css     ← Styles pour les profils
+├── style.css          ← Fichier principal (importe tous les modules)
+├── global.css         ← Styles globaux (layout, navigation, variables)
+├── components.css     ← Composants réutilisables (boutons, cartes, formulaires)
+├── auth.css           ← Pages login et register
+├── home.css           ← Page d'accueil
+├── profile.css        ← Profil public d'un utilisateur
+├── account.css        ← Page "Mon compte" (profil privé)
+├── books.css          ← Liste des livres disponibles
+├── bookdetail.css     ← Page de détail d'un livre
+├── bookadd.css        ← Formulaire d'ajout de livre
+├── bookedit.css       ← Formulaire d'édition de livre
+└── messagerie.css     ← Système de messagerie
 ```
 
 ---
@@ -19,8 +27,16 @@ public/css/
 
 ```css
 @import url('global.css');
+@import url('components.css');
 @import url('auth.css');
+@import url('home.css');
 @import url('profile.css');
+@import url('account.css');
+@import url('books.css');
+@import url('bookdetail.css');
+@import url('bookadd.css');
+@import url('bookedit.css');
+@import url('messagerie.css');
 ```
 
 **Utilisation** : C'est le seul fichier à inclure dans vos pages HTML
@@ -36,24 +52,34 @@ public/css/
 - Reset & Base styles
 - Layout (container, main-content)
 - Header & Navigation
-- Boutons (.btn-primary, .btn-secondary, .btn-block)
 - Flash messages
-- Hero section
-- Features & Info sections
-- Error pages
 - Footer
 - Utilities (mt-*, mb-*, p-*, text-center)
-- Responsive global
 
 **Classes principales** :
 ```css
-.container
-.main-content
+.container, .main-content
 .header, .nav, .nav-link
-.btn, .btn-primary, .btn-secondary
 .flash-message, .flash-success, .flash-error
-.hero, .hero-title
 .footer
+```
+
+---
+
+### `components.css` - Composants réutilisables
+**Contenu** :
+- Boutons (.btn-primary, .btn-secondary, .btn-danger, etc.)
+- Cartes (.card, .book-card)
+- Formulaires (.form-group, .form-label, .form-input)
+- Badges et tags
+- Modales et overlays
+
+**Classes principales** :
+```css
+.btn, .btn-primary, .btn-secondary, .btn-danger, .btn-outline
+.card, .card-header, .card-body, .card-footer
+.form-group, .form-label, .form-input, .form-textarea
+.badge, .badge-success, .badge-warning
 ```
 
 ---
@@ -62,22 +88,7 @@ public/css/
 **Contenu** :
 - Pages login & register
 - Formulaires d'authentification
-- Images de fond pour les pages auth
 - Layout spécifique aux pages d'authentification
-
-**Classes principales** :
-```css
-.auth-page
-.login-container
-.auth-container
-.auth-card
-.auth-title
-.auth-form
-.form-group, .form-label, .form-input
-.form-help, .error-message
-.auth-footer, .auth-link
-.login-pic
-```
 
 **Pages concernées** :
 - `/login`
@@ -85,35 +96,96 @@ public/css/
 
 ---
 
-### `profile.css` - Profils
+### `home.css` - Page d'accueil
 **Contenu** :
-- Pages de profil (view, edit, show)
-- Avatar
-- Informations utilisateur
-- Statistiques
-- Actions profil
-- Formulaire d'édition
+- Hero section
+- Features sections
+- Call to actions
+- Présentation du site
 
-**Classes principales** :
-```css
-.profile-page
-.profile-container
-.profile-header
-.profile-avatar, .avatar-placeholder
-.profile-title, .profile-subtitle
-.profile-info, .profile-info-item
-.info-label, .info-value
-.profile-stats, .stat-item, .stat-value, .stat-label
-.profile-actions
-.profile-edit-container
-.profile-form
-.profile-form-actions
-```
+**Page concernée** :
+- `/` (page d'accueil)
+
+---
+
+### `profile.css` - Profil public
+**Contenu** :
+- Affichage du profil d'un utilisateur
+- Avatar, bio, statistiques
+- Liste des livres de l'utilisateur
+
+**Page concernée** :
+- `/profil/{id}` (profil public)
+
+---
+
+### `account.css` - Mon compte
+**Contenu** :
+- Page de gestion du profil personnel
+- Formulaire d'édition du profil
+- Upload d'avatar
+- Ma bibliothèque personnelle
 
 **Pages concernées** :
-- `/mon-compte` (mon profil)
+- `/mon-compte` (mon profil privé)
 - `/mon-compte/modifier` (modifier mon profil)
-- `/profil/{id}` (profil public)
+
+---
+
+### `books.css` - Liste des livres
+**Contenu** :
+- Grille de livres disponibles
+- Recherche de livres
+- Filtres et tri
+
+**Page concernée** :
+- `/nos-livres` (catalogue public)
+
+---
+
+### `bookdetail.css` - Détail d'un livre
+**Contenu** :
+- Page de détail complète d'un livre
+- Informations propriétaire
+- Actions contextuelles
+
+**Page concernée** :
+- `/livre/{id}` (détail d'un livre)
+
+---
+
+### `bookadd.css` - Ajout de livre
+**Contenu** :
+- Formulaire d'ajout de livre
+- Upload d'image avec prévisualisation
+
+**Page concernée** :
+- `/book/create` (ajouter un livre)
+
+---
+
+### `bookedit.css` - Édition de livre
+**Contenu** :
+- Formulaire d'édition moderne
+- Design 2 colonnes (photo + infos)
+- Upload d'image avec prévisualisation
+
+**Page concernée** :
+- `/book/{id}/edit` (modifier un livre)
+
+---
+
+### `messagerie.css` - Messagerie
+**Contenu** :
+- Liste des conversations
+- Fil de discussion
+- Formulaire d'envoi de messages
+- Compteurs de messages non lus
+
+**Pages concernées** :
+- `/messages` (liste des conversations)
+- `/messages/conversation/{id}` (conversation)
+- `/messages/compose/{id}` (nouveau message)
 
 ---
 
@@ -152,22 +224,18 @@ Définies dans `global.css` et disponibles partout :
 
 ## 🔧 Ajout de nouveaux modules
 
-Pour ajouter un nouveau module CSS (ex: `books.css` pour la gestion des livres) :
+Pour ajouter un nouveau module CSS :
 
-1. **Créer le fichier** : `public/css/books.css`
+1. **Créer le fichier** : `public/css/nouveau-module.css`
 
 2. **Ajouter le contenu** :
 ```css
 /**
- * TomTroc - Styles Livres
- * Book list, book detail, book management pages
+ * TomTroc - Nouveau Module
+ * Description du module
  */
 
-.book-grid {
-    /* ... */
-}
-
-.book-card {
+.mon-element {
     /* ... */
 }
 ```
@@ -175,9 +243,8 @@ Pour ajouter un nouveau module CSS (ex: `books.css` pour la gestion des livres) 
 3. **Importer dans `style.css`** :
 ```css
 @import url('global.css');
-@import url('auth.css');
-@import url('profile.css');
-@import url('books.css');    /* ← Nouveau */
+/* ... autres imports ... */
+@import url('nouveau-module.css');    /* ← Nouveau */
 ```
 
 ---
@@ -189,90 +256,9 @@ Pour ajouter un nouveau module CSS (ex: `books.css` pour la gestion des livres) 
 3. **Performance** : Un seul fichier à charger (style.css) grâce aux @import
 4. **Clarté** : Organisation logique par feature
 5. **Évolutivité** : Facile d'ajouter de nouveaux modules
-6. **Réutilisabilité** : Variables CSS partagées entre tous les fichiers
+6. **Réutilisabilité** : Variables CSS et composants partagés
 
 ---
 
-## 📝 Conventions de nommage
-
-### Classes BEM-like
-```css
-.block               /* Élément parent */
-.block-element       /* Élément enfant */
-.block-element-item  /* Sous-élément */
-```
-
-**Exemples** :
-```css
-.profile-container
-.profile-header
-.profile-info-item
-```
-
-### Modificateurs
-```css
-.btn
-.btn-primary
-.btn-secondary
-.btn-block
-```
-
-### États
-```css
-.nav-link
-.nav-link.active
-.form-input
-.form-input.input-error
-```
-
----
-
-## 🧪 Tests
-
-Après modification du CSS, tester sur :
-
-1. **Pages d'authentification**
-   - `/login`
-   - `/register`
-
-2. **Pages de profil**
-   - `/mon-compte`
-   - `/mon-compte/modifier`
-   - `/profil/2`
-
-3. **Pages globales**
-   - Page d'accueil `/`
-   - Pages d'erreur `/404`
-
-4. **Responsive**
-   - Desktop (1920px)
-   - Tablette (768px)
-   - Mobile (375px)
-
----
-
-## 🎯 Prochaines étapes
-
-Modules CSS à créer :
-
-1. **books.css** - Gestion des livres
-   - Liste des livres
-   - Détail d'un livre
-   - Formulaire d'ajout/édition
-   - Grille de livres
-
-2. **messages.css** - Messagerie
-   - Liste des conversations
-   - Fenêtre de conversation
-   - Formulaire d'envoi
-
-3. **home.css** - Page d'accueil
-   - Hero spécifique
-   - Sections de présentation
-   - Call to actions
-
----
-
-**Date de création** : 18 octobre 2025
-**Auteur** : Équipe TomTroc
-**Version** : 1.0
+**Date de mise à jour** : Novembre 2025
+**Version** : 2.0 - TomTroc Production Ready

@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="<?= BASE_URL ?>css/home.css">
 
 <div class="home-container">
-    <!-- Bloc 1 - Fond #F5F3EF -->
+    <!-- Bloc 1 -->
     <section class="home-block-1">
         <div class="block-1-content">
             <div class="block-1-left">
@@ -23,7 +23,7 @@
     </section>
 </div>
 
-<!-- Bloc 2 - Fond #FAF9F7 -->
+<!-- Bloc 2 -->
 <section class="home-block-2">
     <div class="home-container">
         <h2>Les derniers livres ajoutés</h2>
@@ -61,7 +61,7 @@
 </section>
 
 <div class="home-container">
-    <!-- Bloc 3 - Fond #F5F3EF -->
+    <!-- Bloc 3 -->
     <section class="home-block-3">
         <h2>Comment ça marche ?</h2>
         <p class="block-3-subtitle">
@@ -95,7 +95,7 @@
 </div>
 
 <div class="home-container">
-    <!-- Bloc 4 - Fond #F5F3EF -->
+    <!-- Bloc 4 -->
     <section class="home-block-4">
         <h2>Nos valeurs</h2>
         <div class="block-4-content">

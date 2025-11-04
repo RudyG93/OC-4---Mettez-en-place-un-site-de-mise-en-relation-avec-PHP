@@ -1,7 +1,10 @@
 <?php
 /**
  * Classe Entity - Entité de base
- * Toutes les entités métier héritent de cette classe
+ * 
+ * Toutes les entités métier (User, Book, Message) héritent de cette classe.
+ * Fournit la méthode hydrate() pour remplir automatiquement les propriétés
+ * à partir d'un tableau de données (typiquement depuis la BDD).
  */
 
 abstract class Entity
@@ -10,6 +13,14 @@ abstract class Entity
     
     /**
      * Hydrate l'objet à partir d'un tableau de données
+     * 
+     * Remplit automatiquement les propriétés de l'objet en appelant
+     * les setters correspondants. Convertit les noms de colonnes BDD
+     * (snake_case) en noms de méthodes PHP (camelCase).
+     * 
+     * Exemple : 'created_at' → 'setCreatedAt()'
+     * 
+     * @param array $data Tableau associatif (clé => valeur)
      */
     public function hydrate(array $data)
     {

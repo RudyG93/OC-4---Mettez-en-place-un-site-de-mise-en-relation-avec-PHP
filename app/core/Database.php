@@ -1,7 +1,11 @@
 <?php
 /**
  * Classe Database - Singleton pour la connexion PDO
- * Gère la connexion unique à la base de données
+ * 
+ * Garantit une instance unique de connexion à la base de données
+ * partagée par tous les managers de l'application.
+ * 
+ * Pattern : Singleton
  */
 
 class Database

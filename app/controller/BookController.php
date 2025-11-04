@@ -1,10 +1,13 @@
 <?php
 
 /**
- * Contrôleur pour la gestion des livres
+ * Contrôleur de gestion des livres
  * 
- * Refactorisé avec services (BookValidator, ImageUploader) 
- * et trait (ManagesBookOwnership) pour réduire la duplication
+ * Gère le CRUD complet des livres (Create, Read, Update, Delete).
+ * Utilise :
+ * - BookValidator pour la validation
+ * - ImageUploader pour les images
+ * - ManagesBookOwnership (trait) pour vérifier les droits
  */
 class BookController extends Controller
 {

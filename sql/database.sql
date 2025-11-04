@@ -2,6 +2,18 @@
 -- Base de données TomTroc
 -- Système d'échange de livres entre particuliers
 -- ============================================
+-- 
+-- INSTRUCTIONS D'INSTALLATION :
+-- 1. Importer ce fichier dans phpMyAdmin ou via ligne de commande :
+--    mysql -u root -p < database.sql
+-- 2. La base de données "tomtroc" sera créée automatiquement
+-- 3. Les tables et données de test seront insérées
+--
+-- COMPTES DE TEST (mot de passe : "password") :
+-- - alice@example.com
+-- - bob@example.com
+-- - charlie@example.com
+-- ============================================
 
 -- Création de la base de données
 CREATE DATABASE IF NOT EXISTS tomtroc CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

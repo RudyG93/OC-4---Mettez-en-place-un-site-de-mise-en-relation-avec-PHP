@@ -2,7 +2,11 @@
 /**
  * Classe Session - Gestion des sessions utilisateur
  * 
- * Optimisé : Suppression de cleanObsoleteUserObjects (obsolète)
+ * Fournit des méthodes statiques pour gérer :
+ * - Les données de session (get, set, remove)
+ * - Les messages flash (notifications temporaires)
+ * - L'authentification utilisateur
+ * - Les tokens CSRF
  */
 
 class Session

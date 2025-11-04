@@ -39,6 +39,6 @@ return [
     'messages/conversation/{id}' => ['controller' => 'Message', 'action' => 'conversation'],
     'messages/compose/{id}' => ['controller' => 'Message', 'action' => 'compose'],
     'messages/send' => ['controller' => 'Message', 'action' => 'send'],
-    'messagerie' => ['controller' => 'Message', 'action' => 'index'], // Alias pour compatibilité
+    'messagerie' => ['controller' => 'Message', 'action' => 'index'],
     'conversation' => ['controller' => 'Message', 'action' => 'conversation'],
 ];

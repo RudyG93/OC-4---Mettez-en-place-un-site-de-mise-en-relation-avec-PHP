@@ -1,10 +1,17 @@
 # Configuration locale (contient les identifiants BDD)
 config/app.local.php
 
-# Uploads utilisateurs
+# Uploads utilisateurs (ignorer tout sauf structure et placeholders)
 public/uploads/*
 !public/uploads/.gitkeep
+!public/uploads/books/
+public/uploads/books/*
 !public/uploads/books/.gitkeep
+!public/uploads/books/book_placeholder.png
+!public/uploads/avatars/
+public/uploads/avatars/*
+!public/uploads/avatars/.gitkeep
+!public/uploads/avatars/pp_placeholder.png
 
 # Fichiers système
 .DS_Store
