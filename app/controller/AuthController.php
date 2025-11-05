@@ -1,10 +1,19 @@
 <?php
-/**
+
+/*
  * Contrôleur d'authentification
  * 
  * Gère l'inscription, la connexion et la déconnexion des utilisateurs.
  * Assure la sécurité avec CSRF tokens et password hashing.
+ * 
+ * register() - Affiche le formulaire d'inscription et traite les soumissions
+ * registerPost() - Traite les données d'inscription
+ * login() - Affiche le formulaire de connexion et traite les soumissions
+ * loginPost() - Traite les données de connexion
+ * logout() - Déconnecte l'utilisateur
+ * 
  */
+
 class AuthController extends Controller
 {
     private UserManager $userManager;
@@ -14,13 +23,12 @@ class AuthController extends Controller
         $this->userManager = new UserManager();
     }
 
-    /**
-     * Afficher le formulaire d'inscription
-     */
+    /* Afficher le formulaire d'inscription */
+
     public function register()
     {
         // Si la requête est POST, traiter le formulaire
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($this->isPost()) {
             $this->registerPost();
             return;
         }
@@ -43,9 +51,8 @@ class AuthController extends Controller
         $this->render('auth/register', $data);
     }
 
-    /**
-     * Traiter le formulaire d'inscription
-     */
+    /* Traiter le formulaire d'inscription */
+
     private function registerPost()
     {
         // Si l'utilisateur est déjà connecté, rediriger vers l'accueil
@@ -107,7 +114,7 @@ class AuthController extends Controller
         // S'il y a des erreurs, réafficher le formulaire
         if (!empty($errors)) {
             $csrfToken = Session::generateCsrfToken();
-            
+
             $data = [
                 'title' => 'Inscription - TomTroc',
                 'csrfToken' => $csrfToken,
@@ -144,13 +151,12 @@ class AuthController extends Controller
         }
     }
 
-    /**
-     * Afficher le formulaire de connexion
-     */
+    /* Afficher le formulaire de connexion */
+
     public function login()
     {
         // Si la requête est POST, traiter le formulaire
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($this->isPost()) {
             $this->loginPost();
             return;
         }
@@ -171,9 +177,8 @@ class AuthController extends Controller
         $this->render('auth/login', $data);
     }
 
-    /**
-     * Traiter le formulaire de connexion
-     */
+    /* Traiter le formulaire de connexion */
+
     private function loginPost()
     {
         // Si l'utilisateur est déjà connecté, rediriger vers l'accueil
@@ -209,17 +214,16 @@ class AuthController extends Controller
         // Connecter l'utilisateur
         // D'abord nettoyer la session des objets obsolètes
         Session::cleanSession();
-        
+
         Session::set('user_id', $user->getId());
         Session::set('username', $user->getUsername());
         Session::setFlash('success', 'Bienvenue ' . $user->getUsername() . ' !');
-        
+
         $this->redirect('');
     }
 
-    /**
-     * Déconnexion
-     */
+    /* Déconnexion */
+
     public function logout()
     {
         Session::destroy();

@@ -1,6 +1,8 @@
 <?php
 
 class Message extends Entity {
+    
+    protected $id;
     protected $senderId;
     protected $recipientId;
     protected $content;

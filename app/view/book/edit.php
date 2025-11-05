@@ -1,3 +1,5 @@
+<?php $activePage = 'books'?>
+
 <link rel="stylesheet" href="<?= BASE_URL ?>css/bookedit.css">
 
 <div id="book-edit-container">

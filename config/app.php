@@ -25,8 +25,8 @@ if (ENVIRONMENT === 'development') {
 }
 
 // Configuration des sessions
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_strict_mode', 1);
+ini_set('session.cookie_httponly', 1); //Le cookie est uniquement accessible par le serveur (PHP), pas par JavaScript. Protection contre : XSS (Cross-Site Scripting)
+ini_set('session.use_strict_mode', 1); //PHP refuse les ID de session qui n'ont pas été générés par le serveur. Protection contre : Session Fixation
 
 // Charger la configuration locale (identifiants BDD)
 if (file_exists(CONFIG_PATH . '/app.local.php')) {

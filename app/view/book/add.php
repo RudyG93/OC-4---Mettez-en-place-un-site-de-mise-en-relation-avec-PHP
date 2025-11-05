@@ -1,3 +1,5 @@
+<?php $activePage = 'books'?>
+
 <div id="profile-container">
     <div id="profile-content">
         <div class="profile-block">

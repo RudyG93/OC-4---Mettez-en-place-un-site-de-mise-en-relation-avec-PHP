@@ -1,0 +1,4 @@
+<Files "app.php">
+    Order allow,deny
+    Deny from all
+</Files>

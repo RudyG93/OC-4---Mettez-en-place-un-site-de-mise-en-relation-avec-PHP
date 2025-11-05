@@ -122,7 +122,6 @@ class MessageController extends Controller {
         $recipientId = (int) ($_POST['recipient_id'] ?? 0);
         $content = trim($_POST['content'] ?? '');
 
-        // Validation
         $errors = [];
         
         if (empty($content)) {

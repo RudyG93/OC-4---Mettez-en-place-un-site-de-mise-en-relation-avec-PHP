@@ -1,3 +1,5 @@
+<?php $activePage = 'books'?>
+
 <div id="book-detail-container">
     <!-- Breadcrumb en haut à gauche -->
     <nav class="breadcrumb-top">

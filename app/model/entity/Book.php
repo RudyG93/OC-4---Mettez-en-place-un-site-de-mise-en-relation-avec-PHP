@@ -58,11 +58,6 @@ class Book extends Entity
         return $this->created_at;
     }
 
-    public function getUpdatedAt()
-    {
-        return $this->updated_at;
-    }
-
     /**
      * Setters
      */
@@ -105,12 +100,6 @@ class Book extends Entity
     public function setCreatedAt($created_at)
     {
         $this->created_at = $created_at;
-        return $this;
-    }
-
-    public function setUpdatedAt($updated_at)
-    {
-        $this->updated_at = $updated_at;
         return $this;
     }
 

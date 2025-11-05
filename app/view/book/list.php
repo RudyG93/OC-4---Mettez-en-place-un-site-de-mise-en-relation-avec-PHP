@@ -1,4 +1,5 @@
 <?php $searchTerm = $searchTerm ?? ''; ?>
+<?php $activePage = 'books'?>
 
 <link rel="stylesheet" href="<?= BASE_URL ?>css/books.css">
 

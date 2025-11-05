@@ -1,21 +1,12 @@
 <?php
-/**
- * Classe Database - Singleton pour la connexion PDO
- * 
- * Garantit une instance unique de connexion à la base de données
- * partagée par tous les managers de l'application.
- * 
- * Pattern : Singleton
- */
+
+/* Classe Database - Singleton pour la connexion PDO */
 
 class Database
 {
     private static $instance = null;
     private $pdo;
-    
-    /**
-     * Constructeur privé (Singleton)
-     */
+
     private function __construct()
     {
         try {
@@ -25,16 +16,16 @@ class Database
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ];
-            
+
             $this->pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
-        } catch (PDOException $e) {
-            die("Erreur de connexion à la base de données : " . $e->getMessage());
+        } catch (PDOException $errorPDO) {
+            error_log('[DATABASE ERROR] ' . $errorPDO->getMessage());
+            exit('Une erreur est survenue. Merci de réessayer plus tard.');
         }
     }
-    
-    /**
-     * Récupère l'instance unique de la connexion PDO
-     */
+
+    /* Récupère l'instance unique de la connexion PDO */
+
     public static function getInstance()
     {
         if (self::$instance === null) {
@@ -42,15 +33,13 @@ class Database
         }
         return self::$instance->pdo;
     }
-    
-    /**
-     * Empêche le clonage de l'instance
-     */
+
+    /* Empêche le clonage de l'instance */
+
     private function __clone() {}
+
+    /* Empêche la désérialisation de l'instance */
     
-    /**
-     * Empêche la désérialisation de l'instance
-     */
     public function __wakeup()
     {
         throw new Exception("Cannot unserialize singleton");

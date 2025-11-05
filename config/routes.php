@@ -24,7 +24,6 @@ return [
     // Livres
     'nos-livres' => ['controller' => 'Book', 'action' => 'index'],
     'livre/{id}' => ['controller' => 'Book', 'action' => 'show'],
-    'livre/recherche' => ['controller' => 'Book', 'action' => 'search'],
     
     // Gestion des livres
     'book/create' => ['controller' => 'Book', 'action' => 'create'],
@@ -40,5 +39,4 @@ return [
     'messages/compose/{id}' => ['controller' => 'Message', 'action' => 'compose'],
     'messages/send' => ['controller' => 'Message', 'action' => 'send'],
     'messagerie' => ['controller' => 'Message', 'action' => 'index'],
-    'conversation' => ['controller' => 'Message', 'action' => 'conversation'],
 ];

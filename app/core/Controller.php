@@ -4,14 +4,17 @@
  * 
  * Tous les contrôleurs de l'application héritent de cette classe.
  * Fournit des méthodes utilitaires pour charger les vues, rediriger, etc.
+ * 
+ * loadManager($manager) - Charge un manager (modèle)
+ * render($view, $data = [], $layout = 'main') - Charge une vue avec un layout
+ * 
  */
 
 abstract class Controller
 {
-    /**
-     * Charge un manager (modèle)
-     */
-    protected function loadManager($manager)
+    /* Charge un manager (modèle) */
+
+    protected function loadManager($manager) : object
     {
         $managerClass = $manager . 'Manager';
         $managerFile = APP_PATH . '/model/manager/' . $managerClass . '.php';
@@ -24,10 +27,9 @@ abstract class Controller
         throw new Exception("Manager $managerClass introuvable");
     }
     
-    /**
-     * Charge une vue
-     */
-    protected function render($view, $data = [], $layout = 'main')
+    /* Charge une vue */
+
+    protected function render($view, $data = [], $layout = 'main') : void
     {
         // Extraire les données pour les rendre disponibles dans la vue
         extract($data);
@@ -64,36 +66,17 @@ abstract class Controller
     }
     
     /**
-     * Retourne une réponse JSON
-     */
-    protected function json($data, $statusCode = 200)
-    {
-        http_response_code($statusCode);
-        header('Content-Type: application/json');
-        echo json_encode($data);
-        exit;
-    }
-    
-    /**
      * Vérifie si la requête est POST
      */
-    protected function isPost()
+    protected function isPost() : bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
     
     /**
-     * Vérifie si la requête est GET
-     */
-    protected function isGet()
-    {
-        return $_SERVER['REQUEST_METHOD'] === 'GET';
-    }
-    
-    /**
      * Vérifie si l'utilisateur est connecté
      */
-    protected function requireAuth()
+    protected function requireAuth() : void
     {
         if (!Session::isLoggedIn()) {
             Session::setFlash('error', 'Vous devez être connecté pour accéder à cette page');
@@ -101,9 +84,7 @@ abstract class Controller
         }
     }
     
-    /**
-     * Récupère les données POST nettoyées
-     */
+    /* Récupère les données POST nettoyées */
     protected function getPost($key = null, $default = null)
     {
         if ($key === null) {
@@ -112,9 +93,7 @@ abstract class Controller
         return isset($_POST[$key]) ? trim($_POST[$key]) : $default;
     }
     
-    /**
-     * Récupère les données GET nettoyées
-     */
+    /* Récupère les données GET nettoyées */
     protected function getQuery($key = null, $default = null)
     {
         if ($key === null) {
@@ -122,18 +101,14 @@ abstract class Controller
         }
         return isset($_GET[$key]) ? trim($_GET[$key]) : $default;
     }
-    
-    /**
-     * Nettoie une chaîne pour l'affichage HTML
-     */
+
+    /* Nettoie une chaîne pour l'affichage HTML */
     protected function escape($string)
     {
         return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
     }
 
-    /**
-     * Récupère l'utilisateur connecté
-     */
+    /* Récupère l'utilisateur connecté */
     protected function getCurrentUser()
     {
         if (!Session::isLoggedIn()) {
@@ -144,27 +119,23 @@ abstract class Controller
         return $userManager->findById(Session::getUserId());
     }
 
-    /**
-     * Affiche une erreur et redirige
-     */
+    /* Affiche une erreur et redirige */
+
     protected function error($message, $redirectTo = '')
     {
         Session::setFlash('error', $message);
         $this->redirect($redirectTo);
     }
 
-    /**
-     * Affiche un succès et redirige
-     */
+    /* Affiche un succès et redirige */
     protected function success($message, $redirectTo = '')
     {
         Session::setFlash('success', $message);
         $this->redirect($redirectTo);
     }
 
-    /**
-     * Vérifie qu'une ressource existe, sinon erreur
-     */
+    /* Vérifie qu'une ressource existe, sinon erreur */
+
     protected function ensureExists($resource, $errorMessage = 'Ressource introuvable', $redirectTo = '')
     {
         if (!$resource) {
@@ -173,9 +144,8 @@ abstract class Controller
         return $resource;
     }
 
-    /**
-     * Valide le token CSRF
-     */
+    /* Valide le token CSRF  */
+
     protected function validateCsrf($redirectTo = '')
     {
         if (!Session::verifyCsrfToken($this->getPost('csrf_token'))) {
@@ -184,17 +154,15 @@ abstract class Controller
         return true;
     }
 
-    /**
-     * Génère et retourne un token CSRF pour les vues
-     */
+    /* Génère et retourne un token CSRF pour les vues */
+
     protected function getCsrfToken()
     {
         return Session::generateCsrfToken();
     }
 
-    /**
-     * Récupère l'état du formulaire (old input, errors) et nettoie la session
-     */
+    /* Récupère l'état du formulaire (old input, errors) et nettoie la session */
+
     protected function getFormState()
     {
         $oldInput = Session::get('old_input', []);
@@ -210,9 +178,8 @@ abstract class Controller
         ];
     }
 
-    /**
-     * Sauvegarde l'état du formulaire pour redirection
-     */
+    /* Sauvegarde l'état du formulaire pour redirection */
+
     protected function saveFormState(array $oldInput, array $errors = [])
     {
         if (!empty($oldInput)) {

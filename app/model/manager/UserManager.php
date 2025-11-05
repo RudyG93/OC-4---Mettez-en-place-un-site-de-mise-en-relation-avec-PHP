@@ -29,9 +29,8 @@ class UserManager extends Model {
         return $this->hydrateEntity('User', $row);
     }
 
-    /**
-     * Crée un nouvel utilisateur
-     */
+    /* Crée un nouvel utilisateur */
+    
     public function createUser($userData) {
         $sql = "
             INSERT INTO users (username, email, password, bio, avatar, created_at, updated_at) 
