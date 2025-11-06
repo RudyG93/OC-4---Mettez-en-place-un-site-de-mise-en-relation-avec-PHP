@@ -13,7 +13,7 @@
  * @param string|null $string Chaîne à échapper
  * @return string Chaîne échappée
  */
-function escape($string)
+function escape($string): string
 {
     return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
 }

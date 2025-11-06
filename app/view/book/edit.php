@@ -52,7 +52,7 @@
                <input type="file" 
                                id="imageInput" 
                                name="image" 
-                               accept="image/jpeg,image/png,image/gif" 
+                               accept="image/jpeg,image/png" 
                                onchange="if(this.files && this.files[0]){var reader = new FileReader(); reader.onload = function(e){document.getElementById('imagePreview').src = e.target.result;}; reader.readAsDataURL(this.files[0]);}"
                    class="is-hidden">
                     </div>

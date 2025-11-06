@@ -14,14 +14,14 @@ class ImageUploader
     private const CONFIG = [
         'book' => [
             'upload_dir' => 'uploads/books/',
-            'allowed_types' => ['image/jpeg', 'image/png', 'image/gif'],
+            'allowed_types' => ['image/jpeg', 'image/png'],
             'max_size' => 5242880, // 5 MB
             'prefix' => 'book_',
             'placeholder' => 'book_placeholder.png'
         ],
         'avatar' => [
             'upload_dir' => 'uploads/avatars/',
-            'allowed_types' => ['image/jpeg', 'image/png', 'image/gif'],
+            'allowed_types' => ['image/jpeg', 'image/png'],
             'max_size' => 2097152, // 2 MB
             'prefix' => 'avatar_',
             'placeholder' => 'pp_placeholder.png'
@@ -62,7 +62,7 @@ class ImageUploader
             return [
                 'success' => false,
                 'filename' => null,
-                'error' => 'Format de fichier non autorisé. Utilisez JPG, PNG ou GIF.'
+                'error' => 'Format de fichier non autorisé. Utilisez JPG ou PNG.'
             ];
         }
 

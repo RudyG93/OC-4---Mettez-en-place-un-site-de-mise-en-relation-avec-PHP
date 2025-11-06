@@ -21,19 +21,19 @@ abstract class Controller
      * @return object Instance du manager
      * @throws Exception Si le manager n'existe pas
      */
-    protected function loadManager($manager) : object
+    protected function loadManager($manager): object
     {
         $managerClass = $manager . 'Manager';
         $managerFile = APP_PATH . '/model/manager/' . $managerClass . '.php';
-        
+
         if (file_exists($managerFile)) {
             require_once $managerFile;
             return new $managerClass();
         }
-        
+
         throw new Exception("Manager $managerClass introuvable");
     }
-    
+
     /**
      * Charge et affiche une vue avec son layout
      * 
@@ -44,29 +44,29 @@ abstract class Controller
      * @param string $layout Nom du layout (défaut: 'main')
      * @throws Exception Si la vue n'existe pas
      */
-    protected function render($view, $data = [], $layout = 'main') : void
+    protected function render($view, $data = [], $layout = 'main'): void
     {
         // Ajouter le compteur de messages non lus si l'utilisateur est connecté
         if (Session::isLoggedIn() && !isset($data['unreadMessagesCount'])) {
             $messageManager = $this->loadManager('Message');
             $data['unreadMessagesCount'] = $messageManager->getUnreadCount(Session::getUserId());
         }
-        
+
         // Extraire les données pour les rendre disponibles dans la vue
         extract($data);
-        
+
         // Capturer le contenu de la vue
         ob_start();
         $viewFile = APP_PATH . '/view/' . $view . '.php';
-        
+
         if (file_exists($viewFile)) {
             require $viewFile;
         } else {
             throw new Exception("Vue $view introuvable");
         }
-        
+
         $content = ob_get_clean();
-        
+
         // Charger le layout
         $layoutFile = APP_PATH . '/view/layouts/' . $layout . '.php';
         if (file_exists($layoutFile)) {
@@ -89,28 +89,29 @@ abstract class Controller
     }
 
     /**
-     * Vérifie si la requête est de type POST
-     * 
-     * @return bool True si POST, false sinon
-     */
-    protected function isPost() : bool
-    {
-        return $_SERVER['REQUEST_METHOD'] === 'POST';
-    }
-
-    /**
      * Vérifie si l'utilisateur est connecté, sinon redirige vers login
      * 
      * @return void Redirige si non connecté
      */
-    protected function requireAuth() : void
+    protected function requireAuth(): void
     {
         if (!Session::isLoggedIn()) {
             Session::setFlash('error', 'Vous devez être connecté pour accéder à cette page');
             $this->redirect('login');
         }
     }
-    
+
+    /**
+     * Vérifie si la requête est de type POST
+     * 
+     * @return bool True si POST, false sinon
+     */
+    protected function isPost(): bool
+    {
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
+    }
+
+
     /**
      * Récupère une valeur POST nettoyée (trim)
      * 

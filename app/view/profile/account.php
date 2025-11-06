@@ -33,7 +33,7 @@
                 <input type="file" 
                     id="avatar-upload" 
                     name="avatar" 
-                    accept="image/jpeg,image/png,image/gif"
+                    accept="image/jpeg,image/png"
                     class="is-hidden"
                     onchange="if(confirm('Voulez-vous vraiment changer votre avatar ?')) this.form.submit();">
                         </form>
@@ -231,10 +231,10 @@
                <input type="file" 
                    id="bookImage" 
                    name="image" 
-                   accept="image/jpeg,image/png,image/gif"
+                   accept="image/jpeg,image/png"
                    class="is-hidden"
                    onchange="if(this.files && this.files[0]){var reader = new FileReader(); reader.onload = function(e){var el=document.getElementById('imagePreviewModal'); el.innerHTML=''; var img=document.createElement('img'); img.className='preview-img'; img.alt='Aperçu'; img.src=e.target.result; el.appendChild(img);}; reader.readAsDataURL(this.files[0]);}">
-                    <small class="form-help">Formats acceptés : JPG, PNG, GIF (max 2Mo)</small>
+                    <small class="form-help">Formats acceptés : JPG, PNG (max 2Mo)</small>
                 </div>
                 
                 <!-- Titre -->

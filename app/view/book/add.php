@@ -47,9 +47,9 @@
                            id="image" 
                            name="image" 
                            class="form-control <?= isset($errors['image']) ? 'is-invalid' : '' ?>"
-                           accept="image/jpeg,image/png,image/gif">
+                           accept="image/jpeg,image/png">
                     <small class="form-text text-muted">
-                        Formats acceptés : JPEG, PNG, GIF. Taille maximum : 5MB.
+                        Formats acceptés : JPEG, PNG. Taille maximum : 5MB.
                     </small>
                     <?php if (isset($errors['image'])): ?>
                         <div class="invalid-feedback"><?= escape($errors['image']) ?></div>
