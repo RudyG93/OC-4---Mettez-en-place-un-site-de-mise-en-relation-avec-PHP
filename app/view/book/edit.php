@@ -29,7 +29,7 @@
                     <div class="photo-wrapper">
                         <div class="photo-display" id="photoDisplay">
                             <?php if ($book->getImage()): ?>
-                                <img src="<?= $book->getImagePath() ?>" 
+                                <img src="<?= BASE_URL . 'uploads/books/' . $book->getImage() ?>" 
                                      alt="<?= escape($book->getTitle()) ?>" 
                                      id="imagePreview">
                             <?php else: ?>
@@ -96,8 +96,8 @@
                     <div class="form-group">
                         <label for="available" class="form-label">Disponibilité</label>
                         <select id="available" name="available" class="form-select">
-                            <option value="1" <?= $book->isAvailable() ? 'selected' : '' ?>>disponible</option>
-                            <option value="0" <?= !$book->isAvailable() ? 'selected' : '' ?>>non disponible</option>
+                            <option value="1" <?= $book->getIsAvailable() ? 'selected' : '' ?>>disponible</option>
+                            <option value="0" <?= !$book->getIsAvailable() ? 'selected' : '' ?>>non disponible</option>
                         </select>
                     </div>
 

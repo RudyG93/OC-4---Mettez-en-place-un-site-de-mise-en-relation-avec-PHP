@@ -12,7 +12,7 @@
             </div>
         <?php else: ?>
             <?php foreach ($conversations as $conversation): ?>
-                <a href="<?= BASE_URL ?>messages/conversation/<?= $conversation->getOtherUserId() ?>" 
+                <a href="<?= BASE_URL ?>messagerie/conversation/<?= $conversation->getOtherUserId() ?>" 
                    class="conversation-item <?= $conversation->getUnreadCount() > 0 ? 'conversation-unread' : '' ?> <?= isset($otherUser) && $conversation->getOtherUserId() == $otherUser->getId() ? 'active' : '' ?>">
                     
                     <div class="conversation-content">
@@ -24,14 +24,14 @@
                         <div class="conversation-info">
                             <div class="conversation-header-info">
                                 <h3 class="conversation-name"><?= escape($conversation->getOtherUsername()) ?></h3>
-                                <span class="conversation-time"><?= escape($conversation->getFormattedDate()) ?></span>
+                                <span class="conversation-time"><?= escape(formatMessageDate($conversation->getCreatedAt())) ?></span>
                             </div>
                             
                             <p class="conversation-preview">
-                                <?php if ($conversation->isSentBy($currentUser->getId())): ?>
+                                <?php if (isMessageSentBy($conversation, $userId)): ?>
                                     Vous : 
                                 <?php endif?>
-                                <?= escape($conversation->getExcerpt(50)) ?>
+                                <?= escape(getTextExcerpt($conversation->getContent(), 50)) ?>
                             </p>
                         </div>
                     </div>

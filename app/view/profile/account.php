@@ -166,7 +166,7 @@
                                 <?php foreach ($userBooks as $book): ?>
                                     <tr>
                                         <td>
-                                            <img src="<?= escape($book->getImagePath()) ?>" alt="Couverture de <?= escape($book->getTitle()) ?>" class="book-cover">
+                                            <img src="<?= escape($book->getImage() ? BASE_URL . 'uploads/books/' . $book->getImage() : null) ?>" alt="Couverture de <?= escape($book->getTitle()) ?>" class="book-cover">
                                         </td>
                                         <td>
                                             <div class="book-title"><?= escape($book->getTitle()) ?></div>
@@ -175,11 +175,11 @@
                                             <div class="book-author"><?= escape($book->getAuthor()) ?></div>
                                         </td>
                                         <td>
-                                            <div class="book-description"><?= escape($book->getShortDescription(100)) ?></div>
+                                            <div class="book-description"><?= escape(strlen($book->getDescription()) > 100 ? substr($book->getDescription(), 0, 100) . '...' : $book->getDescription()) ?></div>
                                         </td>
                                         <td>
-                                            <span class="availability-badge <?= $book->getAvailabilityClass() ?>">
-                                                <?= $book->getAvailabilityText() ?>
+                                            <span class="availability-badge <?= $book->getIsAvailable() ? 'availability-available' : 'availability-unavailable' ?>">
+                                                <?= $book->getIsAvailable() ? 'disponible' : 'non dispo.' ?>
                                             </span>
                                         </td>
                                         <td>

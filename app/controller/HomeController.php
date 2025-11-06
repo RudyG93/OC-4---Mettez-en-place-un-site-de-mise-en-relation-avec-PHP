@@ -1,23 +1,19 @@
 <?php
-/**
- * HomeController
- * 
- * Gère l'affichage de la page d'accueil
- * 
- * @author TomTroc Team
- * @version 1.0.0
- */
 
+/**
+ * Contrôleur de la page d'accueil
+ * 
+ * Gère l'affichage de la page d'accueil avec les derniers livres ajoutés.
+ */
 class HomeController extends Controller
 {
     /**
      * Affiche la page d'accueil
-     * 
      * Récupère et affiche les 4 derniers livres ajoutés sur la plateforme
      * 
-     * @return void
+     * Route : / (home)
      */
-    public function index()
+    public function index() : void
     {
         // Récupérer les 4 derniers livres ajoutés
         $bookManager = new BookManager();

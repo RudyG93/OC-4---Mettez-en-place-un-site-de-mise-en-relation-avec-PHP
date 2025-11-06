@@ -1,7 +1,16 @@
 <?php
 
-class MessageManager {
-
+/**
+ * MessageManager - Gestion des messages en base de données
+ * 
+ * Responsabilités :
+ * - Gestion des conversations (liste et affichage)
+ * - Envoi de messages
+ * - Gestion du statut lu/non lu
+ * - Comptage des messages non lus
+ */
+class MessageManager
+{
     protected $db;
 
     public function __construct()
@@ -9,9 +18,16 @@ class MessageManager {
         $this->db = Database::getInstance();
     }
 
+    /* ================================
+       LECTURE - CONVERSATIONS
+       ================================ */
+
     /**
      * Récupère la liste des conversations pour un utilisateur
      * Une conversation = dernier message échangé avec chaque personne
+     * 
+     * @param int $userId ID de l'utilisateur
+     * @return Message[] Tableau de conversations avec infos de l'autre utilisateur et compteur non lus
      */
     public function getConversations($userId) {
         $sql = "
@@ -85,18 +101,15 @@ class MessageManager {
 
     /**
      * Récupère tous les messages d'une conversation entre deux utilisateurs
+     * 
+     * @param int $userId1 ID du premier utilisateur
+     * @param int $userId2 ID du deuxième utilisateur
+     * @return Message[] Tableau de messages triés par date croissante
      */
     public function getConversationMessages($userId1, $userId2) {
         $sql = "
-            SELECT 
-                m.*,
-                sender.username as sender_username,
-                sender.avatar as sender_avatar,
-                recipient.username as recipient_username,
-                recipient.avatar as recipient_avatar
+            SELECT m.*
             FROM messages m
-            INNER JOIN users sender ON m.sender_id = sender.id
-            INNER JOIN users recipient ON m.recipient_id = recipient.id
             WHERE (m.sender_id = ? AND m.recipient_id = ?)
                OR (m.sender_id = ? AND m.recipient_id = ?)
             ORDER BY m.created_at ASC
@@ -124,8 +137,17 @@ class MessageManager {
         return $messages;
     }
 
+    /* ================================
+       CRÉATION
+       ================================ */
+
     /**
      * Envoie un nouveau message
+     * 
+     * @param int $senderId ID de l'expéditeur
+     * @param int $recipientId ID du destinataire
+     * @param string $content Contenu du message
+     * @return int|false ID du message créé ou false en cas d'échec
      */
     public function sendMessage($senderId, $recipientId, $content) {
         $sql = "
@@ -145,8 +167,17 @@ class MessageManager {
         return false;
     }
 
+    /* ================================
+       MODIFICATION - STATUT LU/NON LU
+       ================================ */
+
     /**
      * Marque tous les messages d'une conversation comme lus
+     * Utilisé quand l'utilisateur ouvre une conversation
+     * 
+     * @param int $currentUserId ID de l'utilisateur qui lit les messages
+     * @param int $otherUserId ID de l'autre personne dans la conversation
+     * @return bool True si succès
      */
     public function markConversationAsRead($currentUserId, $otherUserId) {
         $sql = "
@@ -164,26 +195,16 @@ class MessageManager {
         return $statement->execute();
     }
 
-    /**
-     * Marque un message spécifique comme lu
-     */
-    public function markAsRead($messageId, $userId) {
-        $sql = "
-            UPDATE messages 
-            SET is_read = 1 
-            WHERE id = :message_id 
-              AND recipient_id = :user_id
-        ";
-
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':message_id', $messageId, PDO::PARAM_INT);
-        $statement->bindValue(':user_id', $userId, PDO::PARAM_INT);
-        
-        return $statement->execute();
-    }
+    /* ================================
+       STATISTIQUES
+       ================================ */
 
     /**
      * Compte le nombre total de messages non lus pour un utilisateur
+     * Utilisé pour afficher le badge de notifications
+     * 
+     * @param int $userId ID de l'utilisateur
+     * @return int Nombre de messages non lus
      */
     public function getUnreadCount($userId) {
         $sql = "
@@ -198,70 +219,5 @@ class MessageManager {
         
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         return $result['count'] ?? 0;
-    }
-
-    /**
-     * Vérifie si deux utilisateurs ont déjà échangé des messages
-     */
-    public function hasConversation($userId1, $userId2) {
-        $sql = "
-            SELECT COUNT(*) as count
-            FROM messages 
-            WHERE (sender_id = ? AND recipient_id = ?)
-               OR (sender_id = ? AND recipient_id = ?)
-        ";
-
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(1, $userId1, PDO::PARAM_INT);
-        $statement->bindValue(2, $userId2, PDO::PARAM_INT);
-        $statement->bindValue(3, $userId2, PDO::PARAM_INT);
-        $statement->bindValue(4, $userId1, PDO::PARAM_INT);
-        $statement->execute();
-        
-        $result = $statement->fetch(PDO::FETCH_ASSOC);
-        return $result['count'] > 0;
-    }
-
-    /**
-     * Récupère le dernier message d'une conversation
-     */
-    public function getLastMessage($userId1, $userId2) {
-        $sql = "
-            SELECT 
-                m.*,
-                sender.username as sender_username,
-                sender.avatar as sender_avatar,
-                recipient.username as recipient_username,
-                recipient.avatar as recipient_avatar
-            FROM messages m
-            INNER JOIN users sender ON m.sender_id = sender.id
-            INNER JOIN users recipient ON m.recipient_id = recipient.id
-            WHERE (m.sender_id = ? AND m.recipient_id = ?)
-               OR (m.sender_id = ? AND m.recipient_id = ?)
-            ORDER BY m.created_at DESC
-            LIMIT 1
-        ";
-
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(1, $userId1, PDO::PARAM_INT);
-        $statement->bindValue(2, $userId2, PDO::PARAM_INT);
-        $statement->bindValue(3, $userId2, PDO::PARAM_INT);
-        $statement->bindValue(4, $userId1, PDO::PARAM_INT);
-        $statement->execute();
-        
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
-        
-        if ($row) {
-            $message = new Message();
-            $message->setId($row['id']);
-            $message->setSenderId($row['sender_id']);
-            $message->setRecipientId($row['recipient_id']);
-            $message->setContent($row['content']);
-            $message->setIsRead($row['is_read']);
-            $message->setCreatedAt($row['created_at']);
-            return $message;
-        }
-        
-        return null;
     }
 }

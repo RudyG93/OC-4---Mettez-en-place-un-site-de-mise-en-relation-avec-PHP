@@ -1,12 +1,17 @@
 <?php
-/**
- * ErrorController - Gère les pages d'erreur
- */
 
+/**
+ * Contrôleur de gestion des erreurs
+ * 
+ * Gère l'affichage des pages d'erreur (404, etc.)
+ */
 class ErrorController extends Controller
 {
     /**
-     * Page 404 - Page non trouvée
+     * Affiche la page 404 - Page non trouvée
+     * 
+     * @param string|null $message Message personnalisé (optionnel)
+     * Route : Déclenchée automatiquement par App.php en cas d'erreur
      */
     public function notFound($message = null)
     {
@@ -15,23 +20,6 @@ class ErrorController extends Controller
             'errorCode' => '404',
             'errorMessage' => 'Page non trouvée',
             'errorDescription' => 'Désolé, la page que vous recherchez n\'existe pas ou a été déplacée.'
-        ];
-        
-        $this->render('error/error', $data);
-    }
-    
-    /**
-     * Page 403 - Accès interdit
-     */
-    public function forbidden()
-    {
-        http_response_code(403);
-        
-        $data = [
-            'title' => 'Accès interdit - TomTroc',
-            'errorCode' => '403',
-            'errorMessage' => 'Accès interdit',
-            'errorDescription' => 'Vous n\'avez pas les permissions nécessaires pour accéder à cette page.'
         ];
         
         $this->render('error/error', $data);

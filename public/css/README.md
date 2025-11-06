@@ -183,9 +183,8 @@ public/css/
 - Compteurs de messages non lus
 
 **Pages concernées** :
-- `/messages` (liste des conversations)
-- `/messages/conversation/{id}` (conversation)
-- `/messages/compose/{id}` (nouveau message)
+- `/messagerie` (liste des conversations)
+- `/messagerie/conversation/{id}` (conversation)
 
 ---
 

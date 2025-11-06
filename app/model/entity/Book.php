@@ -1,11 +1,21 @@
 <?php
 
 /**
- * Entité Book
- * Représente un livre de l'application
+ * Entité Book - Représente un livre dans l'application
+ * 
+ * Propriétés :
+ * - Identifiants : id, user_id
+ * - Informations : title, author, description, image
+ * - État : is_available
+ * - Métadonnées : created_at
  */
-class Book extends Entity
+class Book
 {
+    /* ================================
+       PROPRIÉTÉS
+       ================================ */
+
+    private $id;
     private $user_id;
     private $title;
     private $author;
@@ -14,9 +24,14 @@ class Book extends Entity
     private $is_available;
     private $created_at;
 
-    /**
-     * Getters
-     */
+    /* ================================
+       GETTERS - PROPRIÉTÉS DE BASE
+       ================================ */
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getUserId()
     {
         return $this->user_id;
@@ -47,19 +62,20 @@ class Book extends Entity
         return $this->is_available;
     }
 
-    public function isAvailable()
-    {
-        return (bool) $this->is_available;
-    }
-
     public function getCreatedAt()
     {
         return $this->created_at;
     }
 
-    /**
-     * Setters
-     */
+    /* ================================
+       SETTERS
+       ================================ */
+    public function setId($id)
+    {
+        $this->id = (int) $id;
+        return $this;
+    }
+
     public function setUserId($user_id)
     {
         $this->user_id = (int) $user_id;
@@ -100,52 +116,5 @@ class Book extends Entity
     {
         $this->created_at = $created_at;
         return $this;
-    }
-
-    /**
-     * Méthodes utilitaires
-     */
-    
-    /**
-     * Retourne le chemin complet vers l'image
-     */
-    public function getImagePath()
-    {
-        if ($this->image) {
-            return BASE_URL . 'uploads/books/' . $this->image;
-        }
-        return null;
-    }
-
-    /**
-     * Retourne une description tronquée
-     */
-    public function getShortDescription($length = 100)
-    {
-        if (!$this->description) {
-            return '';
-        }
-        
-        if (strlen($this->description) <= $length) {
-            return $this->description;
-        }
-        
-        return substr($this->description, 0, $length) . '...';
-    }
-
-    /**
-     * Retourne le statut de disponibilité en français
-     */
-    public function getAvailabilityText()
-    {
-        return $this->isAvailable() ? 'disponible' : 'non dispo.';
-    }
-
-    /**
-     * Retourne la classe CSS pour le badge de disponibilité
-     */
-    public function getAvailabilityClass()
-    {
-        return $this->isAvailable() ? 'availability-available' : 'availability-unavailable';
     }
 }

@@ -31,12 +31,12 @@
                     </div>
                 <?php else: ?>
                     <?php foreach ($messages as $message): ?>
-                        <div class="message-item <?= $message->isSentBy($currentUser->getId()) ? 'sent' : 'received' ?>">
-                            <?php if ($message->isSentBy($currentUser->getId())): ?>
+                        <div class="message-item <?= isMessageSentBy($message, $userId) ? 'sent' : 'received' ?>">
+                            <?php if (isMessageSentBy($message, $userId)): ?>
                                 <!-- Messages envoyés : meta puis bulle -->
                                 <div class="message-content">
                                     <div class="message-meta">
-                                        <span class="message-time"><?= $message->getFormattedDate() ?></span>
+                                        <span class="message-time"><?= formatMessageDate($message->getCreatedAt()) ?></span>
                                         <?php if ($message->isRead()): ?>
                                             <span class="message-status">Lu</span>
                                         <?php endif?>
@@ -53,7 +53,7 @@
                                              alt="<?= escape($otherUser->getUsername()) ?>">
                                     </div>
                                     <div class="message-meta">
-                                        <span class="message-time"><?= escape($message->getFormattedDate()) ?></span>
+                                        <span class="message-time"><?= escape(formatMessageDate($message->getCreatedAt())) ?></span>
                                     </div>
                                 </div>
                                 <div class="message-content">
@@ -70,7 +70,7 @@
 
         <!-- Formulaire d'envoi -->
         <div class="message-form-container">
-            <form id="messageForm" class="message-form" method="POST" action="<?= BASE_URL ?>messages/send">
+            <form id="messageForm" class="message-form" method="POST" action="<?= BASE_URL ?>messagerie/send">
                 <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
                 <input type="hidden" name="recipient_id" value="<?= $otherUser->getId() ?>">
                 

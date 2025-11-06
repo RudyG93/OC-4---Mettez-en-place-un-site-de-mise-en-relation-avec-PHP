@@ -1,35 +1,34 @@
 <?php
 
 /**
- * Entité User
- * Représente un utilisateur de l'application
+ * Entité User - Représente un utilisateur de l'application
+ * 
+ * Propriétés :
+ * - Identifiants : id, email, password
+ * - Profil : username, avatar
+ * - Métadonnées : created_at
  */
-class User extends Entity
+class User
 {
+    /* ================================
+       PROPRIÉTÉS
+       ================================ */
+
+    private $id;
     private $username;
     private $email;
     private $password;
-    private $bio;
     private $avatar;
     private $created_at;
 
-    /**
-     * Empêche la création de propriétés dynamiques
-     */
-    public function __set($name, $value)
+    /* ================================
+       GETTERS
+       ================================ */
+    public function getId()
     {
-        // Ignorer silencieusement les tentatives de création de propriétés obsolètes
-        if ($name === 'login') {
-            return;
-        }
-        
-        // Pour les autres propriétés, lever une exception explicite
-        throw new Exception("Propriété '$name' non autorisée dans la classe User");
+        return $this->id;
     }
 
-    /**
-     * Getters
-     */
     public function getUsername()
     {
         return $this->username;
@@ -45,19 +44,6 @@ class User extends Entity
         return $this->password;
     }
 
-    public function getBio()
-    {
-        return $this->bio;
-    }
-
-    /**
-     * Vérifie si l'utilisateur a une bio
-     */
-    public function hasBio()
-    {
-        return !empty($this->bio);
-    }
-
     public function getAvatar()
     {
         return $this->avatar;
@@ -68,9 +54,15 @@ class User extends Entity
         return $this->created_at;
     }
 
-    /**
-     * Setters
-     */
+    /* ================================
+       SETTERS
+       ================================ */
+    public function setId($id)
+    {
+        $this->id = (int) $id;
+        return $this;
+    }
+
     public function setUsername($username)
     {
         $this->username = $username;
@@ -89,12 +81,6 @@ class User extends Entity
         return $this;
     }
 
-    public function setBio($bio)
-    {
-        $this->bio = $bio;
-        return $this;
-    }
-
     public function setAvatar($avatar)
     {
         $this->avatar = $avatar;
@@ -105,13 +91,5 @@ class User extends Entity
     {
         $this->created_at = $created_at;
         return $this;
-    }
-
-    /**
-     * Vérifie si le mot de passe correspond au hash stocké
-     */
-    public function verifyPassword($password)
-    {
-        return password_verify($password, $this->password);
     }
 }

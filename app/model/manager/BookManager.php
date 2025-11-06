@@ -1,7 +1,12 @@
 <?php
 
 /**
- * Manager pour la gestion des livres
+ * BookManager - Gestion des livres en base de données
+ * 
+ * Responsabilités :
+ * - CRUD complet des livres
+ * - Recherche et filtrage (disponibilité, propriétaire, recherche textuelle)
+ * - Statistiques (comptage par utilisateur)
  */
 class BookManager
 {
@@ -12,8 +17,15 @@ class BookManager
         $this->db = Database::getInstance();
     }
 
+    /* ================================
+       LECTURE - PAR CRITÈRE
+       ================================ */
+
     /**
      * Récupère tous les livres d'un utilisateur
+     * 
+     * @param int $userId ID de l'utilisateur
+     * @return Book[] Tableau de livres triés par date de création (récent en premier)
      */
     public function findByUserId($userId)
     {
@@ -42,6 +54,9 @@ class BookManager
 
     /**
      * Récupère un livre par son ID
+     * 
+     * @param int $id ID du livre
+     * @return Book|null Le livre ou null si introuvable
      */
     public function findById($id)
     {
@@ -69,7 +84,10 @@ class BookManager
     }
 
     /**
-     * Récupère tous les livres disponibles (pour les échanges)
+     * Récupère tous les livres disponibles pour l'échange
+     * 
+     * @param int|null $excludeUserId ID de l'utilisateur à exclure (généralement l'utilisateur connecté)
+     * @return array Tableau associatif avec 'book' et 'owner' (username)
      */
     public function findAvailableBooks($excludeUserId = null)
     {
@@ -104,12 +122,10 @@ class BookManager
             $book->setDescription($bookData['description']);
             $book->setIsAvailable($bookData['is_available']);
             $book->setCreatedAt($bookData['created_at']);
-            // Ajouter les infos du propriétaire dans un tableau associatif
+            
             $books[] = [
                 'book' => $book,
-                'owner' => [
-                    'username' => $bookData['username']
-                ]
+                'owner' => ['username' => $bookData['username']]
             ];
         }
         
@@ -117,7 +133,10 @@ class BookManager
     }
 
     /**
-     * Récupère les derniers livres ajoutés
+     * Récupère les derniers livres ajoutés sur la plateforme
+     * 
+     * @param int $limit Nombre maximum de livres à récupérer
+     * @return array Tableau associatif avec 'book' et 'owner' (username)
      */
     public function getLatestBooks($limit = 4)
     {
@@ -143,11 +162,10 @@ class BookManager
             $book->setDescription($bookData['description']);
             $book->setIsAvailable($bookData['is_available']);
             $book->setCreatedAt($bookData['created_at']);
+            
             $books[] = [
                 'book' => $book,
-                'owner' => [
-                    'username' => $bookData['username']
-                ]
+                'owner' => ['username' => $bookData['username']]
             ];
         }
         
@@ -155,92 +173,11 @@ class BookManager
     }
 
     /**
-     * Crée un nouveau livre
-     */
-    public function createBook($bookData)
-    {
-        $sql = "INSERT INTO books (user_id, title, author, image, description, is_available, created_at, updated_at)
-                VALUES (:user_id, :title, :author, :image, :description, :is_available, NOW(), NOW())";
-        
-        $query = $this->db->prepare($sql);
-        $query->bindValue(':user_id', $bookData['user_id'], PDO::PARAM_INT);
-        $query->bindValue(':title', $bookData['title']);
-        $query->bindValue(':author', $bookData['author']);
-        $query->bindValue(':image', $bookData['image'] ?? null);
-        $query->bindValue(':description', $bookData['description']);
-        $query->bindValue(':is_available', $bookData['is_available'] ?? 1, PDO::PARAM_INT);
-        
-        if ($query->execute()) {
-            $bookId = $this->db->lastInsertId();
-            return $this->findById($bookId);
-        }
-        
-        return false;
-    }
-
-    /**
-     * Met à jour un livre
-     */
-    public function updateBook($id, $bookData)
-    {
-        $sql = "UPDATE books 
-                SET title = :title, 
-                    author = :author, 
-                    image = :image, 
-                    description = :description, 
-                    is_available = :is_available,
-                    updated_at = NOW()
-                WHERE id = :id";
-        
-        $query = $this->db->prepare($sql);
-        $query->bindValue(':id', $id, PDO::PARAM_INT);
-        $query->bindValue(':title', $bookData['title']);
-        $query->bindValue(':author', $bookData['author']);
-        $query->bindValue(':image', $bookData['image'] ?? null);
-        $query->bindValue(':description', $bookData['description']);
-        $query->bindValue(':is_available', $bookData['is_available'] ?? 1, PDO::PARAM_INT);
-        
-        if ($query->execute()) {
-            return $this->findById($id);
-        }
-        
-        return false;
-    }
-
-    /**
-     * Supprime un livre
-     */
-    public function deleteBook($id)
-    {
-        $sql = "DELETE FROM books WHERE id = :id";
-        $query = $this->db->prepare($sql);
-        $query->bindValue(':id', $id, PDO::PARAM_INT);
-        
-        if ($query->execute()) {
-            return ['success' => true];
-        }
-        
-        return ['success' => false, 'error' => 'Erreur lors de la suppression du livre.'];
-    }
-
-    /**
-     * Met à jour le statut de disponibilité d'un livre
-     */
-    public function updateAvailability($id, $isAvailable)
-    {
-        $sql = "UPDATE books 
-                SET is_available = :is_available, updated_at = NOW()
-                WHERE id = :id";
-        
-        $query = $this->db->prepare($sql);
-        $query->bindValue(':id', $id, PDO::PARAM_INT);
-        $query->bindValue(':is_available', $isAvailable ? 1 : 0, PDO::PARAM_INT);
-        
-        return $query->execute();
-    }
-
-    /**
-     * Recherche des livres par titre ou auteur
+     * Recherche des livres disponibles par titre ou auteur
+     * 
+     * @param string $searchTerm Terme de recherche
+     * @param int|null $excludeUserId ID de l'utilisateur à exclure
+     * @return array Tableau associatif avec 'book' et 'owner' (username)
      */
     public function searchBooks($searchTerm, $excludeUserId = null)
     {
@@ -285,20 +222,135 @@ class BookManager
             $book->setDescription($bookData['description']);
             $book->setIsAvailable($bookData['is_available']);
             $book->setCreatedAt($bookData['created_at']);
-            // Ajouter les infos du propriétaire dans un tableau associatif
+            
             $books[] = [
                 'book' => $book,
-                'owner' => [
-                    'username' => $bookData['username']
-                ]
+                'owner' => ['username' => $bookData['username']]
             ];
         }
         
         return $books;
     }
 
+    /* ================================
+       CRÉATION
+       ================================ */
+
     /**
-     * Compte le nombre de livres d'un utilisateur
+     * Crée un nouveau livre en base de données
+     * 
+     * @param array $bookData Données du livre (user_id, title, author, image, description, is_available)
+     * @return Book|false Le livre créé ou false en cas d'échec
+     */
+    public function createBook($bookData)
+    {
+        $sql = "INSERT INTO books (user_id, title, author, image, description, is_available, created_at)
+                VALUES (:user_id, :title, :author, :image, :description, :is_available, NOW())";
+        
+        $query = $this->db->prepare($sql);
+        $query->bindValue(':user_id', $bookData['user_id'], PDO::PARAM_INT);
+        $query->bindValue(':title', $bookData['title']);
+        $query->bindValue(':author', $bookData['author']);
+        $query->bindValue(':image', $bookData['image'] ?? null);
+        $query->bindValue(':description', $bookData['description']);
+        $query->bindValue(':is_available', $bookData['is_available'] ?? 1, PDO::PARAM_INT);
+        
+        if ($query->execute()) {
+            $bookId = $this->db->lastInsertId();
+            return $this->findById($bookId);
+        }
+        
+        return false;
+    }
+
+    /* ================================
+       MODIFICATION
+       ================================ */
+
+    /**
+     * Met à jour un livre existant
+     * 
+     * @param int $id ID du livre à modifier
+     * @param array $bookData Nouvelles données du livre
+     * @return Book|false Le livre mis à jour ou false en cas d'échec
+     */
+    public function updateBook($id, $bookData)
+    {
+        $sql = "UPDATE books 
+                SET title = :title, 
+                    author = :author, 
+                    image = :image, 
+                    description = :description, 
+                    is_available = :is_available
+                WHERE id = :id";
+        
+        $query = $this->db->prepare($sql);
+        $query->bindValue(':id', $id, PDO::PARAM_INT);
+        $query->bindValue(':title', $bookData['title']);
+        $query->bindValue(':author', $bookData['author']);
+        $query->bindValue(':image', $bookData['image'] ?? null);
+        $query->bindValue(':description', $bookData['description']);
+        $query->bindValue(':is_available', $bookData['is_available'] ?? 1, PDO::PARAM_INT);
+        
+        if ($query->execute()) {
+            return $this->findById($id);
+        }
+        
+        return false;
+    }
+
+    /**
+     * Met à jour uniquement le statut de disponibilité d'un livre
+     * 
+     * @param int $id ID du livre
+     * @param bool $isAvailable Nouveau statut de disponibilité
+     * @return bool True si succès
+     */
+    public function updateAvailability($id, $isAvailable)
+    {
+        $sql = "UPDATE books 
+                SET is_available = :is_available
+                WHERE id = :id";
+        
+        $query = $this->db->prepare($sql);
+        $query->bindValue(':id', $id, PDO::PARAM_INT);
+        $query->bindValue(':is_available', $isAvailable ? 1 : 0, PDO::PARAM_INT);
+        
+        return $query->execute();
+    }
+
+    /* ================================
+       SUPPRESSION
+       ================================ */
+
+    /**
+     * Supprime un livre de la base de données
+     * 
+     * @param int $id ID du livre à supprimer
+     * @return array Résultat avec 'success' et éventuellement 'error'
+     */
+    public function deleteBook($id)
+    {
+        $sql = "DELETE FROM books WHERE id = :id";
+        $query = $this->db->prepare($sql);
+        $query->bindValue(':id', $id, PDO::PARAM_INT);
+        
+        if ($query->execute()) {
+            return ['success' => true];
+        }
+        
+        return ['success' => false, 'error' => 'Erreur lors de la suppression du livre.'];
+    }
+
+    /* ================================
+       STATISTIQUES
+       ================================ */
+
+    /**
+     * Compte le nombre total de livres d'un utilisateur
+     * 
+     * @param int $userId ID de l'utilisateur
+     * @return int Nombre de livres
      */
     public function countUserBooks($userId)
     {
@@ -312,6 +364,9 @@ class BookManager
 
     /**
      * Compte le nombre de livres disponibles d'un utilisateur
+     * 
+     * @param int $userId ID de l'utilisateur
+     * @return int Nombre de livres disponibles
      */
     public function countAvailableUserBooks($userId)
     {

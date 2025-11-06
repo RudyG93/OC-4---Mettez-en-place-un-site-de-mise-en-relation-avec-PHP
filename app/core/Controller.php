@@ -1,19 +1,26 @@
 <?php
-/*
+
+/**
  * Classe Controller - Contrôleur de base
  * 
  * Tous les contrôleurs de l'application héritent de cette classe.
- * Fournit des méthodes utilitaires pour charger les vues, rediriger, etc.
- * 
- * loadManager($manager) - Charge un manager (modèle)
- * render($view, $data = [], $layout = 'main') - Charge une vue avec un layout
- * 
+ * Fournit des méthodes utilitaires pour :
+ * - Charger les managers (modèles)
+ * - Rendre les vues avec layout
+ * - Gérer les redirections
+ * - Valider les requêtes POST
+ * - Vérifier l'authentification
+ * - Valider les tokens CSRF
  */
-
 abstract class Controller
 {
-    /* Charge un manager (modèle) */
-
+    /**
+     * Charge un manager (modèle)
+     * 
+     * @param string $manager Nom du manager (ex: 'Book' pour BookManager)
+     * @return object Instance du manager
+     * @throws Exception Si le manager n'existe pas
+     */
     protected function loadManager($manager) : object
     {
         $managerClass = $manager . 'Manager';
@@ -27,10 +34,24 @@ abstract class Controller
         throw new Exception("Manager $managerClass introuvable");
     }
     
-    /* Charge une vue */
-
+    /**
+     * Charge et affiche une vue avec son layout
+     * 
+     * Ajoute automatiquement le compteur de messages non lus pour les utilisateurs connectés.
+     * 
+     * @param string $view Chemin de la vue (ex: 'book/list')
+     * @param array $data Données à passer à la vue
+     * @param string $layout Nom du layout (défaut: 'main')
+     * @throws Exception Si la vue n'existe pas
+     */
     protected function render($view, $data = [], $layout = 'main') : void
     {
+        // Ajouter le compteur de messages non lus si l'utilisateur est connecté
+        if (Session::isLoggedIn() && !isset($data['unreadMessagesCount'])) {
+            $messageManager = $this->loadManager('Message');
+            $data['unreadMessagesCount'] = $messageManager->getUnreadCount(Session::getUserId());
+        }
+        
         // Extraire les données pour les rendre disponibles dans la vue
         extract($data);
         
@@ -55,8 +76,11 @@ abstract class Controller
         }
     }
 
-    /* Redirige vers une URL */
-
+    /**
+     * Redirige vers une URL relative
+     * 
+     * @param string $path Chemin relatif (ex: 'mon-compte', 'book/123/edit')
+     */
     protected function redirect($path)
     {
         $url = BASE_URL . ltrim($path, '/');
@@ -64,15 +88,21 @@ abstract class Controller
         exit;
     }
 
-    /* Vérifie si la requête est POST */
-
+    /**
+     * Vérifie si la requête est de type POST
+     * 
+     * @return bool True si POST, false sinon
+     */
     protected function isPost() : bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 
-    /* Vérifie si l'utilisateur est connecté */
-
+    /**
+     * Vérifie si l'utilisateur est connecté, sinon redirige vers login
+     * 
+     * @return void Redirige si non connecté
+     */
     protected function requireAuth() : void
     {
         if (!Session::isLoggedIn()) {
@@ -81,8 +111,13 @@ abstract class Controller
         }
     }
     
-    /* Récupère les données POST nettoyées */
-    
+    /**
+     * Récupère une valeur POST nettoyée (trim)
+     * 
+     * @param string|null $key Clé POST ou null pour tout $_POST
+     * @param mixed $default Valeur par défaut si clé absente
+     * @return mixed Valeur POST nettoyée ou tableau complet
+     */
     protected function getPost($key = null, $default = null)
     {
         if ($key === null) {
@@ -91,8 +126,12 @@ abstract class Controller
         return isset($_POST[$key]) ? trim($_POST[$key]) : $default;
     }
 
-    /* Valide le token CSRF  */
-
+    /**
+     * Valide le token CSRF et redirige en cas d'échec
+     * 
+     * @param string $redirectTo URL de redirection en cas d'erreur
+     * @return bool True si valide
+     */
     protected function validateCsrf($redirectTo = '')
     {
         if (!Session::verifyCsrfToken($this->getPost('csrf_token'))) {
@@ -100,12 +139,5 @@ abstract class Controller
             $this->redirect($redirectTo);
         }
         return true;
-    }
-
-    /* Génère et retourne un token CSRF pour les vues */
-
-    protected function getCsrfToken()
-    {
-        return Session::generateCsrfToken();
     }
 }

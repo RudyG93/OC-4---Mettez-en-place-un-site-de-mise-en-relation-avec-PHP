@@ -5,10 +5,8 @@
 // Charger la configuration
 require_once __DIR__ . '/../config/app.php';
 
-function escape($string)
-{
-    return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
-}
+// Charger les fonctions utilitaires
+require_once APP_PATH . '/core/helpers.php';
 
 // Autoloader pour charger automatiquement les classes
 spl_autoload_register(function ($className) {
@@ -18,7 +16,6 @@ spl_autoload_register(function ($className) {
         APP_PATH . '/model/manager/',
         APP_PATH . '/model/entity/',
         APP_PATH . '/service/',
-        APP_PATH . '/traits/',
     ];
 
     foreach ($paths as $path) {

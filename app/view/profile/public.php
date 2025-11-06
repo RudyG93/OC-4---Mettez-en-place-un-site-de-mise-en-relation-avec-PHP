@@ -50,7 +50,7 @@
                 </div>
                 
                 <?php if (Session::isLoggedIn() && Session::getUserId() != $user->getId()): ?>
-                    <a href="<?= BASE_URL ?>messages/compose/<?= $user->getId() ?>" class="btn-write-message">
+                    <a href="<?= BASE_URL ?>messagerie/conversation/<?= $user->getId() ?>" class="btn-write-message">
                         Écrire un message
                     </a>
                 <?php endif; ?>
@@ -78,7 +78,7 @@
                             <tr>
                                 <td class="book-photo-cell">
                                     <?php if ($book->getImage()): ?>
-                                        <img src="<?= $book->getImagePath() ?>" 
+                                        <img src="<?= BASE_URL . 'uploads/books/' . $book->getImage() ?>" 
                                              alt="<?= escape($book->getTitle()) ?>" 
                                              class="book-thumbnail">
                                     <?php else: ?>
@@ -97,7 +97,7 @@
                                 </td>
                                 <td class="book-description-cell">
                                     <?php if ($book->getDescription()): ?>
-                                        <?= escape($book->getShortDescription(150)) ?>
+                                        <?= escape(strlen($book->getDescription()) > 150 ? substr($book->getDescription(), 0, 150) . '...' : $book->getDescription()) ?>
                                     <?php else: ?>
                                         <span class="no-description">Aucune description</span>
                                     <?php endif; ?>

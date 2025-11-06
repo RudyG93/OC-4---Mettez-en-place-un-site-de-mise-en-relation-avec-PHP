@@ -1,7 +1,15 @@
 <?php
 
-class UserManager {
-
+/**
+ * UserManager - Gestion des utilisateurs en base de données
+ * 
+ * Responsabilités :
+ * - CRUD des utilisateurs
+ * - Authentification
+ * - Vérifications d'unicité (email, username)
+ */
+class UserManager
+{
     protected $db;
 
     public function __construct()
@@ -9,8 +17,15 @@ class UserManager {
         $this->db = Database::getInstance();
     }
 
+    /* ================================
+       LECTURE - PAR CRITÈRE
+       ================================ */
+
     /**
      * Récupère un utilisateur par son ID
+     * 
+     * @param int $id ID de l'utilisateur
+     * @return User|null L'utilisateur ou null si introuvable
      */
     public function findById($id) {
         $sql = "SELECT * FROM users WHERE id = :id";
@@ -28,7 +43,6 @@ class UserManager {
         $user->setUsername($row['username']);
         $user->setEmail($row['email']);
         $user->setPassword($row['password']);
-        $user->setBio($row['bio'] ?? null);
         $user->setAvatar($row['avatar'] ?? null);
         $user->setCreatedAt($row['created_at']);
         
@@ -37,6 +51,9 @@ class UserManager {
 
     /**
      * Récupère un utilisateur par son email
+     * 
+     * @param string $email Email de l'utilisateur
+     * @return User|null L'utilisateur ou null si introuvable
      */
     public function getUserByEmail($email) {
         $sql = "SELECT * FROM users WHERE email = :email LIMIT 1";
@@ -54,52 +71,33 @@ class UserManager {
         $user->setUsername($row['username']);
         $user->setEmail($row['email']);
         $user->setPassword($row['password']);
-        $user->setBio($row['bio'] ?? null);
         $user->setAvatar($row['avatar'] ?? null);
         $user->setCreatedAt($row['created_at']);
         
         return $user;
     }
+
+    /* ================================
+       CRÉATION
+       ================================ */
 
     /**
-     * Récupère un utilisateur par son nom d'utilisateur
+     * Crée un nouvel utilisateur
+     * 
+     * @param array $userData Données de l'utilisateur (username, email, password, avatar)
+     * @return int|false ID de l'utilisateur créé ou false en cas d'échec
      */
-    public function getUserByUsername($username) {
-        $sql = "SELECT * FROM users WHERE username = :username LIMIT 1";
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':username', $username);
-        $stmt->execute();
-        $row = $stmt->fetch();
-        
-        if (!$row) {
-            return null;
-        }
-        
-        $user = new User();
-        $user->setId($row['id']);
-        $user->setUsername($row['username']);
-        $user->setEmail($row['email']);
-        $user->setPassword($row['password']);
-        $user->setBio($row['bio'] ?? null);
-        $user->setAvatar($row['avatar'] ?? null);
-        $user->setCreatedAt($row['created_at']);
-        
-        return $user;
-    }
-
-    /* Crée un nouvel utilisateur */
-
-    public function createUser($userData) {
+    public function createUser($userData)
+    {
         $sql = "
-            INSERT INTO users (username, email, password, bio, avatar, created_at, updated_at) 
-            VALUES (:username, :email, :password, :bio, :avatar, NOW(), NOW())
+            INSERT INTO users (username, email, password, avatar, created_at) 
+            VALUES (:username, :email, :password, :avatar, NOW())
         ";
 
         $statement = $this->db->prepare($sql);
         $statement->bindValue(':username', $userData['username'], PDO::PARAM_STR);
         $statement->bindValue(':email', $userData['email'], PDO::PARAM_STR);
         $statement->bindValue(':password', $userData['password'], PDO::PARAM_STR);
-        $statement->bindValue(':bio', $userData['bio'] ?? null, PDO::PARAM_STR);
         $statement->bindValue(':avatar', $userData['avatar'] ?? null, PDO::PARAM_STR);
         
         if ($statement->execute()) {
@@ -109,8 +107,16 @@ class UserManager {
         return false;
     }
 
+    /* ================================
+       MODIFICATION
+       ================================ */
+
     /**
-     * Met à jour un utilisateur
+     * Met à jour un utilisateur (mise à jour partielle supportée)
+     * 
+     * @param int $id ID de l'utilisateur
+     * @param array $userData Données à mettre à jour (champs optionnels)
+     * @return bool True si succès
      */
     public function updateUser($id, $userData) {
         // Construire la requête dynamiquement selon les champs présents
@@ -127,11 +133,6 @@ class UserManager {
             $params[':email'] = $userData['email'];
         }
         
-        if (isset($userData['bio'])) {
-            $fields[] = 'bio = :bio';
-            $params[':bio'] = $userData['bio'];
-        }
-        
         if (isset($userData['avatar'])) {
             $fields[] = 'avatar = :avatar';
             $params[':avatar'] = $userData['avatar'];
@@ -141,8 +142,6 @@ class UserManager {
             $fields[] = 'password = :password';
             $params[':password'] = $userData['password'];
         }
-        
-        $fields[] = 'updated_at = NOW()';
         
         $sql = "UPDATE users SET " . implode(', ', $fields) . " WHERE id = :id";
         
@@ -159,21 +158,16 @@ class UserManager {
         return $statement->execute();
     }
 
-    /**
-     * Met à jour le mot de passe d'un utilisateur
-     */
-    public function updatePassword($id, $hashedPassword) {
-        $sql = "UPDATE users SET password = :password, updated_at = NOW() WHERE id = :id";
-        
-        $statement = $this->db->prepare($sql);
-        $statement->bindValue(':id', $id, PDO::PARAM_INT);
-        $statement->bindValue(':password', $hashedPassword, PDO::PARAM_STR);
-        
-        return $statement->execute();
-    }
+    /* ================================
+       VÉRIFICATIONS - UNICITÉ
+       ================================ */
 
     /**
-     * Vérifie si un email existe déjà dans la base de données
+     * Vérifie si un email existe déjà en base de données
+     * 
+     * @param string $email Email à vérifier
+     * @param int|null $excludeUserId ID d'utilisateur à exclure (pour les mises à jour)
+     * @return bool True si l'email existe déjà
      */
     public function emailExists($email, $excludeUserId = null) {
         if ($excludeUserId) {
@@ -197,7 +191,11 @@ class UserManager {
     }
 
     /**
-     * Vérifie si un nom d'utilisateur existe déjà
+     * Vérifie si un nom d'utilisateur existe déjà en base de données
+     * 
+     * @param string $username Nom d'utilisateur à vérifier
+     * @param int|null $excludeUserId ID d'utilisateur à exclure (pour les mises à jour)
+     * @return bool True si le nom d'utilisateur existe déjà
      */
     public function usernameExists($username, $excludeUserId = null) {
         if ($excludeUserId) {
@@ -218,18 +216,5 @@ class UserManager {
         $statement->execute();
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         return $result['count'] > 0;
-    }
-
-    /**
-     * Authentifie un utilisateur
-     */
-    public function authenticate($email, $password) {
-        $user = $this->getUserByEmail($email);
-        
-        if ($user && password_verify($password, $user->getPassword())) {
-            return $user;
-        }
-        
-        return null;
     }
 }

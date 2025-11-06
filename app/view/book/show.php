@@ -11,7 +11,7 @@
     <div class="book-detail-layout">
         <!-- Image à gauche -->
         <div class="book-image-container">
-            <img src="<?= escape($book->getImagePath()) ?>" 
+            <img src="<?= escape($book->getImage() ? BASE_URL . 'uploads/books/' . $book->getImage() : null) ?>" 
                  alt="<?= escape($book->getTitle()) ?>" 
                  class="book-detail-image">
         </div>
@@ -52,7 +52,7 @@
                 <!-- Bouton message -->
                 <?php if (Session::isLoggedIn() && Session::getUserId() != $book->getUserId()): ?>
                     <div class="book-actions">
-                        <a href="<?= BASE_URL ?>messages/compose/<?= $owner->getId() ?>?book_title=<?= urlencode($book->getTitle()) ?>" 
+                        <a href="<?= BASE_URL ?>messagerie/conversation/<?= $owner->getId() ?>" 
                            class="btn-message">
                             Envoyer un message
                         </a>

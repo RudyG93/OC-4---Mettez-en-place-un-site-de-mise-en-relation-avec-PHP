@@ -37,7 +37,7 @@
                     <div class="book-card">
                         <div class="book-image">
                             <?php if ($book->getImage()): ?>
-                                <img src="<?= escape($book->getImagePath()) ?>" alt="<?= escape($book->getTitle()) ?>">
+                                <img src="<?= escape(BASE_URL . 'uploads/books/' . $book->getImage()) ?>" alt="<?= escape($book->getTitle()) ?>">
                             <?php else: ?>
                                 <div class="book-placeholder">📚</div>
                             <?php endif; ?>

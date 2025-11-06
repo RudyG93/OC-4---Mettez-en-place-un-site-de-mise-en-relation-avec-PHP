@@ -27,7 +27,7 @@ TomTroc est une plateforme web permettant aux utilisateurs d'échanger des livre
 - ✅ Système de messagerie privée
 - ✅ Conversations en temps réel
 - ✅ Badge de notifications
-- ✅ Interface à deux colonnes (conversations/messages)
+- ✅ Interface à deux colonnes (conversations/messagerie)
 
 ## 🏗️ Architecture technique
 
@@ -148,9 +148,8 @@ Toutes les feuilles de style sont importées via `style.css`.
 - `/book/{id}/edit` - Éditer un livre
 - `/book/{id}/delete` - Supprimer un livre
 - `/book/{id}/toggle-availability` - Changer la disponibilité
-- `/messages` - Liste des conversations
-- `/messages/conversation/{id}` - Conversation avec un utilisateur
-- `/messages/compose/{id}` - Composer un message
+- `/messagerie` - Liste des conversations
+- `/messagerie/conversation/{id}` - Conversation avec un utilisateur
 
 ## 🧪 Données de test
 

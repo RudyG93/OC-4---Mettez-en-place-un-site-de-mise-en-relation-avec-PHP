@@ -1,207 +1,193 @@
 <?php
 
-class MessageController extends Controller {
-    
-    private $messageManager;
-    private $userManager;
+/**
+ * Contrôleur de gestion de la messagerie
+ * 
+ * Gère les conversations entre utilisateurs :
+ * - Affichage de la liste des conversations
+ * - Affichage d'une conversation spécifique
+ * - Envoi de messages
+ */
 
-    /**
-     * Charge le MessageManager si pas encore fait
-     */
-    private function getMessageManager() {
-        if (!$this->messageManager) {
-            $this->messageManager = $this->loadManager('Message');
-        }
-        return $this->messageManager;
+class MessageController extends Controller
+{
+    private MessageManager $messageManager;
+    private UserManager $userManager;
+
+    public function __construct()
+    {
+        $this->messageManager = $this->loadManager('Message');
+        $this->userManager = $this->loadManager('User');
     }
 
-    /**
-     * Charge le UserManager si pas encore fait
-     */
-    private function getUserManager() {
-        if (!$this->userManager) {
-            $this->userManager = $this->loadManager('User');
-        }
-        return $this->userManager;
-    }
+    /* ================================
+       ACTIONS PUBLIQUES - CONSULTATION
+       ================================ */
 
     /**
      * Affiche la liste des conversations de l'utilisateur connecté
+     * Route : messagerie
      */
-    public function index() {
-        // Vérifier que l'utilisateur est connecté
-        if (!Session::isLoggedIn()) {
-            Session::setFlash('error', 'Vous devez être connecté pour accéder à vos messages');
-            $this->redirect('/login');
-        }
+    public function index(): void
+    {
+        $this->requireAuth();
 
-        // Récupérer l'utilisateur actuel
         $userId = Session::getUserId();
-        $currentUser = $this->getUserManager()->findById($userId);
-        
-        $conversations = $this->getMessageManager()->getConversations($userId);
-        $unreadCount = $this->getMessageManager()->getUnreadCount($userId);
 
-        $this->render('message/empty', [
+        $conversations = $this->messageManager->getConversations($userId);
+        $unreadCount = $this->messageManager->getUnreadCount($userId);
+
+        $this->render('messagerie/empty', [
             'conversations' => $conversations,
             'unreadCount' => $unreadCount,
-            'currentUser' => $currentUser,
-            'pageTitle' => 'Mes messages'
+            'userId' => $userId,
+            'title' => 'Messagerie - Tom Troc'
         ]);
     }
 
     /**
-     * Affiche une conversation spécifique
+     * Affiche une conversation spécifique avec un autre utilisateur
+     * Route : messagerie/conversation/{id}
      */
-    public function conversation($otherUserId = null) {
-        // Vérifier que l'utilisateur est connecté
-        if (!Session::isLoggedIn()) {
-            Session::setFlash('error', 'Vous devez être connecté pour accéder aux conversations');
-            $this->redirect('/login');
-        }
+    public function conversation(?int $otherUserId = null): void
+    {
+        $this->requireAuth();
 
-        if (!$otherUserId) {
-            Session::setFlash('error', 'Conversation introuvable');
-            $this->redirect('/messages');
-        }
-
-        // Récupérer l'utilisateur actuel
         $userId = Session::getUserId();
-        $currentUser = $this->getUserManager()->findById($userId);
 
-        // Vérifier que l'autre utilisateur existe
-        $otherUser = $this->getUserManager()->findById($otherUserId);
-        if (!$otherUser) {
-            Session::setFlash('error', 'Utilisateur introuvable');
-            $this->redirect('/messages');
+        // Valider le destinataire
+        $errors = $this->validateRecipient($userId, $otherUserId);
+        
+        if (!empty($errors)) {
+            Session::setFlash('error', implode(', ', $errors));
+            $this->redirect('messagerie');
+            return;
         }
+
+        // Récupérer l'utilisateur (on sait qu'il existe car validateRecipient() l'a vérifié)
+        $otherUser = $this->userManager->findById($otherUserId);
 
         // Récupérer les messages de la conversation
-        $messages = $this->getMessageManager()->getConversationMessages($userId, $otherUserId);
-        
+        $messages = $this->messageManager->getConversationMessages($userId, $otherUserId);
+
         // Marquer la conversation comme lue
-        $this->getMessageManager()->markConversationAsRead($userId, $otherUserId);
+        $this->messageManager->markConversationAsRead($userId, $otherUserId);
 
         // Récupérer toutes les conversations pour la sidebar
-        $conversations = $this->getMessageManager()->getConversations($userId);
+        $conversations = $this->messageManager->getConversations($userId);
 
-        $this->render('message/conversation', [
+        $this->render('messagerie/conversation', [
             'messages' => $messages,
             'otherUser' => $otherUser,
-            'currentUser' => $currentUser,
+            'userId' => $userId,
             'conversations' => $conversations,
             'csrfToken' => Session::generateCsrfToken(),
-            'pageTitle' => 'Conversation avec ' . $otherUser->getUsername()
+            'title' => 'Chat w/ ' . $otherUser->getUsername() . ' - Tom Troc'
         ]);
     }
 
+    /* ================================
+       ACTIONS - ENVOI DE MESSAGES
+       ================================ */
+
     /**
-     * Envoie un nouveau message
+     * Envoie un nouveau message dans une conversation (POST)
+     * Route : messagerie/send
      */
-    public function send() {
-        // Vérifier que l'utilisateur est connecté
-        if (!Session::isLoggedIn()) {
-            Session::setFlash('error', 'Vous devez être connecté');
-            $this->redirect('login');
+    public function send(): void
+    {
+        $this->requireAuth();
+
+        if (!$this->isPost()) {
+            $this->redirect('messagerie');
             return;
         }
 
-        // Vérifier que c'est une requête POST
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('messages');
-            return;
-        }
-
-        // Vérifier le token CSRF
-        if (!Session::verifyCsrfToken($_POST['csrf_token'] ?? '')) {
-            Session::setFlash('error', 'Token de sécurité invalide');
-            $this->redirect('messages');
-            return;
-        }
+        $this->validateCsrf('messagerie');
 
         $userId = Session::getUserId();
         $recipientId = (int) ($_POST['recipient_id'] ?? 0);
         $content = trim($_POST['content'] ?? '');
 
-        $errors = [];
-        
-        if (empty($content)) {
-            $errors[] = 'Le message ne peut pas être vide';
-        }
-        
-        if (strlen($content) > 1000) {
-            $errors[] = 'Le message ne peut pas dépasser 1000 caractères';
+        // Validation des données
+        $errors = $this->validateMessage($userId, $recipientId, $content);
+
+        if (!empty($errors)) {
+            Session::setFlash('error', implode(', ', $errors));
+            
+            if ($recipientId) {
+                $this->redirect('messagerie/conversation/' . $recipientId);
+            } else {
+                $this->redirect('messagerie');
+            }
+            return;
         }
 
+        // Envoi du message
+        $messageId = $this->messageManager->sendMessage($userId, $recipientId, $content);
+
+        if (!$messageId) {
+            Session::setFlash('error', 'Erreur lors de l\'envoi du message.');
+        }
+
+        $this->redirect('messagerie/conversation/' . $recipientId);
+    }
+
+    /* ================================
+       MÉTHODES INTERNES - VALIDATION
+       ================================ */
+
+    /**
+     * Valide un destinataire de message
+     * 
+     * @param int $userId ID de l'utilisateur qui envoie
+     * @param int|null $recipientId ID du destinataire
+     * @return array Tableau d'erreurs (vide si tout est valide)
+     */
+
+    private function validateRecipient(int $userId, ?int $recipientId): array
+    {
+        $errors = [];
+
+        // Vérifier qu'on n'essaie pas de s'envoyer un message à soi-même
         if (!$recipientId || $recipientId === $userId) {
-            $errors[] = 'Destinataire invalide';
+            $errors[] = 'Destinataire invalide.';
+            return $errors;
         }
 
         // Vérifier que le destinataire existe
-        $recipient = $this->getUserManager()->findById($recipientId);
+        $recipient = $this->userManager->findById($recipientId);
         if (!$recipient) {
-            $errors[] = 'Destinataire introuvable';
+            $errors[] = 'Destinataire introuvable.';
         }
 
-        if (empty($errors)) {
-            $messageId = $this->getMessageManager()->sendMessage(
-                $userId,
-                $recipientId,
-                $content
-            );
-
-            if ($messageId) {
-                $this->redirect('messages/conversation/' . $recipientId);
-                return;
-            } else {
-                $errors[] = 'Erreur lors de l\'envoi du message';
-            }
-        }
-
-        // En cas d'erreur, rediriger vers la conversation avec le message d'erreur
-        Session::setFlash('error', implode(', ', $errors));
-        if ($recipientId) {
-            $this->redirect('messages/conversation/' . $recipientId);
-        } else {
-            $this->redirect('messages');
-        }
+        return $errors;
     }
 
     /**
-     * Démarre une nouvelle conversation (depuis une page de livre par exemple)
+     * Valide les données d'un message
+     * 
+     * @param int $userId ID de l'utilisateur qui envoie
+     * @param int $recipientId ID du destinataire
+     * @param string $content Contenu du message
+     * @return array Tableau d'erreurs (vide si tout est valide)
      */
-    public function compose($recipientId = null) {
-        // Vérifier que l'utilisateur est connecté
-        if (!Session::isLoggedIn()) {
-            Session::setFlash('error', 'Vous devez être connecté pour envoyer un message');
-            $this->redirect('login');
-            return;
+
+    private function validateMessage(int $userId, int $recipientId, string $content): array
+    {
+        $errors = [];
+
+        // Validation du contenu
+        if (empty($content)) {
+            $errors[] = 'Le message ne peut pas être vide.';
+        } elseif (strlen($content) > 1000) {
+            $errors[] = 'Le message ne peut pas dépasser 1000 caractères.';
         }
 
-        if (!$recipientId) {
-            Session::setFlash('error', 'Destinataire non spécifié');
-            $this->redirect('messages');
-            return;
-        }
+        // Validation du destinataire
+        $recipientErrors = $this->validateRecipient($userId, $recipientId);
+        $errors = array_merge($errors, $recipientErrors);
 
-        $userId = Session::getUserId();
-
-        // Vérifier que le destinataire existe
-        $recipient = $this->getUserManager()->findById($recipientId);
-        if (!$recipient) {
-            Session::setFlash('error', 'Destinataire introuvable');
-            $this->redirect('messages');
-            return;
-        }
-
-        // Vérifier qu'on n'essaie pas de s'envoyer un message à soi-même
-        if ($recipientId == $userId) {
-            Session::setFlash('error', 'Vous ne pouvez pas vous envoyer un message à vous-même');
-            $this->redirect('messages');
-            return;
-        }
-
-        // Rediriger directement vers la conversation (même si elle est vide)
-        $this->redirect('messages/conversation/' . $recipientId);
+        return $errors;
     }
 }

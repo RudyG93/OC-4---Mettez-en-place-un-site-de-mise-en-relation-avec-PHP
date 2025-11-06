@@ -1,12 +1,21 @@
 <?php
 
-/* Classe Database - Singleton pour la connexion PDO */
-
+/**
+ * Classe Database - Singleton pour la connexion PDO
+ * 
+ * Fournit une instance unique de connexion à la base de données.
+ * Pattern Singleton pour éviter les connexions multiples.
+ */
 class Database
 {
     private static $instance = null;
     private $pdo;
 
+    /**
+     * Constructeur privé - Initialise la connexion PDO
+     * 
+     * @throws PDOException En cas d'erreur de connexion
+     */
     private function __construct()
     {
         try {
@@ -24,8 +33,11 @@ class Database
         }
     }
 
-    /* Récupère l'instance unique de la connexion PDO */
-
+    /**
+     * Récupère l'instance unique de la connexion PDO
+     * 
+     * @return PDO Instance PDO
+     */
     public static function getInstance()
     {
         if (self::$instance === null) {
@@ -34,12 +46,16 @@ class Database
         return self::$instance->pdo;
     }
 
-    /* Empêche le clonage de l'instance */
-
+    /**
+     * Empêche le clonage de l'instance (pattern Singleton)
+     */
     private function __clone() {}
 
-    /* Empêche la désérialisation de l'instance */
-    
+    /**
+     * Empêche la désérialisation de l'instance (pattern Singleton)
+     * 
+     * @throws Exception Toujours
+     */
     public function __wakeup()
     {
         throw new Exception("Cannot unserialize singleton");

@@ -1,9 +1,9 @@
 <?php
+
 /**
  * Configuration des routes personnalisées
  * Format: 'url' => ['controller' => 'ControllerName', 'action' => 'actionName']
  */
-
 return [
     // Page d'accueil
     '' => ['controller' => 'Home', 'action' => 'index'],
@@ -34,9 +34,7 @@ return [
     'book/{id}/delete' => ['controller' => 'Book', 'action' => 'delete'],
     
     // Messagerie
-    'messages' => ['controller' => 'Message', 'action' => 'index'],
-    'messages/conversation/{id}' => ['controller' => 'Message', 'action' => 'conversation'],
-    'messages/compose/{id}' => ['controller' => 'Message', 'action' => 'compose'],
-    'messages/send' => ['controller' => 'Message', 'action' => 'send'],
     'messagerie' => ['controller' => 'Message', 'action' => 'index'],
+    'messagerie/conversation/{id}' => ['controller' => 'Message', 'action' => 'conversation'],
+    'messagerie/send' => ['controller' => 'Message', 'action' => 'send'],
 ];

@@ -83,7 +83,7 @@
                         <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>" class="book-card-link">
                             <div class="book-card">
                                 <div class="book-image">
-                                    <img src="<?= $book->getImagePath() ?>" alt="<?= escape($book->getTitle()) ?>">
+                                    <img src="<?= $book->getImage() ? BASE_URL . 'uploads/books/' . $book->getImage() : '' ?>" alt="<?= escape($book->getTitle()) ?>">
                                 </div>
                                 
                                 <div class="book-info">
