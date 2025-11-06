@@ -40,9 +40,8 @@ app/
 │   └── manager/    # Classes de gestion BDD
 ├── view/           # Vues (templates PHP)
 │   └── layouts/    # Layout principal
-├── service/        # Services réutilisables (ImageUploader, BookValidator)
-├── traits/         # Traits PHP (ManagesBookOwnership)
-└── core/           # Classes système (App, Controller, Model, etc.)
+├── service/        # Services réutilisables (ImageUploader)
+└── core/           # Classes système (App, Controller, Database, Session, helpers)
 ```
 
 ### Technologies utilisées
@@ -69,15 +68,24 @@ cd Projet4
 ```
 
 2. **Configuration de la base de données**
-- Créer une base de données MySQL
-- Importer le fichier `sql/database.sql`
+- Importer le fichier `sql/database.sql` dans phpMyAdmin ou via ligne de commande
+- Le fichier créera automatiquement la base `tomtroc` avec toutes les tables et données de test
+
+```bash
+mysql -u root -p < sql/database.sql
+```
+
+**Comptes de test fournis** (mot de passe : `password`) :
+- alice@example.com
+- bob@example.com
+- charlie@example.com
 
 3. **Configuration de l'application**
-- Copier `config/config.example.php` vers `config/config.local.php`
+- Copier `config/app.example.php` vers `config/app.local.php`
 - Modifier les paramètres de connexion à la base de données
 
 ```php
-// config/config.local.php
+// config/app.local.php
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'tomtroc');
 define('DB_USER', 'votre_utilisateur');
@@ -119,18 +127,20 @@ Toutes les feuilles de style sont importées via `style.css`.
 ## 🔐 Sécurité
 
 ### Mesures de sécurité implémentées
-- ✅ **Protection XSS**: Utilisation systématique de `htmlspecialchars()` via la fonction `e()`
-- ✅ **Protection SQL Injection**: Prepared statements PDO
+- ✅ **Protection XSS**: Utilisation systématique de `htmlspecialchars()` via la fonction `escape()`
+- ✅ **Protection SQL Injection**: Prepared statements PDO dans tous les managers
 - ✅ **Protection CSRF**: Tokens CSRF sur tous les formulaires
 - ✅ **Upload sécurisé**: Validation type MIME et extension des fichiers
-- ✅ **Sessions sécurisées**: Régénération d'ID de session
+- ✅ **Sessions sécurisées**: Régénération d'ID de session après login
 - ✅ **Protection des placeholders**: Empêche la suppression des images par défaut
+- ✅ **Validation des autorisations**: Vérification propriétaire avant édition/suppression
 
 ### Bonnes pratiques
-- Validation côté serveur de toutes les entrées
-- Échappement des sorties HTML
-- Séparation des concerns (MVC)
-- Gestion d'erreurs appropriée
+- Validation côté serveur de toutes les entrées utilisateur
+- Échappement systématique des sorties HTML
+- Séparation stricte des couches MVC (pas de logique métier dans les vues)
+- Gestion centralisée des erreurs via `ErrorController`
+- Pas de requêtes SQL dans les contrôleurs (uniquement dans les Managers)
 
 ## 📝 Routes principales
 
@@ -153,24 +163,26 @@ Toutes les feuilles de style sont importées via `style.css`.
 
 ## 🧪 Données de test
 
-La base de données contient des données de test :
-- Utilisateurs exemples
-- Livres disponibles
-- Conversations de démonstration
+Le fichier `sql/database.sql` contient des données de test complètes :
+- **3 utilisateurs**
+- **6 livres** avec descriptions (disponibles et non disponibles)
+- **4 messages** de test pour la messagerie
+- **Mot de passe commun** : `password123` pour tous les comptes de test
+
+Ces données permettent de tester immédiatement toutes les fonctionnalités de la plateforme.
 
 ## 🧩 Patterns et Bonnes Pratiques
 
 ### Design Patterns implémentés
 - **Singleton**: Connexion base de données unique (`Database.php`)
-- **Repository**: Managers pour l'accès aux données
+- **Repository Pattern**: Managers pour l'accès aux données (séparation requêtes SQL)
 - **Front Controller**: Routeur centralisé (`App.php`)
-- **Service Layer**: Services métier réutilisables (`ImageUploader`, `BookValidator`)
-- **Trait**: Code partagé sans héritage (`ManagesBookOwnership`)
+- **Service Layer**: Service réutilisable pour upload d'images (`ImageUploader`)
 
-### Principes SOLID
+### Principes SOLID appliqués
 - **Single Responsibility**: Chaque classe a une responsabilité unique
 - **Separation of Concerns**: MVC strict sans mélange des couches
-- **DRY** (Don't Repeat Yourself): Code factorisé dans des services et traits
+- **DRY** (Don't Repeat Yourself): Code factorisé (ex: `ImageUploader`, fonction `escape()`)
 
 ## 🚀 Améliorations futures possibles
 

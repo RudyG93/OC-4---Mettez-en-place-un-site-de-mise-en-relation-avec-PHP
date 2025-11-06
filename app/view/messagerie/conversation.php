@@ -31,12 +31,25 @@
                     </div>
                 <?php else: ?>
                     <?php foreach ($messages as $message): ?>
-                        <div class="message-item <?= isMessageSentBy($message, $userId) ? 'sent' : 'received' ?>">
-                            <?php if (isMessageSentBy($message, $userId)): ?>
+                        <div class="message-item <?= $message->getSenderId() == $userId ? 'sent' : 'received' ?>">
+                            <?php if ($message->getSenderId() == $userId): ?>
                                 <!-- Messages envoyés : meta puis bulle -->
                                 <div class="message-content">
                                     <div class="message-meta">
-                                        <span class="message-time"><?= formatMessageDate($message->getCreatedAt()) ?></span>
+                                        <span class="message-time">
+                                            <?php 
+                                            $timestamp = strtotime($message->getCreatedAt());
+                                            $messageDate = date('Y-m-d', $timestamp);
+                                            
+                                            if ($messageDate === date('Y-m-d')) {
+                                                echo date('H:i', $timestamp);
+                                            } elseif ($messageDate === date('Y-m-d', strtotime('-1 day'))) {
+                                                echo 'Hier ' . date('H:i', $timestamp);
+                                            } else {
+                                                echo date('d/m/Y H:i', $timestamp);
+                                            }
+                                            ?>
+                                        </span>
                                         <?php if ($message->isRead()): ?>
                                             <span class="message-status">Lu</span>
                                         <?php endif?>
@@ -53,7 +66,20 @@
                                              alt="<?= escape($otherUser->getUsername()) ?>">
                                     </div>
                                     <div class="message-meta">
-                                        <span class="message-time"><?= escape(formatMessageDate($message->getCreatedAt())) ?></span>
+                                        <span class="message-time">
+                                            <?php 
+                                            $timestamp = strtotime($message->getCreatedAt());
+                                            $messageDate = date('Y-m-d', $timestamp);
+                                            
+                                            if ($messageDate === date('Y-m-d')) {
+                                                echo escape(date('H:i', $timestamp));
+                                            } elseif ($messageDate === date('Y-m-d', strtotime('-1 day'))) {
+                                                echo escape('Hier ' . date('H:i', $timestamp));
+                                            } else {
+                                                echo escape(date('d/m/Y H:i', $timestamp));
+                                            }
+                                            ?>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="message-content">

@@ -10,10 +10,11 @@
 /* Layout principal */
 .messagerie-layout {
     display: flex;
-    min-height: calc(100vh - 160px); /* Hauteur du viewport moins header et footer */
+    height: calc(100vh - 160px); /* Hauteur fixe du viewport moins header et footer */
     margin: 0 auto;
-    max-width: 1200px; /* Même largeur que le container du header/footer */
-    background: #F5F3EF; /* Couleur de fond pour déborder de la sidebar */
+    max-width: 1200px; /* Largeur maximale : sidebar (350px) + conversation (850px) */
+    background: #F5F3EF;
+    overflow: hidden; /* Empêche le débordement horizontal */
 }
 
 /* ========================================
@@ -204,17 +205,18 @@
 .messages-zone {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden; /* Empêche le débordement horizontal */
     padding: 1.5rem;
     background: #F5F3EF;
     display: flex;
-    flex-direction: column-reverse; /* Messages de bas en haut */
+    flex-direction: column-reverse; /* Inverse pour avoir le scroll collé en bas */
 }
 
 .messages-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Ordre normal : les derniers messages en bas */
     gap: 1rem;
-}
+} 
 
 .message-item {
     display: flex;
@@ -265,6 +267,7 @@
     max-width: 60%;
     display: flex;
     flex-direction: column;
+    min-width: 0; /* Permet au contenu de se rétrécir si nécessaire */
 }
 
 .message-item.sent .message-content {
@@ -275,6 +278,9 @@
     background: white;
     padding: 0.75rem 1rem;
     border-radius: 12px;
+    max-width: 100%;
+    overflow-wrap: break-word; /* Casse les mots trop longs */
+    word-break: break-word; /* Pour les navigateurs plus anciens */
 }
 
 .message-item.sent .message-bubble {
@@ -286,6 +292,10 @@
     margin: 0;
     line-height: 1.5;
     word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap; /* Préserve les retours à la ligne */
+    max-width: 100%;
 }
 
 .message-meta {

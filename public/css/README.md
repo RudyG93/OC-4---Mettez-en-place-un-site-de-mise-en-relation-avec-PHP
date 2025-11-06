@@ -111,7 +111,7 @@ public/css/
 ### `profile.css` - Profil public
 **Contenu** :
 - Affichage du profil d'un utilisateur
-- Avatar, bio, statistiques
+- Avatar, statistiques
 - Liste des livres de l'utilisateur
 
 **Page concernée** :

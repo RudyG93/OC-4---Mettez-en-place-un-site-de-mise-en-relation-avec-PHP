@@ -27,10 +27,8 @@ CREATE TABLE users (
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    bio TEXT NULL,
     avatar VARCHAR(255) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_username (username),
     INDEX idx_email (email)
 ) ENGINE=InnoDB;
@@ -90,10 +88,10 @@ CREATE TABLE messages (
 -- ============================================
 
 -- Utilisateurs de test (mot de passe : "password123" hashé)
-INSERT INTO users (username, email, password, bio) VALUES
-('alice', 'alice@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Passionnée de romans policiers et de science-fiction. Toujours à la recherche de nouvelles découvertes littéraires !'),
-('bob', 'bob@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Amateur de fantasy et de littérature classique. J\'adore échanger mes livres et discuter de mes lectures.'),
-('charlie', 'charlie@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Lecteur éclectique, j\'aime tout type de littérature. Membre actif de plusieurs clubs de lecture.');
+INSERT INTO users (username, email, password) VALUES
+('alice', 'alice@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('bob', 'bob@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'),
+('charlie', 'charlie@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
 -- Livres de test
 INSERT INTO books (user_id, title, author, description, is_available) VALUES

@@ -67,14 +67,40 @@ class ProfileController extends Controller
 
         $user = $this->getCurrentUser();
 
-        // Récupérer et valider les données
-        $data = [
-            'username' => $this->getPost('username', ''),
-            'email' => $this->getPost('email', ''),
-            'password' => $this->getPost('password', '')
-        ];
+        // Récupérer les données
+        $username = trim($this->getPost('username', ''));
+        $email = trim($this->getPost('email', ''));
+        $password = $this->getPost('password', '');
 
-        $errors = $this->validateProfileData($data, $user);
+        // Validation
+        $errors = [];
+
+        // Validation du pseudo
+        if (empty($username)) {
+            $errors[] = 'Le pseudo est requis.';
+        } elseif (strlen($username) < 3 || strlen($username) > 50) {
+            $errors[] = 'Le pseudo doit contenir entre 3 et 50 caractères.';
+        } elseif (!preg_match('/^[a-zA-Z0-9_-]+$/', $username)) {
+            $errors[] = 'Le pseudo ne peut contenir que des lettres, chiffres, tirets et underscores.';
+        }
+
+        // Validation de l'email
+        if (empty($email)) {
+            $errors[] = 'L\'email est requis.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'L\'email n\'est pas valide.';
+        } elseif ($email !== $user->getEmail()) {
+            // Vérifier si l'email est déjà utilisé par un autre utilisateur
+            $existingUser = $this->userManager->getUserByEmail($email);
+            if ($existingUser) {
+                $errors[] = 'Cet email est déjà utilisé par un autre compte.';
+            }
+        }
+
+        // Validation du mot de passe (optionnel)
+        if (!empty($password) && strlen($password) < 6) {
+            $errors[] = 'Le mot de passe doit contenir au moins 6 caractères.';
+        }
 
         if (!empty($errors)) {
             Session::setFlash('error', implode(', ', $errors));
@@ -84,13 +110,13 @@ class ProfileController extends Controller
 
         // Préparer les données à mettre à jour
         $updateData = [
-            'username' => $data['username'],
-            'email' => $data['email']
+            'username' => $username,
+            'email' => $email
         ];
 
         // Ajouter le mot de passe s'il a été modifié
-        if (!empty($data['password'])) {
-            $updateData['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        if (!empty($password)) {
+            $updateData['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
         // Mettre à jour le profil
@@ -103,7 +129,7 @@ class ProfileController extends Controller
         }
 
         // Mettre à jour la session
-        Session::set('username', $data['username']);
+        Session::set('username', $username);
         Session::setFlash('success', 'Votre profil a été mis à jour avec succès.');
         $this->redirect('mon-compte');
     }
@@ -237,45 +263,5 @@ class ProfileController extends Controller
         }
 
         return $user;
-    }
-
-    /**
-     * Valide les données du profil
-     */
-    private function validateProfileData(array $data, User $currentUser): array
-    {
-        $errors = [];
-
-        // Validation du pseudo
-        $username = trim($data['username']);
-        if (empty($username)) {
-            $errors[] = 'Le pseudo est requis.';
-        } elseif (strlen($username) < 3 || strlen($username) > 50) {
-            $errors[] = 'Le pseudo doit contenir entre 3 et 50 caractères.';
-        } elseif (!preg_match('/^[a-zA-Z0-9_-]+$/', $username)) {
-            $errors[] = 'Le pseudo ne peut contenir que des lettres, chiffres, tirets et underscores.';
-        }
-
-        // Validation de l'email
-        $email = trim($data['email']);
-        if (empty($email)) {
-            $errors[] = 'L\'email est requis.';
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'L\'email n\'est pas valide.';
-        } elseif ($email !== $currentUser->getEmail()) {
-            // Vérifier si l'email est déjà utilisé par un autre utilisateur
-            $existingUser = $this->userManager->getUserByEmail($email);
-            if ($existingUser) {
-                $errors[] = 'Cet email est déjà utilisé par un autre compte.';
-            }
-        }
-
-        // Validation du mot de passe (optionnel)
-        $password = $data['password'];
-        if (!empty($password) && strlen($password) < 6) {
-            $errors[] = 'Le mot de passe doit contenir au moins 6 caractères.';
-        }
-
-        return $errors;
     }
 }

@@ -21,7 +21,7 @@ class AuthController extends Controller
     }
 
     /* ================================
-       INSCRIPTION
+       ACTIONS - INSCRIPTION
        ================================ */
 
     /**
@@ -137,7 +137,7 @@ class AuthController extends Controller
     }
 
     /* ================================
-       CONNEXION
+       ACTIONS - CONNEXION
        ================================ */
 
     /**
@@ -198,7 +198,7 @@ class AuthController extends Controller
     }
 
     /* ================================
-       DÉCONNEXION
+       ACTIONS - DÉCONNEXION
        ================================ */
 
     /**
@@ -214,7 +214,7 @@ class AuthController extends Controller
     }
 
     /* ================================
-       MÉTHODES PRIVÉES
+       MÉTHODES INTERNES - AUTHENTIFICATION
        ================================ */
 
     /**

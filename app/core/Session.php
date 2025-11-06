@@ -12,42 +12,67 @@
 
 class Session
 {
-    /* Démarre la session si elle n'est pas déjà démarrée */
+    /* ================================
+       GESTION DE BASE - SESSION
+       ================================ */
 
-    public static function start()
+    /**
+     * Démarre la session si elle n'est pas déjà démarrée
+     * 
+     * @return void
+     */
+    public static function start(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
     }
 
-    /* Définit une valeur dans la session */
-
-    public static function set($key, $value)
+    /**
+     * Définit une valeur dans la session
+     * 
+     * @param string $key Clé de la donnée
+     * @param mixed $value Valeur à stocker
+     * @return void
+     */
+    public static function set(string $key, $value): void
     {
         self::start();
         $_SESSION[$key] = $value;
     }
 
-    /* Récupère une valeur de la session */
-
-    public static function get($key, $default = null)
+    /**
+     * Récupère une valeur de la session
+     * 
+     * @param string $key Clé de la donnée
+     * @param mixed $default Valeur par défaut si clé absente
+     * @return mixed Valeur ou valeur par défaut
+     */
+    public static function get(string $key, $default = null)
     {
         self::start();
         return $_SESSION[$key] ?? $default;
     }
 
-    /* Vérifie si une clé existe dans la session */
-
-    public static function has($key)
+    /**
+     * Vérifie si une clé existe dans la session
+     * 
+     * @param string $key Clé à vérifier
+     * @return bool True si la clé existe
+     */
+    public static function has(string $key): bool
     {
         self::start();
         return isset($_SESSION[$key]);
     }
 
-    /* Supprime une valeur de la session */
-
-    public static function remove($key)
+    /**
+     * Supprime une valeur de la session
+     * 
+     * @param string $key Clé à supprimer
+     * @return void
+     */
+    public static function remove(string $key): void
     {
         self::start();
         if (isset($_SESSION[$key])) {
@@ -55,71 +80,113 @@ class Session
         }
     }
 
-    /* Détruit la session complète */
-
-    public static function destroy()
+    /**
+     * Détruit complètement la session
+     * 
+     * @return void
+     */
+    public static function destroy(): void
     {
         self::start();
         session_unset();
         session_destroy();
     }
 
-    /* Définit un message flash */
+    /**
+     * Régénère l'ID de session (sécurité contre session fixation)
+     * 
+     * @return void
+     */
+    public static function regenerate(): void
+    {
+        self::start();
+        session_regenerate_id(true);
+    }
 
-    public static function setFlash($type, $message)
+    /* ================================
+       MESSAGES FLASH
+       ================================ */
+
+    /**
+     * Définit un message flash (notification temporaire)
+     * 
+     * @param string $type Type de message ('success', 'error', 'warning', etc.)
+     * @param string $message Contenu du message
+     * @return void
+     */
+    public static function setFlash(string $type, string $message): void
     {
         self::set('flash', ['type' => $type, 'message' => $message]);
     }
 
-    /* Récupère et supprime le message flash */
-
-    public static function getFlash()
+    /**
+     * Récupère et supprime le message flash
+     * 
+     * @return array|null Message flash ['type' => '', 'message' => ''] ou null
+     */
+    public static function getFlash(): ?array
     {
         $flash = self::get('flash');
         self::remove('flash');
         return $flash;
     }
 
-    /* Vérifie si un utilisateur est connecté */
+    /* ================================
+       AUTHENTIFICATION
+       ================================ */
 
-    public static function isLoggedIn()
+    /**
+     * Vérifie si un utilisateur est connecté
+     * 
+     * @return bool True si connecté
+     */
+    public static function isLoggedIn(): bool
     {
         return self::has('user_id');
     }
 
-    /* Récupère l'ID de l'utilisateur connecté */
-
-    public static function getUserId()
+    /**
+     * Récupère l'ID de l'utilisateur connecté
+     * 
+     * @return int|null ID de l'utilisateur ou null
+     */
+    public static function getUserId(): ?int
     {
         return self::get('user_id');
     }
 
-    /* Connecte un utilisateur */
-
-    public static function login($userId)
+    /**
+     * Connecte un utilisateur (crée la session)
+     * 
+     * @param int $userId ID de l'utilisateur
+     * @return void
+     */
+    public static function login(int $userId): void
     {
         self::set('user_id', $userId);
         self::regenerate();
     }
 
-    /* Déconnecte l'utilisateur */
-
-    public static function logout()
+    /**
+     * Déconnecte l'utilisateur (détruit la session)
+     * 
+     * @return void
+     */
+    public static function logout(): void
     {
         self::destroy();
     }
 
-    /* Régénère l'ID de session (sécurité) */
+    /* ================================
+       PROTECTION CSRF
+       ================================ */
 
-    public static function regenerate()
-    {
-        self::start();
-        session_regenerate_id(true);
-    }
-
-    /* Génère un token CSRF*/
-
-    public static function generateCsrfToken()
+    /**
+     * Génère un token CSRF (réutilise l'existant si présent)
+     * 
+     * @return string Token CSRF
+     */
+    public static function generateCsrfToken(): string
     {
         // Réutiliser le token existant s'il y en a un
         $existingToken = self::get('csrf_token', '');
@@ -133,19 +200,28 @@ class Session
         return $token;
     }
 
-    /* Vérifie le token CSRF */
-
-    public static function verifyCsrfToken($token)
+    /**
+     * Vérifie la validité d'un token CSRF
+     * 
+     * @param string $token Token à vérifier
+     * @return bool True si le token est valide
+     */
+    public static function verifyCsrfToken(string $token): bool
     {
         return hash_equals(self::get('csrf_token', ''), $token);
     }
 
+    /* ================================
+       MAINTENANCE
+       ================================ */
+
     /**
      * Nettoie la session des objets obsolètes
-     * Utile après des modifications de structure d'entités
+     * Conserve uniquement les données essentielles (user_id, username, csrf_token, flash)
+     * 
+     * @return void
      */
-
-    public static function cleanSession()
+    public static function cleanSession(): void
     {
         self::start();
 

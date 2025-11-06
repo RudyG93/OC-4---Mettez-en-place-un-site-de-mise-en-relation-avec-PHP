@@ -24,14 +24,31 @@
                         <div class="conversation-info">
                             <div class="conversation-header-info">
                                 <h3 class="conversation-name"><?= escape($conversation->getOtherUsername()) ?></h3>
-                                <span class="conversation-time"><?= escape(formatMessageDate($conversation->getCreatedAt())) ?></span>
+                                <span class="conversation-time">
+                                    <?php 
+                                    $timestamp = strtotime($conversation->getCreatedAt());
+                                    $messageDate = date('Y-m-d', $timestamp);
+                                    
+                                    if ($messageDate === date('Y-m-d')) {
+                                        echo escape(date('H:i', $timestamp));
+                                    } elseif ($messageDate === date('Y-m-d', strtotime('-1 day'))) {
+                                        echo escape('Hier ' . date('H:i', $timestamp));
+                                    } else {
+                                        echo escape(date('d/m/Y H:i', $timestamp));
+                                    }
+                                    ?>
+                                </span>
                             </div>
                             
                             <p class="conversation-preview">
-                                <?php if (isMessageSentBy($conversation, $userId)): ?>
+                                <?php if ($conversation->getSenderId() == $userId): ?>
                                     Vous : 
                                 <?php endif?>
-                                <?= escape(getTextExcerpt($conversation->getContent(), 50)) ?>
+                                <?php 
+                                $content = $conversation->getContent();
+                                $excerpt = strlen($content) <= 50 ? $content : substr($content, 0, 50) . '...';
+                                echo escape($excerpt);
+                                ?>
                             </p>
                         </div>
                     </div>
