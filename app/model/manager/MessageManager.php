@@ -1,6 +1,13 @@
 <?php
 
-class MessageManager extends Model {
+class MessageManager {
+
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = Database::getInstance();
+    }
 
     /**
      * Récupère la liste des conversations pour un utilisateur
@@ -60,7 +67,12 @@ class MessageManager extends Model {
         $conversations = [];
         while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
             $conversation = new Message();
-            $conversation->hydrate($row);
+            $conversation->setId($row['id']);
+            $conversation->setSenderId($row['sender_id']);
+            $conversation->setRecipientId($row['recipient_id']);
+            $conversation->setContent($row['content']);
+            $conversation->setIsRead($row['is_read']);
+            $conversation->setCreatedAt($row['created_at']);
             $conversation->setOtherUserId($row['other_user_id']);
             $conversation->setOtherUsername($row['other_username']);
             $conversation->setOtherAvatar($row['other_avatar']);
@@ -100,7 +112,12 @@ class MessageManager extends Model {
         $messages = [];
         while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
             $message = new Message();
-            $message->hydrate($row);
+            $message->setId($row['id']);
+            $message->setSenderId($row['sender_id']);
+            $message->setRecipientId($row['recipient_id']);
+            $message->setContent($row['content']);
+            $message->setIsRead($row['is_read']);
+            $message->setCreatedAt($row['created_at']);
             $messages[] = $message;
         }
         
@@ -236,7 +253,12 @@ class MessageManager extends Model {
         
         if ($row) {
             $message = new Message();
-            $message->hydrate($row);
+            $message->setId($row['id']);
+            $message->setSenderId($row['sender_id']);
+            $message->setRecipientId($row['recipient_id']);
+            $message->setContent($row['content']);
+            $message->setIsRead($row['is_read']);
+            $message->setCreatedAt($row['created_at']);
             return $message;
         }
         

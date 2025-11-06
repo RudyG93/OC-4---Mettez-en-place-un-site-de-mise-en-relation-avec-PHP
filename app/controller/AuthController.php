@@ -44,8 +44,7 @@ class AuthController extends Controller
         $data = [
             'title' => 'Inscription - TomTroc',
             'csrfToken' => $csrfToken,
-            'errors' => [],
-            'oldInput' => []
+            'errors' => []
         ];
 
         $this->render('auth/register', $data);
@@ -118,11 +117,7 @@ class AuthController extends Controller
             $data = [
                 'title' => 'Inscription - TomTroc',
                 'csrfToken' => $csrfToken,
-                'errors' => $errors,
-                'oldInput' => [
-                    'username' => $username,
-                    'email' => $email
-                ]
+                'errors' => $errors
             ];
 
             $this->render('auth/register', $data);

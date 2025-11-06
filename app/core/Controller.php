@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Classe Controller - Contrôleur de base
  * 
  * Tous les contrôleurs de l'application héritent de cette classe.
@@ -54,28 +54,25 @@ abstract class Controller
             echo $content;
         }
     }
-    
-    /**
-     * Redirige vers une URL
-     */
+
+    /* Redirige vers une URL */
+
     protected function redirect($path)
     {
         $url = BASE_URL . ltrim($path, '/');
         header("Location: $url");
         exit;
     }
-    
-    /**
-     * Vérifie si la requête est POST
-     */
+
+    /* Vérifie si la requête est POST */
+
     protected function isPost() : bool
     {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
-    
-    /**
-     * Vérifie si l'utilisateur est connecté
-     */
+
+    /* Vérifie si l'utilisateur est connecté */
+
     protected function requireAuth() : void
     {
         if (!Session::isLoggedIn()) {
@@ -85,6 +82,7 @@ abstract class Controller
     }
     
     /* Récupère les données POST nettoyées */
+    
     protected function getPost($key = null, $default = null)
     {
         if ($key === null) {
@@ -92,64 +90,14 @@ abstract class Controller
         }
         return isset($_POST[$key]) ? trim($_POST[$key]) : $default;
     }
-    
-    /* Récupère les données GET nettoyées */
-    protected function getQuery($key = null, $default = null)
-    {
-        if ($key === null) {
-            return $_GET;
-        }
-        return isset($_GET[$key]) ? trim($_GET[$key]) : $default;
-    }
-
-    /* Nettoie une chaîne pour l'affichage HTML */
-    protected function escape($string)
-    {
-        return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-    }
-
-    /* Récupère l'utilisateur connecté */
-    protected function getCurrentUser()
-    {
-        if (!Session::isLoggedIn()) {
-            return null;
-        }
-        
-        $userManager = $this->loadManager('User');
-        return $userManager->findById(Session::getUserId());
-    }
-
-    /* Affiche une erreur et redirige */
-
-    protected function error($message, $redirectTo = '')
-    {
-        Session::setFlash('error', $message);
-        $this->redirect($redirectTo);
-    }
-
-    /* Affiche un succès et redirige */
-    protected function success($message, $redirectTo = '')
-    {
-        Session::setFlash('success', $message);
-        $this->redirect($redirectTo);
-    }
-
-    /* Vérifie qu'une ressource existe, sinon erreur */
-
-    protected function ensureExists($resource, $errorMessage = 'Ressource introuvable', $redirectTo = '')
-    {
-        if (!$resource) {
-            $this->error($errorMessage, $redirectTo);
-        }
-        return $resource;
-    }
 
     /* Valide le token CSRF  */
 
     protected function validateCsrf($redirectTo = '')
     {
         if (!Session::verifyCsrfToken($this->getPost('csrf_token'))) {
-            $this->error('Token de sécurité invalide. Veuillez réessayer.', $redirectTo);
+            Session::setFlash('error', 'Token de sécurité invalide. Veuillez réessayer.');
+            $this->redirect($redirectTo);
         }
         return true;
     }
@@ -159,34 +107,5 @@ abstract class Controller
     protected function getCsrfToken()
     {
         return Session::generateCsrfToken();
-    }
-
-    /* Récupère l'état du formulaire (old input, errors) et nettoie la session */
-
-    protected function getFormState()
-    {
-        $oldInput = Session::get('old_input', []);
-        $errors = Session::get('errors', []);
-        
-        // Nettoyer la session
-        Session::remove('old_input');
-        Session::remove('errors');
-        
-        return [
-            'oldInput' => $oldInput,
-            'errors' => $errors
-        ];
-    }
-
-    /* Sauvegarde l'état du formulaire pour redirection */
-
-    protected function saveFormState(array $oldInput, array $errors = [])
-    {
-        if (!empty($oldInput)) {
-            Session::set('old_input', $oldInput);
-        }
-        if (!empty($errors)) {
-            Session::set('errors', $errors);
-        }
     }
 }

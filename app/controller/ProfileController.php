@@ -28,10 +28,11 @@ class ProfileController extends Controller
         $this->requireAuth();
 
         // Récupérer l'utilisateur connecté et vérifier qu'il existe
-        $user = $this->ensureExists($this->getCurrentUser(), 'Profil introuvable.');
-
-        // Récupérer l'état du formulaire (anciennes valeurs et erreurs)
-        $formState = $this->getFormState();
+        $user = $this->userManager->findById(Session::getUserId());
+        if (!$user) {
+            Session::setFlash('error', 'Profil introuvable.');
+            $this->redirect('');
+        }
 
         // Compter les livres de l'utilisateur
         $totalBooks = $this->bookManager->countUserBooks($user->getId());
@@ -42,13 +43,10 @@ class ProfileController extends Controller
 
         // Afficher la vue
         $pageTitle = 'Mon profil';
-        $activePage = 'account';
 
         $data = [
             'title' => $pageTitle,
             'user' => $user,
-            'oldInput' => $formState['oldInput'],
-            'errors' => $formState['errors'],
             'totalBooks' => $totalBooks,
             'availableBooks' => $availableBooks,
             'userBooks' => $userBooks
@@ -57,9 +55,7 @@ class ProfileController extends Controller
         $this->render('profile/account', $data);
     }
 
-    /**
-     * Traite la modification du profil
-     */
+    /* Traite la modification du profil  */
     public function update(): void
     {
         // Vérifier que l'utilisateur est connecté
@@ -97,7 +93,7 @@ class ProfileController extends Controller
             $errors['email'] = 'L\'email n\'est pas valide.';
         } else {
             // Vérifier si l'email est déjà utilisé par un autre utilisateur
-            $currentUser = $this->getCurrentUser();
+            $currentUser = $this->userManager->findById(Session::getUserId());
 
             if ($email !== $currentUser->getEmail()) {
                 $existingUser = $this->userManager->getUserByEmail($email);
@@ -116,10 +112,6 @@ class ProfileController extends Controller
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
-            $this->saveFormState([
-                'username' => $username,
-                'email' => $email
-            ], $errors);
             $this->redirect('mon-compte');
         }
 
@@ -135,15 +127,17 @@ class ProfileController extends Controller
         }
 
         // Mettre à jour le profil
-        $currentUser = $this->getCurrentUser();
+        $currentUser = $this->userManager->findById(Session::getUserId());
         $success = $this->userManager->updateUser($currentUser->getId(), $data);
 
         if ($success) {
             // Mettre à jour les informations dans la session
             Session::set('username', $username);
-            $this->success('Votre profil a été mis à jour avec succès.', 'mon-compte');
+            Session::setFlash('success', 'Votre profil a été mis à jour avec succès.');
+            $this->redirect('mon-compte');
         } else {
-            $this->error('Une erreur est survenue lors de la mise à jour du profil.', 'mon-compte/modifier');
+            Session::setFlash('error', 'Une erreur est survenue lors de la mise à jour du profil.');
+            $this->redirect('mon-compte/modifier');
         }
     }
 
@@ -158,7 +152,10 @@ class ProfileController extends Controller
         $user = $this->userManager->findById($userId);
 
         // Vérifier que l'utilisateur existe
-        $user = $this->ensureExists($user, 'Utilisateur introuvable.');
+        if (!$user) {
+            Session::setFlash('error', 'Utilisateur introuvable.');
+            $this->redirect('');
+        }
 
         // Récupérer les livres de l'utilisateur
         $bookManager = $this->loadManager('Book');
@@ -166,7 +163,7 @@ class ProfileController extends Controller
 
         // Afficher la vue
         $data = [
-            'title' => 'Profil de ' . $this->escape($user->getUsername()),
+            'title' => 'Profil de ' . escape($user->getUsername()),
             'user' => $user,
             'userBooks' => $userBooks
         ];
@@ -204,7 +201,7 @@ class ProfileController extends Controller
         }
 
         // Récupérer l'utilisateur actuel
-        $currentUser = $this->getCurrentUser();
+        $currentUser = $this->userManager->findById(Session::getUserId());
 
         // Supprimer l'ancien avatar si présent et non placeholder
         $oldAvatar = $currentUser->getAvatar();
@@ -245,7 +242,7 @@ class ProfileController extends Controller
         $this->validateCsrf('mon-compte');
 
         // Récupérer l'utilisateur actuel
-        $currentUser = $this->getCurrentUser();
+        $currentUser = $this->userManager->findById(Session::getUserId());
 
         // Vérifier qu'il a bien un avatar
         if (!$currentUser->getAvatar()) {

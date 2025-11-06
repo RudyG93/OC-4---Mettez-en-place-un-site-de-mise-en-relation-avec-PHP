@@ -146,9 +146,8 @@ class Session
         return $token;
     }
     
-    /**
-     * Vérifie le token CSRF
-     */
+    /* Vérifie le token CSRF */
+    
     public static function verifyCsrfToken($token)
     {
         return hash_equals(self::get('csrf_token', ''), $token);

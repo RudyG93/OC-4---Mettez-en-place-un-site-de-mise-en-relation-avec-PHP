@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e($title ?? 'TomTroc') ?></title>
+    <title><?= escape($title ?? 'TomTroc') ?></title>
     <link rel="stylesheet" href="<?= BASE_URL ?>css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -58,9 +58,9 @@
 
     <?php if (Session::has('flash')): ?>
         <?php $flash = Session::getFlash()?>
-        <div class="flash-message flash-<?= e($flash['type']) ?>">
+        <div class="flash-message flash-<?= escape($flash['type']) ?>">
             <div class="container">
-                <?= e($flash['message']) ?>
+                <?= escape($flash['message']) ?>
             </div>
         </div>
     <?php endif?>

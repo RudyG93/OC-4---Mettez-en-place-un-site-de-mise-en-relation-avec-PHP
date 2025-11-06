@@ -5,14 +5,14 @@
     <nav class="breadcrumb-top">
         <a href="<?= BASE_URL ?>nos-livres" class="breadcrumb-link">Nos livres</a>
         <span class="breadcrumb-separator">></span>
-        <span class="breadcrumb-current"><?= e($book->getTitle()) ?></span>
+        <span class="breadcrumb-current"><?= escape($book->getTitle()) ?></span>
     </nav>
 
     <div class="book-detail-layout">
         <!-- Image à gauche -->
         <div class="book-image-container">
-            <img src="<?= $book->getImagePath() ?>" 
-                 alt="<?= e($book->getTitle()) ?>" 
+            <img src="<?= escape($book->getImagePath()) ?>" 
+                 alt="<?= escape($book->getTitle()) ?>" 
                  class="book-detail-image">
         </div>
 
@@ -22,8 +22,8 @@
                 
                 <!-- Titre et auteur -->
                 <div class="book-header">
-                    <h1 class="book-detail-title"><?= e($book->getTitle()) ?></h1>
-                    <p class="book-detail-author">par <?= e($book->getAuthor()) ?></p>
+                    <h1 class="book-detail-title"><?= escape($book->getTitle()) ?></h1>
+                    <p class="book-detail-author">par <?= escape($book->getAuthor()) ?></p>
                 </div>
 
                 <div class="content-divider"></div>
@@ -33,7 +33,7 @@
                 <div class="book-section">
                     <h2 class="section-title">Description</h2>
                     <div class="section-content">
-                        <?= nl2br(e($book->getDescription())) ?>
+                        <?= nl2br(escape($book->getDescription())) ?>
                     </div>
                 </div>
                 <?php endif?>
@@ -43,9 +43,9 @@
                     <h2 class="section-title">Propriétaire</h2>
                     <a href="<?= BASE_URL ?>profil/<?= $owner->getId() ?>" class="owner-badge">
                         <div class="owner-avatar">
-                            <img src="<?= BASE_URL ?>uploads/avatars/<?= $owner->getAvatar() ?>" alt="<?= e($owner->getUsername()) ?>">
+                            <img src="<?= BASE_URL ?>uploads/avatars/<?= escape($owner->getAvatar()) ?>" alt="<?= escape($owner->getUsername()) ?>">
                         </div>
-                        <span class="owner-name"><?= e($owner->getUsername()) ?></span>
+                        <span class="owner-name"><?= escape($owner->getUsername()) ?></span>
                     </a>
                 </div>
 
@@ -67,7 +67,7 @@
                         </a>
                         <button class="btn-delete delete-book" 
                                 data-book-id="<?= $book->getId() ?>" 
-                                data-book-title="<?= e($book->getTitle()) ?>">
+                                data-book-title="<?= escape($book->getTitle()) ?>">
                             Supprimer
                         </button>
                     </div>

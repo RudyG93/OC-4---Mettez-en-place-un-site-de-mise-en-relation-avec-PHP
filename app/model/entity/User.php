@@ -12,7 +12,6 @@ class User extends Entity
     private $bio;
     private $avatar;
     private $created_at;
-    private $updated_at;
 
     /**
      * Empêche la création de propriétés dynamiques

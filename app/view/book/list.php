@@ -17,7 +17,7 @@
                                name="q" 
                                class="search-input" 
                                placeholder="Rechercher un livre"
-                               value="<?= e($searchTerm) ?>"
+                               value="<?= escape($searchTerm) ?>"
                                autocomplete="off">
                         <?php if (!empty($searchTerm)): ?>
                             <a href="<?= BASE_URL ?>nos-livres" class="clear-search-btn" title="Effacer la recherche">
@@ -43,7 +43,7 @@
                             <i class="fas fa-search"></i>
                         </div>
                         <h3>Aucun résultat trouvé</h3>
-                        <p>Aucun livre ne correspond à votre recherche "<span class="search-term"><?= e($searchTerm) ?></span>"</p>
+                        <p>Aucun livre ne correspond à votre recherche "<span class="search-term"><?= escape($searchTerm) ?></span>"</p>
                         <a href="<?= BASE_URL ?>nos-livres" class="btn btn-primary">Voir tous les livres</a>
                     </div>
                 <?php else: ?>
@@ -68,7 +68,7 @@
             <?php else: ?>
                 <div class="books-count">
                     <?php if (!empty($searchTerm)): ?>
-                        <p><?= count($books) ?> résultat<?= count($books) > 1 ? 's' : '' ?> trouvé<?= count($books) > 1 ? 's' : '' ?> pour "<?= e($searchTerm) ?>"</p>
+                        <p><?= count($books) ?> résultat<?= count($books) > 1 ? 's' : '' ?> trouvé<?= count($books) > 1 ? 's' : '' ?> pour "<?= escape($searchTerm) ?>"</p>
                     <?php else: ?>
                         <p><?= count($books) ?> livre<?= count($books) > 1 ? 's' : '' ?> disponible<?= count($books) > 1 ? 's' : '' ?></p>
                     <?php endif; ?>
@@ -83,16 +83,16 @@
                         <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>" class="book-card-link">
                             <div class="book-card">
                                 <div class="book-image">
-                                    <img src="<?= $book->getImagePath() ?>" alt="<?= e($book->getTitle()) ?>">
+                                    <img src="<?= $book->getImagePath() ?>" alt="<?= escape($book->getTitle()) ?>">
                                 </div>
                                 
                                 <div class="book-info">
-                                    <h3 class="book-title"><?= e($book->getTitle()) ?></h3>
-                                    <p class="book-author"><?= e($book->getAuthor()) ?></p>
-                                    
+                                    <h3 class="book-title"><?= escape($book->getTitle()) ?></h3>
+                                    <p class="book-author"><?= escape($book->getAuthor()) ?></p>
+
                                     <div class="book-meta">
                                         <div class="book-owner">
-                                            <span>Vendu par : <?= e($owner['username']) ?></span>
+                                            <span>Vendu par : <?= escape($owner['username']) ?></span>
                                         </div>
                                     </div>
                                 </div>

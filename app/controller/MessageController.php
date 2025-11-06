@@ -31,7 +31,8 @@ class MessageController extends Controller {
     public function index() {
         // Vérifier que l'utilisateur est connecté
         if (!Session::isLoggedIn()) {
-            $this->error('Vous devez être connecté pour accéder à vos messages', '/login');
+            Session::setFlash('error', 'Vous devez être connecté pour accéder à vos messages');
+            $this->redirect('/login');
         }
 
         // Récupérer l'utilisateur actuel

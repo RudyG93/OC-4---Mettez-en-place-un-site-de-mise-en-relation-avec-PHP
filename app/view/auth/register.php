@@ -6,7 +6,7 @@
 
             <form method="POST" action="<?= BASE_URL ?>register" class="auth-form">
                 <!-- Token CSRF -->
-                <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+                <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
 
                 <!-- Pseudo -->
                 <div class="form-group">
@@ -16,10 +16,10 @@
                         id="username"
                         name="username"
                         class="form-input <?= isset($errors['username']) ? 'input-error' : '' ?>"
-                        value="<?= e($oldInput['username'] ?? '') ?>"
+                        value=""
                         required>
                     <?php if (isset($errors['username'])): ?>
-                        <span class="error-message"><?= e($errors['username']) ?></span>
+                        <span class="error-message"><?= escape($errors['username']) ?></span>
                     <?php endif?>
                 </div>
 
@@ -31,10 +31,10 @@
                         id="email"
                         name="email"
                         class="form-input <?= isset($errors['email']) ? 'input-error' : '' ?>"
-                        value="<?= e($oldInput['email'] ?? '') ?>"
+                        value=""
                         required>
                     <?php if (isset($errors['email'])): ?>
-                        <span class="error-message"><?= e($errors['email']) ?></span>
+                        <span class="error-message"><?= escape($errors['email']) ?></span>
                     <?php endif?>
                 </div>
 
@@ -48,7 +48,7 @@
                         class="form-input <?= isset($errors['password']) ? 'input-error' : '' ?>"
                         required>
                     <?php if (isset($errors['password'])): ?>
-                        <span class="error-message"><?= e($errors['password']) ?></span>
+                        <span class="error-message"><?= escape($errors['password']) ?></span>
                     <?php endif?>
                 </div>
 
@@ -62,7 +62,7 @@
                         class="form-input <?= isset($errors['password_confirm']) ? 'input-error' : '' ?>"
                         required>
                     <?php if (isset($errors['password_confirm'])): ?>
-                        <span class="error-message"><?= e($errors['password_confirm']) ?></span>
+                        <span class="error-message"><?= escape($errors['password_confirm']) ?></span>
                     <?php endif?>
                 </div>
 

@@ -13,8 +13,8 @@
                 <div class="profile-user-block">
                     <div class="profile-avatar">
                         <?php if ($user->getAvatar() && $user->getAvatar() !== 'pp_placeholder.png'): ?>
-                            <img src="<?= BASE_URL ?>uploads/avatars/<?= e($user->getAvatar()) ?>" 
-                                 alt="Avatar de <?= e($user->getUsername()) ?>" 
+                            <img src="<?= BASE_URL ?>uploads/avatars/<?= escape($user->getAvatar()) ?>" 
+                                 alt="Avatar de <?= escape($user->getUsername()) ?>" 
                                  class="avatar-image">
                         <?php else: ?>
                             <img src="<?= BASE_URL ?>uploads/avatars/pp_placeholder.png" 
@@ -46,7 +46,7 @@
                         <?php endif; ?>
                     </div>
                     
-                    <h1 class="profile-username"><?= e($user->getUsername()) ?></h1>
+                    <h1 class="profile-username"><?= escape($user->getUsername()) ?></h1>
                     
                     <p class="profile-member-info">
                         <?php 
@@ -97,11 +97,11 @@
                                 type="email" 
                                 name="email"
                                 class="form-input <?= isset($errors['email']) ? 'input-error' : '' ?>" 
-                                value="<?= e($oldInput['email'] ?? $user->getEmail()) ?>"
+                                value="<?= escape($user->getEmail()) ?>"
                                 placeholder="votre.email@example.com"
                                 required>
                             <?php if (isset($errors['email'])): ?>
-                                <span class="error-message"><?= e($errors['email']) ?></span>
+                                <span class="error-message"><?= escape($errors['email']) ?></span>
                             <?php endif?>
                         </div>
 
@@ -114,7 +114,7 @@
                                 class="form-input <?= isset($errors['password']) ? 'input-error' : '' ?>" 
                                 placeholder="••••••••">
                             <?php if (isset($errors['password'])): ?>
-                                <span class="error-message"><?= e($errors['password']) ?></span>
+                                <span class="error-message"><?= escape($errors['password']) ?></span>
                             <?php endif?>
                         </div>
 
@@ -125,11 +125,11 @@
                                 type="text" 
                                 name="username"
                                 class="form-input <?= isset($errors['username']) ? 'input-error' : '' ?>" 
-                                value="<?= e($oldInput['username'] ?? $user->getUsername()) ?>"
+                                value="<?= escape($user->getUsername()) ?>"
                                 placeholder="Votre pseudo"
                                 required>
                             <?php if (isset($errors['username'])): ?>
-                                <span class="error-message"><?= e($errors['username']) ?></span>
+                                <span class="error-message"><?= escape($errors['username']) ?></span>
                             <?php endif?>
                         </div>
                         
@@ -166,16 +166,16 @@
                                 <?php foreach ($userBooks as $book): ?>
                                     <tr>
                                         <td>
-                                            <img src="<?= e($book->getImagePath()) ?>" alt="Couverture de <?= e($book->getTitle()) ?>" class="book-cover">
+                                            <img src="<?= escape($book->getImagePath()) ?>" alt="Couverture de <?= escape($book->getTitle()) ?>" class="book-cover">
                                         </td>
                                         <td>
-                                            <div class="book-title"><?= e($book->getTitle()) ?></div>
+                                            <div class="book-title"><?= escape($book->getTitle()) ?></div>
                                         </td>
                                         <td>
-                                            <div class="book-author"><?= e($book->getAuthor()) ?></div>
+                                            <div class="book-author"><?= escape($book->getAuthor()) ?></div>
                                         </td>
                                         <td>
-                                            <div class="book-description"><?= e($book->getShortDescription(100)) ?></div>
+                                            <div class="book-description"><?= escape($book->getShortDescription(100)) ?></div>
                                         </td>
                                         <td>
                                             <span class="availability-badge <?= $book->getAvailabilityClass() ?>">
@@ -186,7 +186,7 @@
                                             <div class="action-buttons">
                                                 <a href="<?= BASE_URL ?>book/<?= $book->getId() ?>/edit" class="btn-action btn-edit">Éditer</a>
                                 <form method="POST" action="<?= BASE_URL ?>book/<?= $book->getId() ?>/delete" 
-                                                      onsubmit="return confirm('Voulez-vous vraiment supprimer « <?= e($book->getTitle()) ?> » ?');">
+                                                      onsubmit="return confirm('Voulez-vous vraiment supprimer « <?= escape($book->getTitle()) ?> » ?');">
                                                     <input type="hidden" name="csrf_token" value="<?= Session::generateCsrfToken() ?>">
                                                     <button type="submit" class="btn-action btn-delete">Supprimer</button>
                                                 </form>

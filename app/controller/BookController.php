@@ -32,7 +32,7 @@ class BookController extends Controller
     public function index(): void
     {
         // Récupérer le terme de recherche s'il existe
-        $searchTerm = $this->getQuery('q', '');
+        $searchTerm = isset($_GET['q']) ? trim($_GET['q']) : '';
         
         // Exclure les livres de l'utilisateur connecté s'il est connecté
         $excludeUserId = Session::isLoggedIn() ? Session::getUserId() : null;
@@ -78,7 +78,6 @@ class BookController extends Controller
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
-            $this->saveFormState($data, $errors);
             $this->redirect('mon-compte#add-book-modal');
             return;
         }
@@ -141,14 +140,10 @@ class BookController extends Controller
         $book = $this->findOwnBookOrFail($id);
         if (!$book) return;
 
-        $formState = $this->getFormState();
-
         $this->render('book/edit', [
             'book' => $book,
-            'title' => 'Modifier ' . $this->escape($book->getTitle()),
+            'title' => 'Modifier ' . escape($book->getTitle()),
             'csrfToken' => $this->getCsrfToken(),
-            'oldInput' => $formState['oldInput'],
-            'errors' => $formState['errors']
         ]);
     }
 
@@ -184,7 +179,6 @@ class BookController extends Controller
 
         // S'il y a des erreurs, retourner au formulaire
         if (!empty($errors)) {
-            $this->saveFormState($data, $errors);
             $this->redirect('book/' . $id . '/edit');
             return;
         }
@@ -278,12 +272,11 @@ class BookController extends Controller
         $this->redirect('book/' . $id . '/edit');
     }
 
-    /**
-     * Recherche de livres
-     */
+    /* Recherche de livres */
+
     public function search(): void
     {
-        $searchTerm = $this->getQuery('q', '');
+        $searchTerm = isset($_GET['q']) ? trim($_GET['q']) : '';
         $excludeUserId = Session::isLoggedIn() ? Session::getUserId() : null;
         
         $books = !empty($searchTerm) 
@@ -297,9 +290,8 @@ class BookController extends Controller
         ]);
     }
 
-    /**
-     * Change le statut de disponibilité d'un livre
-     */
+    /* Change le statut de disponibilité d'un livre */
+
     public function toggleAvailability(int $id): void
     {
         $this->requireAuth();
@@ -334,6 +326,7 @@ class BookController extends Controller
      * @param array &$errors Tableau d'erreurs (passé par référence)
      * @return string Nom du fichier (nouveau ou placeholder)
      */
+
     private function handleImageUpload(?array $file, array &$errors): string
     {
         $imageName = $this->imageUploader->getPlaceholder('book');

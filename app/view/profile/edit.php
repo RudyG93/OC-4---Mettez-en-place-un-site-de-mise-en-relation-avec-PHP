@@ -7,7 +7,7 @@
 
             <form method="POST" action="<?= BASE_URL ?>mon-compte/update" class="profile-form">
                 <!-- Token CSRF -->
-                <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+                <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
 
                 <!-- Pseudo -->
                 <div class="form-group">
@@ -17,11 +17,11 @@
                         id="username"
                         name="username"
                         class="form-input <?= isset($errors['username']) ? 'input-error' : '' ?>"
-                        value="<?= e($oldInput['username'] ?? $user->getUsername()) ?>"
+                        value=""
                         placeholder="Votre pseudo"
                         required>
                     <?php if (isset($errors['username'])): ?>
-                        <span class="error-message"><?= e($errors['username']) ?></span>
+                        <span class="error-message"><?= escape($errors['username']) ?></span>
                     <?php endif?>
                     <small class="form-help">3 à 50 caractères, lettres, chiffres, tirets et underscores uniquement</small>
                 </div>
@@ -34,11 +34,11 @@
                         id="email"
                         name="email"
                         class="form-input <?= isset($errors['email']) ? 'input-error' : '' ?>"
-                        value="<?= e($oldInput['email'] ?? $user->getEmail()) ?>"
+                        value=""
                         placeholder="votre.email@example.com"
                         required>
                     <?php if (isset($errors['email'])): ?>
-                        <span class="error-message"><?= e($errors['email']) ?></span>
+                        <span class="error-message"><?= escape($errors['email']) ?></span>
                     <?php endif?>
                 </div>
 
@@ -52,7 +52,7 @@
                         class="form-input <?= isset($errors['password']) ? 'input-error' : '' ?>"
                         placeholder="••••••••">
                     <?php if (isset($errors['password'])): ?>
-                        <span class="error-message"><?= e($errors['password']) ?></span>
+                        <span class="error-message"><?= escape($errors['password']) ?></span>
                     <?php endif?>
                     <small class="form-help">Laissez vide pour conserver votre mot de passe actuel</small>
                 </div>
@@ -67,7 +67,7 @@
                         class="form-input <?= isset($errors['password_confirm']) ? 'input-error' : '' ?>"
                         placeholder="••••••••">
                     <?php if (isset($errors['password_confirm'])): ?>
-                        <span class="error-message"><?= e($errors['password_confirm']) ?></span>
+                        <span class="error-message"><?= escape($errors['password_confirm']) ?></span>
                     <?php endif?>
                 </div>
 

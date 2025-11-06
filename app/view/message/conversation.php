@@ -9,11 +9,11 @@
         <div class="conversation-header">
             <div class="conversation-header-content">
                 <div class="header-avatar">
-                    <img src="<?= BASE_URL ?>uploads/avatars/<?= $otherUser->getAvatar() ?>" 
-                         alt="<?= e($otherUser->getUsername()) ?>">
+                    <img src="<?= BASE_URL ?>uploads/avatars/<?= escape($otherUser->getAvatar()) ?>" 
+                         alt="<?= escape($otherUser->getUsername()) ?>">
                 </div>
                 <div class="header-info">
-                    <h2 class="header-username"><?= e($otherUser->getUsername()) ?></h2>
+                    <h2 class="header-username"><?= escape($otherUser->getUsername()) ?></h2>
                     <a href="<?= BASE_URL ?>profil/<?= $otherUser->getId() ?>" class="header-link">
                         Voir le profil
                     </a>
@@ -42,23 +42,23 @@
                                         <?php endif?>
                                     </div>
                                     <div class="message-bubble">
-                                        <p class="message-text"><?= nl2br(e($message->getContent())) ?></p>
+                                        <p class="message-text"><?= nl2br(escape($message->getContent())) ?></p>
                                     </div>
                                 </div>
                             <?php else: ?>
                                 <!-- Messages reçus : header (avatar + meta) puis bulle -->
                                 <div class="message-header">
                                     <div class="message-avatar">
-                                        <img src="<?= BASE_URL ?>uploads/avatars/<?= $otherUser->getAvatar() ?>" 
-                                             alt="<?= e($otherUser->getUsername()) ?>">
+                                        <img src="<?= BASE_URL ?>uploads/avatars/<?= escape($otherUser->getAvatar()) ?>" 
+                                             alt="<?= escape($otherUser->getUsername()) ?>">
                                     </div>
                                     <div class="message-meta">
-                                        <span class="message-time"><?= $message->getFormattedDate() ?></span>
+                                        <span class="message-time"><?= escape($message->getFormattedDate()) ?></span>
                                     </div>
                                 </div>
                                 <div class="message-content">
                                     <div class="message-bubble">
-                                        <p class="message-text"><?= nl2br(e($message->getContent())) ?></p>
+                                        <p class="message-text"><?= nl2br(escape($message->getContent())) ?></p>
                                     </div>
                                 </div>
                             <?php endif?>

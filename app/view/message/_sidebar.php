@@ -17,21 +17,21 @@
                     
                     <div class="conversation-content">
                         <div class="conversation-avatar">
-                            <img src="<?= BASE_URL ?>uploads/avatars/<?= $conversation->getOtherAvatar() ?>" 
-                                 alt="<?= e($conversation->getOtherUsername()) ?>">
+                            <img src="<?= BASE_URL ?>uploads/avatars/<?= escape($conversation->getOtherAvatar()) ?>" 
+                                 alt="<?= escape($conversation->getOtherUsername()) ?>">
                         </div>
                         
                         <div class="conversation-info">
                             <div class="conversation-header-info">
-                                <h3 class="conversation-name"><?= e($conversation->getOtherUsername()) ?></h3>
-                                <span class="conversation-time"><?= $conversation->getFormattedDate() ?></span>
+                                <h3 class="conversation-name"><?= escape($conversation->getOtherUsername()) ?></h3>
+                                <span class="conversation-time"><?= escape($conversation->getFormattedDate()) ?></span>
                             </div>
                             
                             <p class="conversation-preview">
                                 <?php if ($conversation->isSentBy($currentUser->getId())): ?>
                                     Vous : 
                                 <?php endif?>
-                                <?= e($conversation->getExcerpt(50)) ?>
+                                <?= escape($conversation->getExcerpt(50)) ?>
                             </p>
                         </div>
                     </div>

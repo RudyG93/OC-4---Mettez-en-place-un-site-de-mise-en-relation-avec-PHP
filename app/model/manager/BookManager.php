@@ -3,16 +3,41 @@
 /**
  * Manager pour la gestion des livres
  */
-class BookManager extends Model
+class BookManager
 {
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = Database::getInstance();
+    }
+
     /**
      * Récupère tous les livres d'un utilisateur
      */
     public function findByUserId($userId)
     {
-        $this->table = 'books';
-        $rows = parent::findBy(['user_id' => $userId], 'created_at DESC');
-        return $this->hydrateEntities('Book', $rows);
+        $sql = "SELECT * FROM books WHERE user_id = :user_id ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+        
+        $books = [];
+        foreach ($rows as $row) {
+            $book = new Book();
+            $book->setId($row['id']);
+            $book->setUserId($row['user_id']);
+            $book->setTitle($row['title']);
+            $book->setAuthor($row['author']);
+            $book->setImage($row['image']);
+            $book->setDescription($row['description']);
+            $book->setIsAvailable($row['is_available']);
+            $book->setCreatedAt($row['created_at']);
+            $books[] = $book;
+        }
+        
+        return $books;
     }
 
     /**
@@ -20,9 +45,27 @@ class BookManager extends Model
      */
     public function findById($id)
     {
-        $this->table = 'books';
-        $bookData = parent::findById($id);
-        return $this->hydrateEntity('Book', $bookData);
+        $sql = "SELECT * FROM books WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $bookData = $stmt->fetch();
+        
+        if (!$bookData) {
+            return null;
+        }
+        
+        $book = new Book();
+        $book->setId($bookData['id']);
+        $book->setUserId($bookData['user_id']);
+        $book->setTitle($bookData['title']);
+        $book->setAuthor($bookData['author']);
+        $book->setImage($bookData['image']);
+        $book->setDescription($bookData['description']);
+        $book->setIsAvailable($bookData['is_available']);
+        $book->setCreatedAt($bookData['created_at']);
+        
+        return $book;
     }
 
     /**
@@ -53,7 +96,14 @@ class BookManager extends Model
         $books = [];
         while ($bookData = $query->fetch(PDO::FETCH_ASSOC)) {
             $book = new Book();
-            $book->hydrate($bookData);
+            $book->setId($bookData['id']);
+            $book->setUserId($bookData['user_id']);
+            $book->setTitle($bookData['title']);
+            $book->setAuthor($bookData['author']);
+            $book->setImage($bookData['image']);
+            $book->setDescription($bookData['description']);
+            $book->setIsAvailable($bookData['is_available']);
+            $book->setCreatedAt($bookData['created_at']);
             // Ajouter les infos du propriétaire dans un tableau associatif
             $books[] = [
                 'book' => $book,
@@ -85,7 +135,14 @@ class BookManager extends Model
         $books = [];
         while ($bookData = $query->fetch(PDO::FETCH_ASSOC)) {
             $book = new Book();
-            $book->hydrate($bookData);
+            $book->setId($bookData['id']);
+            $book->setUserId($bookData['user_id']);
+            $book->setTitle($bookData['title']);
+            $book->setAuthor($bookData['author']);
+            $book->setImage($bookData['image']);
+            $book->setDescription($bookData['description']);
+            $book->setIsAvailable($bookData['is_available']);
+            $book->setCreatedAt($bookData['created_at']);
             $books[] = [
                 'book' => $book,
                 'owner' => [
@@ -220,7 +277,14 @@ class BookManager extends Model
         $books = [];
         while ($bookData = $query->fetch(PDO::FETCH_ASSOC)) {
             $book = new Book();
-            $book->hydrate($bookData);
+            $book->setId($bookData['id']);
+            $book->setUserId($bookData['user_id']);
+            $book->setTitle($bookData['title']);
+            $book->setAuthor($bookData['author']);
+            $book->setImage($bookData['image']);
+            $book->setDescription($bookData['description']);
+            $book->setIsAvailable($bookData['is_available']);
+            $book->setCreatedAt($bookData['created_at']);
             // Ajouter les infos du propriétaire dans un tableau associatif
             $books[] = [
                 'book' => $book,
@@ -238,13 +302,12 @@ class BookManager extends Model
      */
     public function countUserBooks($userId)
     {
-        $sql = "SELECT COUNT(*) as count FROM books WHERE user_id = :user_id";
-        $query = $this->db->prepare($sql);
-        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
-        $query->execute();
-        
-        $result = $query->fetch(PDO::FETCH_ASSOC);
-        return (int) $result['count'];
+        $sql = "SELECT COUNT(*) as total FROM books WHERE user_id = :user_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return (int) $result['total'];
     }
 
     /**
@@ -252,12 +315,11 @@ class BookManager extends Model
      */
     public function countAvailableUserBooks($userId)
     {
-        $sql = "SELECT COUNT(*) as count FROM books WHERE user_id = :user_id AND is_available = 1";
-        $query = $this->db->prepare($sql);
-        $query->bindValue(':user_id', $userId, PDO::PARAM_INT);
-        $query->execute();
-        
-        $result = $query->fetch(PDO::FETCH_ASSOC);
-        return (int) $result['count'];
+        $sql = "SELECT COUNT(*) as total FROM books WHERE user_id = :user_id AND is_available = 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return (int) $result['total'];
     }
 }

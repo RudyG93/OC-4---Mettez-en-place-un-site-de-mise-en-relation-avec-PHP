@@ -37,16 +37,16 @@
                     <div class="book-card">
                         <div class="book-image">
                             <?php if ($book->getImage()): ?>
-                                <img src="<?= $book->getImagePath() ?>" alt="<?= e($book->getTitle()) ?>">
+                                <img src="<?= escape($book->getImagePath()) ?>" alt="<?= escape($book->getTitle()) ?>">
                             <?php else: ?>
                                 <div class="book-placeholder">📚</div>
                             <?php endif; ?>
                         </div>
                         <div class="book-info">
-                            <h3 class="book-title"><?= e($book->getTitle()) ?></h3>
-                            <p class="book-author"><?= e($book->getAuthor()) ?></p>
+                            <h3 class="book-title"><?= escape($book->getTitle()) ?></h3>
+                            <p class="book-author"><?= escape($book->getAuthor()) ?></p>
                             <p class="book-owner">
-                                <span>Vendu par: <?= e($owner['username']) ?></span>
+                                <span>Vendu par: <?= escape($owner['username']) ?></span>
                             </p>
                         </div>
                     </div>

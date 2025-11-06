@@ -20,10 +20,10 @@
                                id="title" 
                                name="title" 
                                class="form-control <?= isset($errors['title']) ? 'is-invalid' : '' ?>"
-                               value="<?= e($oldInput['title'] ?? '') ?>"
+                               value=""
                                required>
                         <?php if (isset($errors['title'])): ?>
-                            <div class="invalid-feedback"><?= e($errors['title']) ?></div>
+                            <div class="invalid-feedback"><?= escape($errors['title']) ?></div>
                         <?php endif?>
                     </div>
                     
@@ -33,10 +33,10 @@
                                id="author" 
                                name="author" 
                                class="form-control <?= isset($errors['author']) ? 'is-invalid' : '' ?>"
-                               value="<?= e($oldInput['author'] ?? '') ?>"
+                               value=""
                                required>
                         <?php if (isset($errors['author'])): ?>
-                            <div class="invalid-feedback"><?= e($errors['author']) ?></div>
+                            <div class="invalid-feedback"><?= escape($errors['author']) ?></div>
                         <?php endif?>
                     </div>
                 </div>
@@ -52,7 +52,7 @@
                         Formats acceptés : JPEG, PNG, GIF. Taille maximum : 5MB.
                     </small>
                     <?php if (isset($errors['image'])): ?>
-                        <div class="invalid-feedback"><?= e($errors['image']) ?></div>
+                        <div class="invalid-feedback"><?= escape($errors['image']) ?></div>
                     <?php endif?>
                 </div>
                 
@@ -62,10 +62,10 @@
                               name="description" 
                               class="form-control <?= isset($errors['description']) ? 'is-invalid' : '' ?>"
                               rows="4"
-                              placeholder="Résumé du livre, votre avis, état du livre..."><?= e($oldInput['description'] ?? '') ?></textarea>
+                              placeholder="Résumé du livre, votre avis, état du livre..."></textarea>
                     <small class="form-text text-muted">Maximum 1000 caractères</small>
                     <?php if (isset($errors['description'])): ?>
-                        <div class="invalid-feedback"><?= e($errors['description']) ?></div>
+                        <div class="invalid-feedback"><?= escape($errors['description']) ?></div>
                     <?php endif?>
                 </div>
                 
@@ -75,8 +75,7 @@
                                id="is_available" 
                                name="is_available" 
                                value="1"
-                               class="form-check-input"
-                               <?= ($oldInput['is_available'] ?? '1') === '1' ? 'checked' : '' ?>>
+                               class="form-check-input">
                         <label for="is_available" class="form-check-label">
                             Rendre ce livre disponible pour les échanges
                         </label>

@@ -13,7 +13,6 @@ class Book extends Entity
     private $description;
     private $is_available;
     private $created_at;
-    private $updated_at;
 
     /**
      * Getters

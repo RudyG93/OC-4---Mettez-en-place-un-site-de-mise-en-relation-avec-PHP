@@ -30,7 +30,7 @@
                         <div class="photo-display" id="photoDisplay">
                             <?php if ($book->getImage()): ?>
                                 <img src="<?= $book->getImagePath() ?>" 
-                                     alt="<?= e($book->getTitle()) ?>" 
+                                     alt="<?= escape($book->getTitle()) ?>" 
                                      id="imagePreview">
                             <?php else: ?>
                                 <div class="photo-placeholder">
@@ -67,7 +67,7 @@
                                id="title" 
                                name="title" 
                                class="form-input"
-                               value="<?= e($book->getTitle()) ?>" 
+                               value="<?= escape($book->getTitle()) ?>" 
                                required>
                     </div>
 
@@ -78,7 +78,7 @@
                                id="author" 
                                name="author" 
                                class="form-input"
-                               value="<?= e($book->getAuthor()) ?>" 
+                               value="<?= escape($book->getAuthor()) ?>" 
                                required>
                     </div>
 
@@ -89,7 +89,7 @@
                                   name="description" 
                                   class="form-textarea"
                                   rows="6"
-                                  maxlength="1000"><?= e($book->getDescription() ?? '') ?></textarea>
+                                  maxlength="1000"><?= escape($book->getDescription() ?? '') ?></textarea>
                     </div>
 
                     <!-- Disponibilité -->

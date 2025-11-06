@@ -9,8 +9,8 @@
             <div class="user-avatar-section">
                 <div class="user-avatar">
                     <?php if ($user->getAvatar() && $user->getAvatar() !== 'pp_placeholder.png'): ?>
-                        <img src="<?= BASE_URL ?>uploads/avatars/<?= e($user->getAvatar()) ?>" 
-                             alt="Avatar de <?= e($user->getUsername()) ?>" 
+                        <img src="<?= BASE_URL ?>uploads/avatars/<?= escape($user->getAvatar()) ?>" 
+                             alt="Avatar de <?= escape($user->getUsername()) ?>" 
                              class="avatar-image">
                     <?php else: ?>
                         <img src="<?= BASE_URL ?>uploads/avatars/pp_placeholder.png" 
@@ -19,7 +19,7 @@
                     <?php endif; ?>
                 </div>
                 
-                <h1 class="user-username"><?= e($user->getUsername()) ?></h1>
+                <h1 class="user-username"><?= escape($user->getUsername()) ?></h1>
                 
                 <p class="user-member-since">
                     Membre depuis 
@@ -61,7 +61,7 @@
         <div class="user-books-section">
             <?php if (empty($userBooks)): ?>
                 <div class="no-books-message">
-                    <p><?= e($user->getUsername()) ?> n'a pas encore ajouté de livres.</p>
+                    <p><?= escape($user->getUsername()) ?> n'a pas encore ajouté de livres.</p>
                 </div>
             <?php else: ?>
                 <table class="books-table">
@@ -79,7 +79,7 @@
                                 <td class="book-photo-cell">
                                     <?php if ($book->getImage()): ?>
                                         <img src="<?= $book->getImagePath() ?>" 
-                                             alt="<?= e($book->getTitle()) ?>" 
+                                             alt="<?= escape($book->getTitle()) ?>" 
                                              class="book-thumbnail">
                                     <?php else: ?>
                                         <div class="book-thumbnail-placeholder">
@@ -89,15 +89,15 @@
                                 </td>
                                 <td class="book-title-cell">
                                     <a href="<?= BASE_URL ?>livre/<?= $book->getId() ?>">
-                                        <?= e($book->getTitle()) ?>
+                                        <?= escape($book->getTitle()) ?>
                                     </a>
                                 </td>
                                 <td class="book-author-cell">
-                                    <?= e($book->getAuthor()) ?>
+                                    <?= escape($book->getAuthor()) ?>
                                 </td>
                                 <td class="book-description-cell">
                                     <?php if ($book->getDescription()): ?>
-                                        <?= e($book->getShortDescription(150)) ?>
+                                        <?= escape($book->getShortDescription(150)) ?>
                                     <?php else: ?>
                                         <span class="no-description">Aucune description</span>
                                     <?php endif; ?>

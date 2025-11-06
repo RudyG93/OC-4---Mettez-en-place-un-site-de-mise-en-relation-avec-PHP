@@ -1,36 +1,94 @@
 <?php
 
-class UserManager extends Model {
+class UserManager {
+
+    protected $db;
+
+    public function __construct()
+    {
+        $this->db = Database::getInstance();
+    }
 
     /**
      * Récupère un utilisateur par son ID
      */
     public function findById($id) {
-        $this->table = 'users';
-        $row = parent::findById($id);
-        return $this->hydrateEntity('User', $row);
+        $sql = "SELECT * FROM users WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        
+        if (!$row) {
+            return null;
+        }
+        
+        $user = new User();
+        $user->setId($row['id']);
+        $user->setUsername($row['username']);
+        $user->setEmail($row['email']);
+        $user->setPassword($row['password']);
+        $user->setBio($row['bio'] ?? null);
+        $user->setAvatar($row['avatar'] ?? null);
+        $user->setCreatedAt($row['created_at']);
+        
+        return $user;
     }
 
     /**
      * Récupère un utilisateur par son email
      */
     public function getUserByEmail($email) {
-        $this->table = 'users';
-        $row = parent::findOneBy(['email' => $email]);
-        return $this->hydrateEntity('User', $row);
+        $sql = "SELECT * FROM users WHERE email = :email LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':email', $email);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        
+        if (!$row) {
+            return null;
+        }
+        
+        $user = new User();
+        $user->setId($row['id']);
+        $user->setUsername($row['username']);
+        $user->setEmail($row['email']);
+        $user->setPassword($row['password']);
+        $user->setBio($row['bio'] ?? null);
+        $user->setAvatar($row['avatar'] ?? null);
+        $user->setCreatedAt($row['created_at']);
+        
+        return $user;
     }
 
     /**
      * Récupère un utilisateur par son nom d'utilisateur
      */
     public function getUserByUsername($username) {
-        $this->table = 'users';
-        $row = parent::findOneBy(['username' => $username]);
-        return $this->hydrateEntity('User', $row);
+        $sql = "SELECT * FROM users WHERE username = :username LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':username', $username);
+        $stmt->execute();
+        $row = $stmt->fetch();
+        
+        if (!$row) {
+            return null;
+        }
+        
+        $user = new User();
+        $user->setId($row['id']);
+        $user->setUsername($row['username']);
+        $user->setEmail($row['email']);
+        $user->setPassword($row['password']);
+        $user->setBio($row['bio'] ?? null);
+        $user->setAvatar($row['avatar'] ?? null);
+        $user->setCreatedAt($row['created_at']);
+        
+        return $user;
     }
 
     /* Crée un nouvel utilisateur */
-    
+
     public function createUser($userData) {
         $sql = "
             INSERT INTO users (username, email, password, bio, avatar, created_at, updated_at) 
@@ -115,11 +173,9 @@ class UserManager extends Model {
     }
 
     /**
-     * Vérifie si un email existe déjà
+     * Vérifie si un email existe déjà dans la base de données
      */
     public function emailExists($email, $excludeUserId = null) {
-        $this->table = 'users';
-        
         if ($excludeUserId) {
             // Pour les cas avec exclusion, garder SQL manuel pour performance
             $sql = "SELECT COUNT(*) as count FROM users WHERE email = :email AND id != :exclude_id";
@@ -131,17 +187,19 @@ class UserManager extends Model {
             return $result['count'] > 0;
         }
         
-        // Cas simple : utiliser findBy()
-        $users = parent::findBy(['email' => $email], null, 1);
-        return !empty($users);
+        // Cas simple : vérifier si l'email existe
+        $sql = "SELECT COUNT(*) as count FROM users WHERE email = :email";
+        $statement = $this->db->prepare($sql);
+        $statement->bindValue(':email', $email);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] > 0;
     }
 
     /**
      * Vérifie si un nom d'utilisateur existe déjà
      */
     public function usernameExists($username, $excludeUserId = null) {
-        $this->table = 'users';
-        
         if ($excludeUserId) {
             // Pour les cas avec exclusion, garder SQL manuel pour performance
             $sql = "SELECT COUNT(*) as count FROM users WHERE username = :username AND id != :exclude_id";
@@ -153,9 +211,13 @@ class UserManager extends Model {
             return $result['count'] > 0;
         }
         
-        // Cas simple : utiliser findBy()
-        $users = parent::findBy(['username' => $username], null, 1);
-        return !empty($users);
+        // Cas simple : vérifier si le username existe
+        $sql = "SELECT COUNT(*) as count FROM users WHERE username = :username";
+        $statement = $this->db->prepare($sql);
+        $statement->bindValue(':username', $username);
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+        return $result['count'] > 0;
     }
 
     /**

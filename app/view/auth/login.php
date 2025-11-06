@@ -6,7 +6,7 @@
 
             <form method="POST" action="<?= BASE_URL ?>login" class="auth-form">
                 <!-- Token CSRF -->
-                <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+                <input type="hidden" name="csrf_token" value="<?= escape($csrfToken) ?>">
 
                 <!-- Email -->
                 <div class="form-group">
