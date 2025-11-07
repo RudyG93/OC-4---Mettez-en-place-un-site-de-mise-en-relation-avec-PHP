@@ -149,7 +149,8 @@ class MessageManager
      * @param string $content Contenu du message
      * @return int|false ID du message créé ou false en cas d'échec
      */
-    public function sendMessage($senderId, $recipientId, $content) {
+    public function sendMessage($senderId, $recipientId, $content) : int|false
+    {
         $sql = "
             INSERT INTO messages (sender_id, recipient_id, content, is_read, created_at) 
             VALUES (:sender_id, :recipient_id, :content, 0, NOW())
@@ -179,7 +180,8 @@ class MessageManager
      * @param int $otherUserId ID de l'autre personne dans la conversation
      * @return bool True si succès
      */
-    public function markConversationAsRead($currentUserId, $otherUserId) {
+    public function markConversationAsRead($currentUserId, $otherUserId) : bool
+    {
         $sql = "
             UPDATE messages 
             SET is_read = 1 
